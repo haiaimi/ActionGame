@@ -36,6 +36,10 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bInAbility;
 
+	/**受攻击的反馈动画，为前、后、左、右的顺序*/
+	UPROPERTY(EditDefaultsOnly)
+	TArray<class UAnimMontage*> HitReactAnims;
+
 	FTimerHandle YawTimerHandle;
 
 	/**是否被Aurora减速*/
@@ -74,9 +78,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	EMoveDir::Type GetMoveDirection();
 
-
 	/**玩家被冻结，减速*/
 	UFUNCTION(BlueprintCallable)
 	void ApplyFreezedParticle(class UParticleSystem* InParticle);
+
+	/**玩家对受到的攻击进行反馈*/
+	void HitReact(const FHitResult& HitResult);
 };
 

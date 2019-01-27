@@ -14,6 +14,7 @@
 #include <Particles/ParticleSystem.h>
 #include <Kismet/GameplayStatics.h>
 #include <Components/SkeletalMeshComponent.h>
+#include <Animation/AnimInstance.h>
 
 //////////////////////////////////////////////////////////////////////////
 // AActionGameCharacter
@@ -182,4 +183,35 @@ void AActionGameCharacter::ApplyFreezedParticle(class UParticleSystem* InParticl
 		const FString SocketName = TEXT("Freezed_") + FString::FormatAsNumber(i);
 		UGameplayStatics::SpawnEmitterAttached(InParticle, GetMesh(), FName(*SocketName));
 	}
+}
+
+void AActionGameCharacter::HitReact(const FHitResult& HitResult)
+{
+	const FVector HitNormal = (HitResult.ImpactPoint - GetActorLocation()).GetSafeNormal2D();
+	const FVector PlayerDir = GetActorRotation().Vector();  //玩家方向
+	const FVector PlayerRightDir = FRotationMatrix(GetActorRotation()).GetScaledAxis(EAxis::Y);  //玩家右边的方向
+
+	const float Degree = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(HitNormal, PlayerDir)));
+	HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(Degree));
+	HAIAIMIHelper::Debug_ScreenMessage(HitResult.ImpactPoint.ToString());
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (Degree <= 45.f)
+	{
+		AnimInstance->Montage_Play(HitReactAnims[0], 1.f);
+		return;
+	}
+	
+	if (Degree >= 135.f)
+	{
+		AnimInstance->Montage_Play(HitReactAnims[1], 1.f);
+		return;
+	}
+	else
+	{
+		if (FVector::DotProduct(PlayerRightDir, HitNormal) > 0.f)    //受击点在右方
+			AnimInstance->Montage_Play(HitReactAnims[3], 1.f);
+		else
+			AnimInstance->Montage_Play(HitReactAnims[2], 1.f);
+	}
+
 }

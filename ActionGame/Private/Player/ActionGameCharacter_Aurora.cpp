@@ -209,7 +209,7 @@ void AActionGameCharacter_Aurora::Ability_R()
 
 	float FirstYaw = 0.f;
 	const FVector CenterPos = GetActorLocation() - FVector(0.f, 0.f, 90.f);
-	UGameplayStatics::SpawnDecalAtLocation(GetWorld(), DecalMaterial, FVector(1.f, 1.f, 1.f), CenterPos);
+	
 	for (int32 i = 0; i < 6; ++i)
 	{
 		const FVector SpawnLocation = CenterPos + FRotator(0.f, FirstYaw, 0.f).Vector()*50.f;
@@ -305,6 +305,7 @@ void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* Overl
 		if (Enemy != this)
 		{
 			UGameplayStatics::SpawnEmitterAttached(ImpactParticle, Enemy->GetMesh(), TEXT("Impact"));
+			Enemy->HitReact(SweepResult);
 			bCanAttack = false;
 			if (Enemy->bFreezedSlow)
 			{
@@ -322,7 +323,7 @@ void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* Overl
 					});
 
 				GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.f, false);
-			}	
+			}
 		}
 	}
 }

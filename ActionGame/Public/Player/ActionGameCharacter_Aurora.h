@@ -116,9 +116,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> IcePlatform;
 
-	UPROPERTY(EditDefaultsOnly)
-	class UMaterialInterface* DecalMaterial;
-
 	class AActor* PreIcePlatform;
 
 	float IcePlatformOffset;
