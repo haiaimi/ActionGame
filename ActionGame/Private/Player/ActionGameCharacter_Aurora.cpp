@@ -10,6 +10,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include <Components/SplineComponent.h>
 #include "Components/CapsuleComponent.h"
+#include <Components/BoxComponent.h>
+#include "Common/HAIAIMIHelper.h"
 
 
 AActionGameCharacter_Aurora::AActionGameCharacter_Aurora():
@@ -18,19 +20,27 @@ AActionGameCharacter_Aurora::AActionGameCharacter_Aurora():
 	AttackCount(0),
 	bTurboJumpAccelerate(false),
 	PreIcePlatform(nullptr),
-	IcePlatformOffset(0.f)
+	IcePlatformOffset(0.f),
+	bCanAttack(false)
 {
 	NormalAttackAnims.SetNum(4);
 	AbilityAnims.SetNum(3);
 	JumpMaxCount = 2;
 	JumpMaxHoldTime = 0.15f;
 
+	SwordCollsion = CreateDefaultSubobject<UBoxComponent>(TEXT("SwordCollision"));
 	IceMoveSpline = CreateDefaultSubobject<USplineComponent>(TEXT("IceMoveSpline"));
 	if (IceMoveSpline)
 	{
 		IceMoveSpline->SetupAttachment(RootComponent);
 		IceMoveSpline->SetRelativeLocation(FVector(0.f, 0.f, -97.f));
 		IceMoveSpline->bHiddenInGame = false;
+	}
+
+	if (SwordCollsion)
+	{
+		SwordCollsion->SetupAttachment(GetMesh(), TEXT("Sword_Mid"));
+		SwordCollsion->SetBoxExtent(FVector(5.739f, 2.261f, 45.062f));
 	}
 }
 
@@ -52,10 +62,11 @@ void AActionGameCharacter_Aurora::ResetCombo()
 	SaveAttack = false;
 	IsAttacking = false;
 	AttackCount = 0;
+	bCanAttack = false;
 }
 
 
-void AActionGameCharacter_Aurora::FreezeEnemy(class UParticleSystem* InParticle)
+void AActionGameCharacter_Aurora::FreezeEnemy()
 {
 	TArray<FHitResult> HitResults;
 	FCollisionQueryParams QueryParam;
@@ -73,10 +84,18 @@ void AActionGameCharacter_Aurora::FreezeEnemy(class UParticleSystem* InParticle)
 		{
 			if (AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(Iter.GetActor()))
 			{
-				Enemy->ApplyFreezedParticle(InParticle);
+				Enemy->ApplyFreezedParticle(Freezed_Slow);
 			}
 		}
 	}
+}
+
+void AActionGameCharacter_Aurora::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (SwordCollsion)
+		SwordCollsion->OnComponentBeginOverlap.AddDynamic(this, &AActionGameCharacter_Aurora::OnSwordBeginOverlap);
 }
 
 void AActionGameCharacter_Aurora::Tick(float DeltaTime)
@@ -266,4 +285,19 @@ void AActionGameCharacter_Aurora::DetectIceRoad()
 
 	IceMoveSpline->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	IcePlatformOffset = IceMoveSpline->GetComponentLocation().Z;
+}
+
+void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	if (!bCanAttack)return;
+
+	if (AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(OtherActor))
+	{
+		if (Enemy != this)
+		{
+			UGameplayStatics::SpawnEmitterAttached(ImpactParticle, Enemy->GetMesh(), TEXT("Impact"));
+			//Enemy->ApplyFreezedParticle(ImpactParticle);
+			bCanAttack = false;
+		}
+	}
 }

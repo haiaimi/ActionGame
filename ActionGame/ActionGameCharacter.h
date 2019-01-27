@@ -36,12 +36,6 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bInAbility;
 
-	/*UPROPERTY(EditDefaultsOnly)
-	class UParticleSystem* Freezed_Slow;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UParticleSystem* Freezed_Stop;*/
-
 	FTimerHandle YawTimerHandle;
 
 protected:
