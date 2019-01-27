@@ -21,7 +21,8 @@
 AActionGameCharacter::AActionGameCharacter():
 	MoveDirStat(0),
 	bCanUpdateControlYaw(true),
-	bInAbility(false)
+	bInAbility(false),
+	bFreezedSlow(false)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);

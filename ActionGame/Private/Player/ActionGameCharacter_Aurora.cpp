@@ -84,7 +84,16 @@ void AActionGameCharacter_Aurora::FreezeEnemy()
 		{
 			if (AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(Iter.GetActor()))
 			{
+				Enemy->bFreezedSlow = true;
 				Enemy->ApplyFreezedParticle(Freezed_Slow);
+
+				FTimerHandle TimerHandle;
+				FTimerDelegate TimerDelegate;
+				TimerDelegate.BindLambda([Enemy, this]() {
+					Enemy->bFreezedSlow = false;
+					});
+
+				GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.f, false);
 			}
 		}
 	}
@@ -296,8 +305,24 @@ void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* Overl
 		if (Enemy != this)
 		{
 			UGameplayStatics::SpawnEmitterAttached(ImpactParticle, Enemy->GetMesh(), TEXT("Impact"));
-			//Enemy->ApplyFreezedParticle(ImpactParticle);
 			bCanAttack = false;
+			if (Enemy->bFreezedSlow)
+			{
+				Enemy->ApplyFreezedParticle(Freezed_Stop);
+				Enemy->bFreezedSlow = false;
+				//停止玩家移动及相关动画
+				Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+				Enemy->GetMesh()->bNoSkeletonUpdate = true;
+
+				FTimerHandle TimerHandle;
+				FTimerDelegate TimerDelegate;
+				TimerDelegate.BindLambda([Enemy, this]() {
+					Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+					Enemy->GetMesh()->bNoSkeletonUpdate = false;
+					});
+
+				GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.f, false);
+			}	
 		}
 	}
 }

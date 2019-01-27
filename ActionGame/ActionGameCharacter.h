@@ -38,7 +38,11 @@ public:
 
 	FTimerHandle YawTimerHandle;
 
+	/**ÊÇ·ñ±»Aurora¼õËÙ*/
+	bool bFreezedSlow;
+
 protected:
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void MoveForward(float Value);
 
@@ -59,7 +63,7 @@ protected:
 	virtual void Ability_R();
 
 protected:
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
 
 
 public:
