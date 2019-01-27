@@ -12,6 +12,7 @@
 #include "Components/CapsuleComponent.h"
 #include <Components/BoxComponent.h>
 #include "Common/HAIAIMIHelper.h"
+#include <DrawDebugHelpers.h>
 
 
 AActionGameCharacter_Aurora::AActionGameCharacter_Aurora():
@@ -305,7 +306,15 @@ void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* Overl
 		if (Enemy != this)
 		{
 			UGameplayStatics::SpawnEmitterAttached(ImpactParticle, Enemy->GetMesh(), TEXT("Impact"));
-			Enemy->HitReact(SweepResult);
+
+			//获取最适合的打击点
+			FVector NewImpactPoint, NewImpactNormal;
+			if (UBodySetup* BodySetup = OverlappedComponent->GetBodySetup())
+			{
+				BodySetup->GetClosestPointAndNormal(GetMesh()->GetSocketLocation(TEXT("Sword_Mid")), OverlappedComponent->GetComponentTransform(), NewImpactPoint, NewImpactNormal);
+			}
+
+			Enemy->HitReact(NewImpactPoint);
 			bCanAttack = false;
 			if (Enemy->bFreezedSlow)
 			{
@@ -320,6 +329,7 @@ void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* Overl
 				TimerDelegate.BindLambda([Enemy, this]() {
 					Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 					Enemy->GetMesh()->bNoSkeletonUpdate = false;
+					Enemy->GetMesh()->GetAnimInstance()->StopAllMontages(1.f);
 					});
 
 				GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.f, false);

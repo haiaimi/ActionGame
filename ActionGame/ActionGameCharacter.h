@@ -83,6 +83,6 @@ public:
 	void ApplyFreezedParticle(class UParticleSystem* InParticle);
 
 	/**玩家对受到的攻击进行反馈*/
-	void HitReact(const FHitResult& HitResult);
+	void HitReact(const FVector& HitPoint);
 };
 

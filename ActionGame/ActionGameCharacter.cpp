@@ -185,15 +185,15 @@ void AActionGameCharacter::ApplyFreezedParticle(class UParticleSystem* InParticl
 	}
 }
 
-void AActionGameCharacter::HitReact(const FHitResult& HitResult)
+void AActionGameCharacter::HitReact(const FVector& HitPoint)
 {
-	const FVector HitNormal = (HitResult.ImpactPoint - GetActorLocation()).GetSafeNormal2D();
+	const FVector HitNormal = (HitPoint - GetActorLocation()).GetSafeNormal2D();
 	const FVector PlayerDir = GetActorRotation().Vector();  //玩家方向
 	const FVector PlayerRightDir = FRotationMatrix(GetActorRotation()).GetScaledAxis(EAxis::Y);  //玩家右边的方向
 
 	const float Degree = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(HitNormal, PlayerDir)));
-	HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(Degree));
-	HAIAIMIHelper::Debug_ScreenMessage(HitResult.ImpactPoint.ToString());
+	//HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(Degree));
+	//HAIAIMIHelper::Debug_ScreenMessage(HitResult.ImpactPoint.ToString());
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (Degree <= 45.f)
 	{
