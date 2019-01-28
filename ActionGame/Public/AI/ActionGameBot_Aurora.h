@@ -18,7 +18,7 @@ public:
 	AActionGameBot_Aurora();
 
 
-	//virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;
+	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;
 
 public:
 	/**ÐÐÎªÊ÷*/

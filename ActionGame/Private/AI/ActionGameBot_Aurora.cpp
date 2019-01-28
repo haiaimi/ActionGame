@@ -10,9 +10,9 @@ AActionGameBot_Aurora::AActionGameBot_Aurora()
 	bUseControllerRotationYaw = true;
 }
 
-//void AActionGameBot_Aurora::FaceRotation(FRotator NewRotation, float DeltaTime /*= 0.f*/)
-//{
-//	FRotator CurrentRotation = FMath::RInterpTo(GetActorRotation(), NewRotation, DeltaTime, 4.0f);
-//
-//	Super::FaceRotation(CurrentRotation, DeltaTime);
-//}
+void AActionGameBot_Aurora::FaceRotation(FRotator NewRotation, float DeltaTime /*= 0.f*/)
+{
+	FRotator CurrentRotation = FMath::RInterpTo(GetActorRotation(), NewRotation, DeltaTime, 4.0f);
+
+	ACharacter::FaceRotation(CurrentRotation, DeltaTime);
+}

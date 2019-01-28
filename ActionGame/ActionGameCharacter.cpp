@@ -109,7 +109,11 @@ void AActionGameCharacter::Ability_R()
 
 void AActionGameCharacter::FaceRotation(FRotator NewRotation, float DeltaTime /*= 0.f*/)
 {
-	FRotator CurrentRotation = FMath::RInterpTo(GetActorRotation(), NewRotation, DeltaTime, 4.0f);
+	FRotator CurrentRotation;
+	if (GetMoveDirection() == EMoveDir::Left || GetMoveDirection() == EMoveDir::Right || GetMoveDirection() == EMoveDir::Backward)
+		CurrentRotation = NewRotation;
+	else
+		CurrentRotation = FMath::RInterpTo(GetActorRotation(), NewRotation, DeltaTime, 4.0f);
 
 	Super::FaceRotation(CurrentRotation, DeltaTime);
 }
@@ -121,8 +125,7 @@ void AActionGameCharacter::MoveForward(float Value)
 	if (Value == 0.f)MoveDirStat &= 12;
 
 	bool Tmp = (MoveDirStat == 0) || ((MoveDirStat & 1) && (MoveDirStat & 12));
-	
-		bUseControllerRotationYaw = !Tmp;
+	bUseControllerRotationYaw = !Tmp;
 
 
 	if ((Controller != NULL) && (Value != 0.0f) && GetCharacterMovement()->GetMaxSpeed() > 0.f)
@@ -145,7 +148,7 @@ void AActionGameCharacter::MoveRight(float Value)
 	bool Tmp = (MoveDirStat == 0) || ((MoveDirStat & 1) && (MoveDirStat & 12));
 	bUseControllerRotationYaw = !Tmp;
 	
-	if ( (Controller != NULL) && (Value != 0.0f)&& GetCharacterMovement()->GetMaxSpeed() > 0.f )
+	if ( (Controller != NULL) && (Value != 0.0f) && GetCharacterMovement()->GetMaxSpeed() > 0.f )
 	{
 		if (GetMoveDirection() == EMoveDir::Backward)return;
 		const FRotator Rotation = Controller->GetControlRotation();
@@ -196,8 +199,6 @@ void AActionGameCharacter::HitReact(const FVector& HitPoint)
 	const FVector PlayerRightDir = FRotationMatrix(GetActorRotation()).GetScaledAxis(EAxis::Y);  //玩家右边的方向
 
 	const float Degree = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(HitNormal, PlayerDir)));
-	//HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(Degree));
-	//HAIAIMIHelper::Debug_ScreenMessage(HitResult.ImpactPoint.ToString());
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (Degree <= 45.f)
 	{
