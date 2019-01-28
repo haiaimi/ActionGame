@@ -8,7 +8,7 @@ public class ActionGame : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "Json" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "Json", "GameplayTasks", "NavigationSystem" });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
     }

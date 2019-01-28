@@ -67,7 +67,7 @@ protected:
 	virtual void Ability_R();
 
 protected:
-	
+	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;
 
 
 public:

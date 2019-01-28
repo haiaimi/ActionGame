@@ -107,6 +107,13 @@ void AActionGameCharacter::Ability_R()
 
 }
 
+void AActionGameCharacter::FaceRotation(FRotator NewRotation, float DeltaTime /*= 0.f*/)
+{
+	FRotator CurrentRotation = FMath::RInterpTo(GetActorRotation(), NewRotation, DeltaTime, 4.0f);
+
+	Super::FaceRotation(CurrentRotation, DeltaTime);
+}
+
 void AActionGameCharacter::MoveForward(float Value)
 {
 	if (Value > 0.f)MoveDirStat |= 1;
@@ -114,10 +121,9 @@ void AActionGameCharacter::MoveForward(float Value)
 	if (Value == 0.f)MoveDirStat &= 12;
 
 	bool Tmp = (MoveDirStat == 0) || ((MoveDirStat & 1) && (MoveDirStat & 12));
-	if (bCanUpdateControlYaw)
+	
 		bUseControllerRotationYaw = !Tmp;
-	else
-		bUseControllerRotationYaw = false;
+
 
 	if ((Controller != NULL) && (Value != 0.0f) && GetCharacterMovement()->GetMaxSpeed() > 0.f)
 	{
@@ -137,10 +143,8 @@ void AActionGameCharacter::MoveRight(float Value)
 	if (Value == 0.f)MoveDirStat &= 3;
 
 	bool Tmp = (MoveDirStat == 0) || ((MoveDirStat & 1) && (MoveDirStat & 12));
-	if (bCanUpdateControlYaw)
-		bUseControllerRotationYaw = !Tmp;
-	else
-		bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = !Tmp;
+	
 	if ( (Controller != NULL) && (Value != 0.0f)&& GetCharacterMovement()->GetMaxSpeed() > 0.f )
 	{
 		if (GetMoveDirection() == EMoveDir::Backward)return;
@@ -151,19 +155,19 @@ void AActionGameCharacter::MoveRight(float Value)
 		AddMovementInput(Direction, Value);
 	}
 
-	//下面是为了动画过渡正常
-	if (bUseControllerRotationYaw && PreStat)
-	{
-		bUseControllerRotationYaw = false;
-		bCanUpdateControlYaw = false;
-		
-		FTimerDelegate TimerDelegate;
-		TimerDelegate.BindLambda([&]() {
-			if(!bInAbility)bUseControllerRotationYaw = true;
-			bCanUpdateControlYaw = true;
-			});
-		GetWorldTimerManager().SetTimer(YawTimerHandle, TimerDelegate, 0.5f, false);
-	}
+	////下面是为了动画过渡正常
+	//if (bUseControllerRotationYaw && PreStat)
+	//{
+	//	bUseControllerRotationYaw = false;
+	//	bCanUpdateControlYaw = false;
+	//	
+	//	FTimerDelegate TimerDelegate;
+	//	TimerDelegate.BindLambda([&]() {
+	//		if(!bInAbility)bUseControllerRotationYaw = true;
+	//		bCanUpdateControlYaw = true;
+	//		});
+	//	GetWorldTimerManager().SetTimer(YawTimerHandle, TimerDelegate, 0.5f, false);
+	//}
 }
 
 EMoveDir::Type AActionGameCharacter::GetMoveDirection()
