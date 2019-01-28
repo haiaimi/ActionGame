@@ -87,11 +87,13 @@ void AActionGameCharacter_Aurora::FreezeEnemy()
 			{
 				Enemy->bFreezedSlow = true;
 				Enemy->ApplyFreezedParticle(Freezed_Slow);
+				Enemy->GetCharacterMovement()->MaxWalkSpeed = 200.f;
 
 				FTimerHandle TimerHandle;
 				FTimerDelegate TimerDelegate;
 				TimerDelegate.BindLambda([Enemy, this]() {
 					Enemy->bFreezedSlow = false;
+					Enemy->GetCharacterMovement()->MaxWalkSpeed = 600.f;
 					});
 
 				GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.f, false);

@@ -15,13 +15,13 @@
 #include <Kismet/GameplayStatics.h>
 #include <Components/SkeletalMeshComponent.h>
 #include <Animation/AnimInstance.h>
+#include "AI/ActionAIController.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AActionGameCharacter
 
 AActionGameCharacter::AActionGameCharacter():
 	MoveDirStat(0),
-	bCanUpdateControlYaw(true),
 	bInAbility(false),
 	bFreezedSlow(false)
 {
@@ -120,6 +120,7 @@ void AActionGameCharacter::FaceRotation(FRotator NewRotation, float DeltaTime /*
 
 void AActionGameCharacter::MoveForward(float Value)
 {
+	//if (Controller->IsA(AActionAIController::StaticClass()))
 	if (Value > 0.f)MoveDirStat |= 1;
 	if (Value < 0.f)MoveDirStat |= 2;
 	if (Value == 0.f)MoveDirStat &= 12;
@@ -147,6 +148,8 @@ void AActionGameCharacter::MoveRight(float Value)
 
 	bool Tmp = (MoveDirStat == 0) || ((MoveDirStat & 1) && (MoveDirStat & 12));
 	bUseControllerRotationYaw = !Tmp;
+
+	//if (Controller->IsA(AActionAIController::StaticClass()))
 	
 	if ( (Controller != NULL) && (Value != 0.0f) && GetCharacterMovement()->GetMaxSpeed() > 0.f )
 	{

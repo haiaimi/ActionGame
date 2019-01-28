@@ -20,8 +20,6 @@ class AActionGameCharacter : public ACharacter
 
 	/**玩家目前移动方向的状态*/
 	uint8 MoveDirStat;
-
-	bool bCanUpdateControlYaw;
 	
 public:
 	AActionGameCharacter();
@@ -43,6 +41,7 @@ public:
 	FTimerHandle YawTimerHandle;
 
 	/**是否被Aurora减速*/
+	UPROPERTY(BlueprintReadOnly)
 	bool bFreezedSlow;
 
 protected:
@@ -76,7 +75,7 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	UFUNCTION(BlueprintCallable)
-	EMoveDir::Type GetMoveDirection();
+	virtual EMoveDir::Type GetMoveDirection();
 
 	/**玩家被冻结，减速*/
 	UFUNCTION(BlueprintCallable)
