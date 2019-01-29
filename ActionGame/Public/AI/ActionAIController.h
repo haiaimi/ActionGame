@@ -33,6 +33,10 @@ public:
 	
 	class AActionGameCharacter* GetEnemy();
 
+	void SetAIFreezedValue();
+
 private:
 	int32 EnemyKeyID;
+
+	int32 FreezedKeyID;
 };

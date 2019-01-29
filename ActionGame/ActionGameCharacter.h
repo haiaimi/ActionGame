@@ -44,6 +44,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bFreezedSlow;
 
+	/**ÊÇ·ñ±»¶³×¡*/
+	bool bFreezedStop;
+
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 

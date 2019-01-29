@@ -9,6 +9,7 @@
 #include <EngineUtils.h>
 #include "Common/HAIAIMIHelper.h"
 #include <BehaviorTree/Blackboard/BlackboardKeyType_Object.h>
+#include <BehaviorTree/Blackboard/BlackboardKeyType_Bool.h>
 
 AActionAIController::AActionAIController()
 {
@@ -63,4 +64,10 @@ class AActionGameCharacter* AActionAIController::GetEnemy()
 		}	
 	}
 	return nullptr;
+}
+
+void AActionAIController::SetAIFreezedValue()
+{
+	AActionGameCharacter* AIPlayer = Cast<AActionGameCharacter>(GetPawn());
+	BlackboardComp->SetValue<UBlackboardKeyType_Bool>(FreezedKeyID, AIPlayer->bFreezedStop);
 }

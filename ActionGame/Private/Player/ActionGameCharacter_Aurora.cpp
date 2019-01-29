@@ -343,6 +343,7 @@ void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* Overl
 				//停止玩家移动及相关动画
 				Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 				Enemy->GetMesh()->bNoSkeletonUpdate = true;
+				Enemy->bFreezedStop = true;
 
 				FTimerHandle TimerHandle;
 				FTimerDelegate TimerDelegate;
@@ -350,6 +351,7 @@ void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* Overl
 					Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 					Enemy->GetMesh()->bNoSkeletonUpdate = false;
 					Enemy->GetMesh()->GetAnimInstance()->StopAllMontages(1.f);
+					Enemy->bFreezedStop = false;
 					});
 
 				GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.f, false);

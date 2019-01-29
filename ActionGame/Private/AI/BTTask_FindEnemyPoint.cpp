@@ -13,6 +13,7 @@ EBTNodeResult::Type UBTTask_FindEnemyPoint::ExecuteTask(UBehaviorTreeComponent& 
 	if (MyController == nullptr)
 		return EBTNodeResult::Failed;
 
+	MyController->SetAIFreezedValue();
 	APawn* MyBot = MyController->GetPawn();
 	AActionGameCharacter* Enemy = MyController->GetEnemy();
 
