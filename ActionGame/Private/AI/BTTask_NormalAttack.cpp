@@ -17,7 +17,7 @@ EBTNodeResult::Type UBTTask_NormalAttack::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	if(Enemy && MyBot)
 	{
-		if ((Enemy->GetActorLocation() - MyBot->GetActorLocation()).Size2D() < 200.f)
+		if ((Enemy->GetActorLocation() - MyBot->GetActorLocation()).Size2D() < 250.f)
 		{
 			//HAIAIMIHelper::Debug_ScreenMessage(TEXT("Normal Attack"));
 			MyBot->NormalAttack();
@@ -25,5 +25,5 @@ EBTNodeResult::Type UBTTask_NormalAttack::ExecuteTask(UBehaviorTreeComponent& Ow
 		}
 	}
 	
-	return EBTNodeResult::Failed;
+	return EBTNodeResult::Succeeded;
 }

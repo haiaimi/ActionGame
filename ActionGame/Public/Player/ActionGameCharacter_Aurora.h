@@ -95,10 +95,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	class UParticleSystem* FreezeSegment;
-
-	/**Q技能的粒子效果*/
-	UPROPERTY(EditDefaultsOnly)
-	class UParticleSystem* RushParticle;
 	
 	/**R技能的粒子*/
 	UPROPERTY(EditDefaultsOnly)

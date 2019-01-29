@@ -43,7 +43,7 @@ void UActionAnimInstance_Aurora::AnimNotify_StartMove(UAnimNotify* Notify)
 	APawn* Owner = TryGetPawnOwner();
 	if(AActionGameCharacter_Aurora* CurOwner=Cast<AActionGameCharacter_Aurora>(Owner))
 	{
-		CurOwner->GetCharacterMovement()->MaxWalkSpeed = 500.f;
+		CurOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 		CurOwner->bInAbility = false;
 	}
 }

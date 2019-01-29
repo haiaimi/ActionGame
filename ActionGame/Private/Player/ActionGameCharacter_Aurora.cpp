@@ -155,13 +155,11 @@ void AActionGameCharacter_Aurora::MoveRight(float Value)
 void AActionGameCharacter_Aurora::NormalAttack()
 {
 	if (bInAbility || bTurboJumpAccelerate)return;   //在释放技能的时候不进行平A
-	//HAIAIMIHelper::Debug_ScreenMessage(TEXT("AI Normal Attack 1"));
 
 	if (IsAttacking)
 		SaveAttack = true;
 	else
 	{
-		//HAIAIMIHelper::Debug_ScreenMessage(TEXT("AI Normal Attack 2"));
 		IsAttacking = true;
 		if (AttackCount < NormalAttackAnims.Num()-1)
 		{
@@ -180,21 +178,19 @@ void AActionGameCharacter_Aurora::Ability_Q()
 	bInAbility = true;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(AbilityAnims[0], 1.f);
-	//UGameplayStatics::SpawnEmitterAttached(RushParticle, GetMesh(), TEXT("Rush"),FVector(ForceInit), FRotator::ZeroRotator, FVector(0.5f));
 	ResetCombo();   //重置攻击动画状态
 	
 	bUseControllerRotationYaw = false;
 	DetectIceRoad();
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AActionGameCharacter_Aurora::SpawnIcePlatform, 0.3f, false);
-	//SpawnIcePlatform();
 }
 
 void AActionGameCharacter_Aurora::Ability_E()
 {
 	if (GetCharacterMovement()->IsFalling() || bInAbility)return;
 	bInAbility = true;
-	GetCharacterMovement()->MaxWalkSpeed = 0.f;
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(AbilityAnims[1], 1.f);
 	ResetCombo();   //重置攻击动画状态
@@ -230,7 +226,12 @@ bool AActionGameCharacter_Aurora::HitReact(const FVector& HitPoint)
 	if(Super::HitReact(HitPoint))
 	{
 		ResetCombo();
-		if (bInAbility)bInAbility = false;
+		if (bInAbility)
+		{
+			bInAbility = false;
+			GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+			bTurboJumpAccelerate = false;
+		}
 		return true;
 	}
 	return false;
