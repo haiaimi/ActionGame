@@ -55,6 +55,7 @@ protected:
 
 	void LookUpAtRate(float Rate);
 
+public:
 	/**普通攻击*/
 	virtual void NormalAttack();
 
@@ -82,6 +83,6 @@ public:
 	void ApplyFreezedParticle(class UParticleSystem* InParticle);
 
 	/**玩家对受到的攻击进行反馈*/
-	void HitReact(const FVector& HitPoint);
+	virtual bool HitReact(const FVector& HitPoint);
 };
 

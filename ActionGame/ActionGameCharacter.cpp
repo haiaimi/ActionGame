@@ -195,7 +195,7 @@ void AActionGameCharacter::ApplyFreezedParticle(class UParticleSystem* InParticl
 	}
 }
 
-void AActionGameCharacter::HitReact(const FVector& HitPoint)
+bool AActionGameCharacter::HitReact(const FVector& HitPoint)
 {
 	const FVector HitNormal = (HitPoint - GetActorLocation()).GetSafeNormal2D();
 	const FVector PlayerDir = GetActorRotation().Vector();  //Íæ¼Ò·½Ïò
@@ -206,13 +206,13 @@ void AActionGameCharacter::HitReact(const FVector& HitPoint)
 	if (Degree <= 45.f)
 	{
 		AnimInstance->Montage_Play(HitReactAnims[0], 1.f);
-		return;
+		return true;
 	}
 	
 	if (Degree >= 135.f)
 	{
 		AnimInstance->Montage_Play(HitReactAnims[1], 1.f);
-		return;
+		return true;
 	}
 	else
 	{
@@ -220,6 +220,7 @@ void AActionGameCharacter::HitReact(const FVector& HitPoint)
 			AnimInstance->Montage_Play(HitReactAnims[3], 1.f);
 		else
 			AnimInstance->Montage_Play(HitReactAnims[2], 1.f);
+		return true;
 	}
-
+	return false;
 }

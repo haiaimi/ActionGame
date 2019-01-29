@@ -32,6 +32,7 @@ protected:
 
 	virtual void Tick(float DeltaTime)override;
 
+public:
 	/**跳跃动作*/
 	virtual void Jump()override;
 
@@ -47,6 +48,8 @@ protected:
 
 	virtual void Ability_R()override;
 
+	virtual bool HitReact(const FVector& HitPoint)override;
+
 	void EmitFreeze();
 
 	/**生成冰块平台*/
@@ -57,6 +60,8 @@ protected:
 
 	UFUNCTION()
 	void OnSwordBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	void PlayerCanAttack() { bCanAttack = true; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
@@ -110,13 +115,16 @@ protected:
 
 	FTransform FreezeTransform;
 
-	UPROPERTY(BlueprintReadWrite)
-	bool bTurboJumpAccelerate;
-
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> IcePlatform;
 
 	class AActor* PreIcePlatform;
 
 	float IcePlatformOffset;
+
+	float MoveTime;
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	bool bTurboJumpAccelerate;
 };

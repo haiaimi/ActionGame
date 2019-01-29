@@ -8,6 +8,7 @@
 #include "ActionGameCharacter.h"
 #include <EngineUtils.h>
 #include "Common/HAIAIMIHelper.h"
+#include <BehaviorTree/Blackboard/BlackboardKeyType_Object.h>
 
 AActionAIController::AActionAIController()
 {
@@ -33,9 +34,9 @@ void AActionAIController::Possess(class APawn* InPawn)
 		{
 			BlackboardComp->InitializeBlackboard(*Bot->BotBehavior->BlackboardAsset);
 		}
+		EnemyKeyID = BlackboardComp->GetKeyID(TEXT("Enemy"));
 	}
 
-	HAIAIMIHelper::Debug_ScreenMessage(TEXT("Possess Pawn"));
 	BehaviorComp->StartTree(*(Bot->BotBehavior));
 }
 
@@ -56,7 +57,10 @@ class AActionGameCharacter* AActionAIController::GetEnemy()
 	for (FConstPawnIterator It = GetWorld()->GetPawnIterator(); It; ++It)
 	{
 		if (It->Get() != GetPawn())
+		{
+			BlackboardComp->SetValue<UBlackboardKeyType_Object>(EnemyKeyID, It->Get());
 			return Cast<AActionGameCharacter>(It->Get());
+		}	
 	}
 	return nullptr;
 }

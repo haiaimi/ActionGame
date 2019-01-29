@@ -32,4 +32,7 @@ public:
 	// End APlayerController interface
 	
 	class AActionGameCharacter* GetEnemy();
+
+private:
+	int32 EnemyKeyID;
 };

@@ -12,7 +12,6 @@
 #include "Components/CapsuleComponent.h"
 #include <Components/BoxComponent.h>
 #include "Common/HAIAIMIHelper.h"
-#include <DrawDebugHelpers.h>
 
 
 AActionGameCharacter_Aurora::AActionGameCharacter_Aurora():
@@ -22,7 +21,8 @@ AActionGameCharacter_Aurora::AActionGameCharacter_Aurora():
 	bTurboJumpAccelerate(false),
 	PreIcePlatform(nullptr),
 	IcePlatformOffset(0.f),
-	bCanAttack(false)
+	bCanAttack(false),
+	MoveTime(0.f)
 {
 	NormalAttackAnims.SetNum(4);
 	AbilityAnims.SetNum(3);
@@ -60,6 +60,7 @@ void AActionGameCharacter_Aurora::ComboAttackSave()
 
 void AActionGameCharacter_Aurora::ResetCombo()
 {
+	HAIAIMIHelper::Debug_ScreenMessage(TEXT("Reset Combo"));
 	SaveAttack = false;
 	IsAttacking = false;
 	AttackCount = 0;
@@ -154,11 +155,13 @@ void AActionGameCharacter_Aurora::MoveRight(float Value)
 void AActionGameCharacter_Aurora::NormalAttack()
 {
 	if (bInAbility || bTurboJumpAccelerate)return;   //在释放技能的时候不进行平A
+	//HAIAIMIHelper::Debug_ScreenMessage(TEXT("AI Normal Attack 1"));
 
 	if (IsAttacking)
 		SaveAttack = true;
 	else
 	{
+		//HAIAIMIHelper::Debug_ScreenMessage(TEXT("AI Normal Attack 2"));
 		IsAttacking = true;
 		if (AttackCount < NormalAttackAnims.Num()-1)
 		{
@@ -174,16 +177,17 @@ void AActionGameCharacter_Aurora::NormalAttack()
 void AActionGameCharacter_Aurora::Ability_Q()
 {
 	if (GetCharacterMovement()->IsFalling() || bInAbility)return;
-	bTurboJumpAccelerate = true;
 	bInAbility = true;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(AbilityAnims[0], 1.f);
-	UGameplayStatics::SpawnEmitterAttached(RushParticle, GetMesh(), TEXT("Rush"),FVector(ForceInit), FRotator::ZeroRotator, FVector(0.5f));
+	//UGameplayStatics::SpawnEmitterAttached(RushParticle, GetMesh(), TEXT("Rush"),FVector(ForceInit), FRotator::ZeroRotator, FVector(0.5f));
 	ResetCombo();   //重置攻击动画状态
 	
 	bUseControllerRotationYaw = false;
 	DetectIceRoad();
-	SpawnIcePlatform();
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AActionGameCharacter_Aurora::SpawnIcePlatform, 0.3f, false);
+	//SpawnIcePlatform();
 }
 
 void AActionGameCharacter_Aurora::Ability_E()
@@ -221,6 +225,17 @@ void AActionGameCharacter_Aurora::Ability_R()
 	}
 }
 
+bool AActionGameCharacter_Aurora::HitReact(const FVector& HitPoint)
+{
+	if(Super::HitReact(HitPoint))
+	{
+		ResetCombo();
+		if (bInAbility)bInAbility = false;
+		return true;
+	}
+	return false;
+}
+
 void AActionGameCharacter_Aurora::EmitFreeze()
 {
 	FTimerHandle EmitHandle;
@@ -241,7 +256,8 @@ void AActionGameCharacter_Aurora::EmitFreeze()
 
 void AActionGameCharacter_Aurora::SpawnIcePlatform()
 {
-	static float MoveTime = 0.f;
+	if (MoveTime == 0.f)
+		bTurboJumpAccelerate = true;
 	if (!bTurboJumpAccelerate)
 	{
 		MoveTime = 0.f;
@@ -267,12 +283,13 @@ void AActionGameCharacter_Aurora::SpawnIcePlatform()
 
 void AActionGameCharacter_Aurora::DetectIceRoad()
 {
+	const float OffsetLength = 180.f;
 	IceMoveSpline->ClearSplinePoints();    //清除所有已有的关键点
 	IceMoveSpline->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	IceMoveSpline->SetRelativeLocation(FVector(0.f, 0.f, -97.f));
 	IceMoveSpline->SetRelativeRotation(FRotator::ZeroRotator);
 	const FVector RoadDir = GetActorRotation().Vector();
-	const FVector StartPoint = GetActorLocation() + RoadDir * 100.f;
+	const FVector StartPoint = GetActorLocation() + RoadDir * OffsetLength;
 	
 	for (int32 i = 0; i < 20; ++i)
 	{
@@ -290,7 +307,7 @@ void AActionGameCharacter_Aurora::DetectIceRoad()
 		if(HitResult.bBlockingHit)
 		{
 			const FVector ImpactPoint = HitResult.ImpactPoint + HitResult.ImpactNormal*20.f;
-			const FVector SplinePointPos = FVector(100.f + i * 50.f, 0.f, ImpactPoint.Z);
+			const FVector SplinePointPos = FVector(OffsetLength + i * 50.f, 0.f, ImpactPoint.Z);
 			IceMoveSpline->AddPoint(FSplinePoint(i, SplinePointPos, ESplinePointType::Curve));
 		}
 	}
