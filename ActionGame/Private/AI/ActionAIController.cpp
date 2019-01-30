@@ -36,6 +36,7 @@ void AActionAIController::Possess(class APawn* InPawn)
 			BlackboardComp->InitializeBlackboard(*Bot->BotBehavior->BlackboardAsset);
 		}
 		EnemyKeyID = BlackboardComp->GetKeyID(TEXT("Enemy"));
+		FreezedKeyID = BlackboardComp->GetKeyID(TEXT("bFreezed"));
 	}
 
 	BehaviorComp->StartTree(*(Bot->BotBehavior));

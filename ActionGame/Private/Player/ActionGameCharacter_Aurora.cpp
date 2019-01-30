@@ -12,6 +12,7 @@
 #include "Components/CapsuleComponent.h"
 #include <Components/BoxComponent.h>
 #include "Common/HAIAIMIHelper.h"
+#include "ActionAIController.h"
 
 
 AActionGameCharacter_Aurora::AActionGameCharacter_Aurora():
@@ -60,11 +61,12 @@ void AActionGameCharacter_Aurora::ComboAttackSave()
 
 void AActionGameCharacter_Aurora::ResetCombo()
 {
-	HAIAIMIHelper::Debug_ScreenMessage(TEXT("Reset Combo"));
 	SaveAttack = false;
 	IsAttacking = false;
 	AttackCount = 0;
 	bCanAttack = false;
+
+	Super::ResetCombo();
 }
 
 
@@ -174,7 +176,7 @@ void AActionGameCharacter_Aurora::NormalAttack()
 
 void AActionGameCharacter_Aurora::Ability_Q()
 {
-	if (GetCharacterMovement()->IsFalling() || bInAbility)return;
+	if (GetCharacterMovement()->IsFalling() || bInAbility || bFreezedStop)return;
 	bInAbility = true;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(AbilityAnims[0], 1.f);
@@ -257,14 +259,15 @@ void AActionGameCharacter_Aurora::EmitFreeze()
 
 void AActionGameCharacter_Aurora::SpawnIcePlatform()
 {
-	if (MoveTime == 0.f)
+	if (MoveTime == 0.f && bInAbility && !bFreezedStop)
 		bTurboJumpAccelerate = true;
-	if (!bTurboJumpAccelerate)
+
+	if (800.f*MoveTime > IceMoveSpline->GetSplineLength() || !bInAbility)
 	{
+		bTurboJumpAccelerate = false;
 		MoveTime = 0.f;
 		return;
 	}
-
 	FTimerHandle TimerHandle;
 	//首先对前方路况检测
 	FHitResult HitResult1, HitResult2;
@@ -300,7 +303,7 @@ void AActionGameCharacter_Aurora::DetectIceRoad()
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(this);
 		GetWorld()->LineTraceSingleByChannel(HitResult,
-											 CurDetectPoint + FVector(0.f, 0.f, 1000.f),     //检测起始位置，尽量靠上
+											 CurDetectPoint + FVector(0.f, 0.f, 500.f),     //检测起始位置，尽量靠上
 											 CurDetectPoint + FVector(0.f, 0.f, -500.f),
 											 ECollisionChannel::ECC_GameTraceChannel1,    //该通道已经在编辑器里设置为Ice专用检测通道
 											 QueryParams);
@@ -315,6 +318,8 @@ void AActionGameCharacter_Aurora::DetectIceRoad()
 
 	IceMoveSpline->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	IcePlatformOffset = IceMoveSpline->GetComponentLocation().Z;
+	HAIAIMIHelper::Debug_ScreenMessage(IceMoveSpline->K2_GetComponentRotation().ToString());
+	IceMoveSpline->SetWorldRotation(FRotator(0.f, IceMoveSpline->K2_GetComponentRotation().Yaw, IceMoveSpline->K2_GetComponentRotation().Roll));
 }
 
 void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -344,7 +349,11 @@ void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* Overl
 				Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 				Enemy->GetMesh()->bNoSkeletonUpdate = true;
 				Enemy->bFreezedStop = true;
-
+				if (AActionAIController* AIControl = Cast<AActionAIController>(Enemy->Controller))
+				{
+					AIControl->SetAIFreezedValue();
+				}
+					
 				FTimerHandle TimerHandle;
 				FTimerDelegate TimerDelegate;
 				TimerDelegate.BindLambda([Enemy, this]() {
@@ -352,6 +361,11 @@ void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* Overl
 					Enemy->GetMesh()->bNoSkeletonUpdate = false;
 					Enemy->GetMesh()->GetAnimInstance()->StopAllMontages(1.f);
 					Enemy->bFreezedStop = false;
+					Enemy->ResetCombo();
+					if (AActionAIController* AIControl = Cast<AActionAIController>(Enemy->Controller))
+					{
+						AIControl->SetAIFreezedValue();
+					}
 					});
 
 				GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.f, false);

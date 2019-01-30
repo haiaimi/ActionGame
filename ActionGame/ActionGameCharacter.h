@@ -62,6 +62,9 @@ public:
 	/**普通攻击*/
 	virtual void NormalAttack();
 
+	/**重置普攻*/
+	virtual void ResetCombo() {};
+	
 	/**下面是人物主要的三个技能*/
 	virtual void Ability_Q();
 

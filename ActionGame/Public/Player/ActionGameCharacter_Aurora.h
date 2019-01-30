@@ -21,7 +21,7 @@ public:
 	void ComboAttackSave();
 
 	UFUNCTION(BlueprintCallable)
-	void ResetCombo();
+	virtual void ResetCombo()override;
 
 	/**∂≥Ω·µ–»À*/
 	UFUNCTION(BlueprintCallable)
