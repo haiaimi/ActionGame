@@ -20,6 +20,17 @@ class AActionGameCharacter : public ACharacter
 
 	/**玩家目前移动方向的状态*/
 	uint8 MoveDirStat;
+
+	/**玩家生命值*/
+	UPROPERTY(EditDefaultsOnly)
+	float Health;
+
+	/**技能的冷却时间*/
+	UPROPERTY(EditDefaultsOnly)
+	TArray<float> SkillCoolingTimes;
+
+	/**技能冷却定时器*/
+	TArray<FTimerHandle> SkillCoolingTimers;
 	
 public:
 	AActionGameCharacter();
@@ -37,8 +48,6 @@ public:
 	/**受攻击的反馈动画，为前、后、左、右的顺序*/
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class UAnimMontage*> HitReactAnims;
-
-	FTimerHandle YawTimerHandle;
 
 	/**是否被Aurora减速*/
 	UPROPERTY(BlueprintReadOnly)
@@ -58,6 +67,10 @@ protected:
 
 	void LookUpAtRate(float Rate);
 
+	void MakeAbilityCooling(int32 Index);
+
+	void SetAbilityReady(int32 Index);
+
 public:
 	/**普通攻击*/
 	virtual void NormalAttack();
@@ -71,6 +84,8 @@ public:
 	virtual void Ability_E();
 
 	virtual void Ability_R();
+
+	bool IsAbilityinCooling(int32 Index);
 
 protected:
 	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;

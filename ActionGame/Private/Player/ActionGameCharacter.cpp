@@ -54,6 +54,9 @@ AActionGameCharacter::AActionGameCharacter():
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	SkillCoolingTimes.SetNum(3);
+	SkillCoolingTimers.Init(FTimerHandle(), 3);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -88,24 +91,48 @@ void AActionGameCharacter::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
+void AActionGameCharacter::MakeAbilityCooling(int32 Index)
+{
+	if (Index >= SkillCoolingTimes.Num())return;
+	FTimerDelegate TimerDelegate;
+	TimerDelegate.BindLambda([Index, this]() {
+		SetAbilityReady(Index);
+		});
+	GetWorldTimerManager().SetTimer(SkillCoolingTimers[Index], TimerDelegate, SkillCoolingTimes[Index], false);
+	SkillCoolingTimes[Index] = 0.f;
+	HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(GetWorldTimerManager().GetTimerRate(SkillCoolingTimers[Index])));
+}
+
+void AActionGameCharacter::SetAbilityReady(int32 Index)
+{
+	const float DefaultCoolingTime = GetClass()->GetDefaultObject<AActionGameCharacter>()->SkillCoolingTimes[Index];
+	SkillCoolingTimes[Index] = DefaultCoolingTime;
+	HAIAIMIHelper::Debug_ScreenMessage(TEXT("Cool Finsih"));
+}
+
 void AActionGameCharacter::NormalAttack()
 {
-
+	
 }
 
 void AActionGameCharacter::Ability_Q()
 {
-
+	MakeAbilityCooling(0);
 }
 
 void AActionGameCharacter::Ability_E()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, TEXT("Ability E"));
+	MakeAbilityCooling(1);
 }
 
 void AActionGameCharacter::Ability_R()
 {
+	MakeAbilityCooling(2);
+}
 
+bool AActionGameCharacter::IsAbilityinCooling(int32 Index)
+{
+	return SkillCoolingTimes[Index] == 0.f;
 }
 
 void AActionGameCharacter::FaceRotation(FRotator NewRotation, float DeltaTime /*= 0.f*/)
@@ -121,14 +148,17 @@ void AActionGameCharacter::FaceRotation(FRotator NewRotation, float DeltaTime /*
 
 void AActionGameCharacter::MoveForward(float Value)
 {
-	//if (Controller->IsA(AActionAIController::StaticClass()))
+	if (bFreezedStop)
+	{
+		bUseControllerRotationYaw = false;
+		return;
+	}
 	if (Value > 0.f)MoveDirStat |= 1;
-	if (Value < 0.f)MoveDirStat |= 2;
-	if (Value == 0.f)MoveDirStat &= 12;
+	else if (Value < 0.f)MoveDirStat |= 2;
+	else MoveDirStat &= 12;
 
 	bool Tmp = (MoveDirStat == 0) || ((MoveDirStat & 1) && (MoveDirStat & 12));
 	bUseControllerRotationYaw = !Tmp;
-
 
 	if ((Controller != NULL) && (Value != 0.0f) && GetCharacterMovement()->GetMaxSpeed() > 0.f)
 	{
@@ -142,10 +172,14 @@ void AActionGameCharacter::MoveForward(float Value)
 
 void AActionGameCharacter::MoveRight(float Value)
 {
-	const bool PreStat = (MoveDirStat & 1) && (MoveDirStat & 12);
+	if (bFreezedStop)
+	{
+		bUseControllerRotationYaw = false;
+		return;
+	}
 	if (Value > 0.f)MoveDirStat |= 8;
-	if (Value < 0.f)MoveDirStat |= 4;
-	if (Value == 0.f)MoveDirStat &= 3;
+	else if (Value < 0.f)MoveDirStat |= 4;
+	else MoveDirStat &= 3;
 
 	bool Tmp = (MoveDirStat == 0) || ((MoveDirStat & 1) && (MoveDirStat & 12));
 	bUseControllerRotationYaw = !Tmp;

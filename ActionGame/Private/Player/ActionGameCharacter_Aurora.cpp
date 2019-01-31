@@ -176,7 +176,9 @@ void AActionGameCharacter_Aurora::NormalAttack()
 
 void AActionGameCharacter_Aurora::Ability_Q()
 {
-	if (GetCharacterMovement()->IsFalling() || bInAbility || bFreezedStop)return;
+	if (GetCharacterMovement()->IsFalling() || bInAbility || bFreezedStop || IsAbilityinCooling(0))return;
+	Super::Ability_Q();
+
 	bInAbility = true;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(AbilityAnims[0], 1.f);
@@ -190,7 +192,9 @@ void AActionGameCharacter_Aurora::Ability_Q()
 
 void AActionGameCharacter_Aurora::Ability_E()
 {
-	if (GetCharacterMovement()->IsFalling() || bInAbility)return;
+	if (GetCharacterMovement()->IsFalling() || bInAbility || IsAbilityinCooling(1))return;
+	Super::Ability_E();
+
 	bInAbility = true;
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
@@ -204,7 +208,9 @@ void AActionGameCharacter_Aurora::Ability_E()
 
 void AActionGameCharacter_Aurora::Ability_R()
 {
-	if (GetCharacterMovement()->IsFalling() || bInAbility || bTurboJumpAccelerate)return;
+	if (GetCharacterMovement()->IsFalling() || bInAbility || bTurboJumpAccelerate || IsAbilityinCooling(2))return;
+	Super::Ability_R();
+
 	GetCharacterMovement()->JumpZVelocity = 700.f;
 	Jump();
 	bInAbility = true;
@@ -349,6 +355,7 @@ void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* Overl
 				Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 				Enemy->GetMesh()->bNoSkeletonUpdate = true;
 				Enemy->bFreezedStop = true;
+				Enemy->bUseControllerRotationRoll = false;
 				if (AActionAIController* AIControl = Cast<AActionAIController>(Enemy->Controller))
 				{
 					AIControl->SetAIFreezedValue();
