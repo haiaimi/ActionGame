@@ -107,7 +107,6 @@ void AActionGameCharacter::SetAbilityReady(int32 Index)
 {
 	const float DefaultCoolingTime = GetClass()->GetDefaultObject<AActionGameCharacter>()->SkillCoolingTimes[Index];
 	SkillCoolingTimes[Index] = DefaultCoolingTime;
-	HAIAIMIHelper::Debug_ScreenMessage(TEXT("Cool Finsih"));
 }
 
 void AActionGameCharacter::NormalAttack()
@@ -133,6 +132,13 @@ void AActionGameCharacter::Ability_R()
 bool AActionGameCharacter::IsAbilityinCooling(int32 Index)
 {
 	return SkillCoolingTimes[Index] == 0.f;
+}
+
+float AActionGameCharacter::GetCoolingRate(int32 Index)
+{
+	const float DefaultCoolingTime = GetClass()->GetDefaultObject<AActionGameCharacter>()->SkillCoolingTimes[Index];
+	const float RemainingTime = GetWorldTimerManager().GetTimerRemaining(SkillCoolingTimers[Index]);
+	return 1 - RemainingTime / DefaultCoolingTime;
 }
 
 void AActionGameCharacter::FaceRotation(FRotator NewRotation, float DeltaTime /*= 0.f*/)

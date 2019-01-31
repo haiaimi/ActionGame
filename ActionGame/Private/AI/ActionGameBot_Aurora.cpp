@@ -27,3 +27,8 @@ EMoveDir::Type AActionGameBot_Aurora::GetMoveDirection()
 {
 	return AIMoveDir;
 }
+
+void AActionGameBot_Aurora::SetMoveDir(EMoveDir::Type InDir)
+{
+	AIMoveDir = InDir;
+}

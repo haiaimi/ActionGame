@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Player/ActionGameCharacter_Aurora.h"
+#include "ActionGameType.h"
 #include "ActionGameBot_Aurora.generated.h"
 
 /**
@@ -22,6 +23,8 @@ public:
 	virtual void AddMovementInput(FVector WorldDirection, float ScaleValue, bool bForce /*=false*/)override;
 
 	virtual EMoveDir::Type GetMoveDirection()override;
+
+	virtual void SetMoveDir(EMoveDir::Type InDir)override;
 
 public:
 	/**ÐÐÎªÊ÷*/

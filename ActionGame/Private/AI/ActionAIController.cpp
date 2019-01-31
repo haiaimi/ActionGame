@@ -10,6 +10,7 @@
 #include "Common/HAIAIMIHelper.h"
 #include <BehaviorTree/Blackboard/BlackboardKeyType_Object.h>
 #include <BehaviorTree/Blackboard/BlackboardKeyType_Bool.h>
+#include "GameFramework/CharacterMovementComponent.h"
 
 AActionAIController::AActionAIController()
 {
@@ -37,6 +38,7 @@ void AActionAIController::Possess(class APawn* InPawn)
 		}
 		EnemyKeyID = BlackboardComp->GetKeyID(TEXT("Enemy"));
 		FreezedKeyID = BlackboardComp->GetKeyID(TEXT("bFreezed"));
+		MoveBackKeyID = BlackboardComp->GetKeyID(TEXT("bMoveBack"));
 	}
 
 	BehaviorComp->StartTree(*(Bot->BotBehavior));
@@ -71,4 +73,30 @@ void AActionAIController::SetAIFreezedValue()
 {
 	AActionGameCharacter* AIPlayer = Cast<AActionGameCharacter>(GetPawn());
 	BlackboardComp->SetValue<UBlackboardKeyType_Bool>(FreezedKeyID, AIPlayer->bFreezedStop);
+}
+
+bool AActionAIController::ShouldMoveBack()
+{
+	UObject* Enemy = BlackboardComp->GetValue<UBlackboardKeyType_Object>(EnemyKeyID);
+	AActionGameCharacter* AIPlayer = Cast<AActionGameCharacter>(GetPawn());
+
+	bool Result = AIPlayer->bFreezedSlow;
+	
+	if (AActionGameCharacter_Aurora* Enemy_A = Cast<AActionGameCharacter_Aurora>(Enemy))
+	{
+		if (Enemy_A->bFreezedSlow || Enemy_A->bFreezedStop)  //敌人也处于冰冻减速状态，就硬杠
+			Result = false;
+		else
+			Result = Result || Enemy_A->IsCastAbility_R();
+	}
+	BlackboardComp->SetValue<UBlackboardKeyType_Bool>(MoveBackKeyID, Result);
+	AIPlayer->GetCharacterMovement()->bOrientRotationToMovement = !Result;
+	AIPlayer->SetMoveDir(Result ? EMoveDir::Backward : EMoveDir::Forward);
+
+	return Result;
+}
+
+bool AActionAIController::IsMovingBack()
+{
+	return BlackboardComp->GetValue<UBlackboardKeyType_Bool>(MoveBackKeyID);
 }

@@ -19,8 +19,17 @@ EBTNodeResult::Type UBTTask_FindEnemyPoint::ExecuteTask(UBehaviorTreeComponent& 
 
 	if(Enemy && MyBot)
 	{
-		const float SearchRadius = 200.f;
-		FVector Result = Enemy->GetActorLocation() + (MyBot->GetActorLocation() - Enemy->GetActorLocation()).GetSafeNormal()*100.f;
+		FVector Result;
+		if(MyController->IsMovingBack())
+		{
+			const float Distance = (MyBot->GetActorLocation() - Enemy->GetActorLocation()).Size2D();
+			if (Distance < 1200)
+			{
+				Result = MyBot->GetActorLocation() - MyBot->GetActorRotation().Vector()*600.f;
+			}
+		}
+		else
+			Result = Enemy->GetActorLocation() + (MyBot->GetActorLocation() - Enemy->GetActorLocation()).GetSafeNormal()*100.f;
 		OwnerComp.GetBlackboardComponent()->SetValue<UBlackboardKeyType_Vector>(BlackboardKey.GetSelectedKeyID(), Result);
 		return EBTNodeResult::Succeeded;
 	}

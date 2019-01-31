@@ -87,6 +87,8 @@ public:
 
 	bool IsAbilityinCooling(int32 Index);
 
+	float GetCoolingRate(int32 Index);
+
 protected:
 	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;
 
@@ -98,6 +100,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual EMoveDir::Type GetMoveDirection();
+
+	virtual void SetMoveDir(EMoveDir::Type InDir) {};
 
 	/**玩家被冻结，减速*/
 	UFUNCTION(BlueprintCallable)

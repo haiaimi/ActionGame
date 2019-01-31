@@ -50,6 +50,9 @@ public:
 
 	virtual bool HitReact(const FVector& HitPoint)override;
 
+	UFUNCTION(BlueprintCallable)
+	bool IsCastAbility_R();
+
 	void EmitFreeze();
 
 	/**生成冰块平台*/

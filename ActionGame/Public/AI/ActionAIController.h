@@ -35,8 +35,15 @@ public:
 
 	void SetAIFreezedValue();
 
+	UFUNCTION(BlueprintCallable)
+	bool ShouldMoveBack();
+
+	bool IsMovingBack();
+
 private:
 	int32 EnemyKeyID;
 
 	int32 FreezedKeyID;
+
+	int32 MoveBackKeyID;
 };
