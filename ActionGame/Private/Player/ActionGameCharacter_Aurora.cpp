@@ -375,6 +375,7 @@ void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* Overl
 					Enemy->GetMesh()->GetAnimInstance()->StopAllMontages(1.f);
 					Enemy->bFreezedStop = false;
 					Enemy->ResetCombo();
+					Enemy->bInAbility = false;
 					if (AActionAIController* AIControl = Cast<AActionAIController>(Enemy->Controller))
 					{
 						AIControl->SetAIFreezedValue();

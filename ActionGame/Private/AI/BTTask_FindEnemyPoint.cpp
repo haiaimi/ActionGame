@@ -23,10 +23,11 @@ EBTNodeResult::Type UBTTask_FindEnemyPoint::ExecuteTask(UBehaviorTreeComponent& 
 		if(MyController->IsMovingBack())
 		{
 			const float Distance = (MyBot->GetActorLocation() - Enemy->GetActorLocation()).Size2D();
-			if (Distance < 1200)
+			if (Distance < 600)
 			{
-				Result = MyBot->GetActorLocation() - MyBot->GetActorRotation().Vector()*600.f;
+				Result = MyBot->GetActorLocation() - MyBot->GetActorRotation().Vector()*100.f;
 			}
+
 		}
 		else
 			Result = Enemy->GetActorLocation() + (MyBot->GetActorLocation() - Enemy->GetActorLocation()).GetSafeNormal()*100.f;

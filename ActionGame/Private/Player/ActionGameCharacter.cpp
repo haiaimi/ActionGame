@@ -159,8 +159,16 @@ void AActionGameCharacter::MoveForward(float Value)
 		bUseControllerRotationYaw = false;
 		return;
 	}
-	if (Value > 0.f)MoveDirStat |= 1;
-	else if (Value < 0.f)MoveDirStat |= 2;
+	if (Value > 0.f)
+	{
+		MoveDirStat |= 1;
+		MoveDirStat &= 13;
+	}
+	else if (Value < 0.f)
+	{
+		MoveDirStat |= 2;
+		MoveDirStat &= 14;
+	}
 	else MoveDirStat &= 12;
 
 	bool Tmp = (MoveDirStat == 0) || ((MoveDirStat & 1) && (MoveDirStat & 12));
@@ -183,14 +191,20 @@ void AActionGameCharacter::MoveRight(float Value)
 		bUseControllerRotationYaw = false;
 		return;
 	}
-	if (Value > 0.f)MoveDirStat |= 8;
-	else if (Value < 0.f)MoveDirStat |= 4;
+	if (Value > 0.f)
+	{
+		MoveDirStat |= 8;
+		MoveDirStat &= 11;
+	}
+	else if (Value < 0.f)
+	{
+		MoveDirStat |= 4;
+		MoveDirStat &= 7;
+	}
 	else MoveDirStat &= 3;
 
 	bool Tmp = (MoveDirStat == 0) || ((MoveDirStat & 1) && (MoveDirStat & 12));
 	bUseControllerRotationYaw = !Tmp;
-
-	//if (Controller->IsA(AActionAIController::StaticClass()))
 	
 	if ( (Controller != NULL) && (Value != 0.0f) && GetCharacterMovement()->GetMaxSpeed() > 0.f )
 	{
