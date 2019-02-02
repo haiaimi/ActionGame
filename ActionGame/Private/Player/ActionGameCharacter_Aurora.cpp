@@ -32,6 +32,7 @@ AActionGameCharacter_Aurora::AActionGameCharacter_Aurora():
 
 	SwordCollsion = CreateDefaultSubobject<UBoxComponent>(TEXT("SwordCollision"));
 	IceMoveSpline = CreateDefaultSubobject<USplineComponent>(TEXT("IceMoveSpline"));
+	QAbilityCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("QAbiilityCollision"));
 	if (IceMoveSpline)
 	{
 		IceMoveSpline->SetupAttachment(RootComponent);
@@ -43,6 +44,13 @@ AActionGameCharacter_Aurora::AActionGameCharacter_Aurora():
 	{
 		SwordCollsion->SetupAttachment(GetMesh(), TEXT("Sword_Mid"));
 		SwordCollsion->SetBoxExtent(FVector(5.739f, 2.261f, 45.062f));
+	}
+
+	if(QAbilityCollision)
+	{
+		QAbilityCollision->SetupAttachment(GetMesh(), TEXT("Rush"));
+		QAbilityCollision->SetBoxExtent(FVector(96.688881f, 56.212772f, 58.236698f));
+		QAbilityCollision->SetRelativeLocation(FVector(70.f, 0.f, 60.f));
 	}
 }
 
@@ -111,6 +119,8 @@ void AActionGameCharacter_Aurora::BeginPlay()
 
 	if (SwordCollsion)
 		SwordCollsion->OnComponentBeginOverlap.AddDynamic(this, &AActionGameCharacter_Aurora::OnSwordBeginOverlap);
+	if (QAbilityCollision)
+		QAbilityCollision->OnComponentBeginOverlap.AddDynamic(this, &AActionGameCharacter_Aurora::OnQAbilityBeginOverlap);
 }
 
 void AActionGameCharacter_Aurora::Tick(float DeltaTime)
@@ -208,7 +218,7 @@ void AActionGameCharacter_Aurora::Ability_E()
 
 void AActionGameCharacter_Aurora::Ability_R()
 {
-	if (GetCharacterMovement()->IsFalling() || bInAbility || bTurboJumpAccelerate || IsAbilityinCooling(2))return;
+	if (GetCharacterMovement()->IsFalling() || bInAbility || bTurboJumpAccelerate || IsAbilityinCooling(2) || bFreezedSlow || bFreezedStop)return;
 	Super::Ability_R();
 
 	GetCharacterMovement()->JumpZVelocity = 700.f;
@@ -314,7 +324,7 @@ void AActionGameCharacter_Aurora::DetectIceRoad()
 		GetWorld()->LineTraceSingleByChannel(HitResult,
 											 CurDetectPoint + FVector(0.f, 0.f, 500.f),     //检测起始位置，尽量靠上
 											 CurDetectPoint + FVector(0.f, 0.f, -500.f),
-											 ECollisionChannel::ECC_GameTraceChannel1,    //该通道已经在编辑器里设置为Ice专用检测通道
+											 COLLISION_ICETRACE,    //该通道已经在编辑器里设置为Ice专用检测通道
 											 QueryParams);
 
 		if(HitResult.bBlockingHit)
@@ -327,14 +337,27 @@ void AActionGameCharacter_Aurora::DetectIceRoad()
 
 	IceMoveSpline->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	IcePlatformOffset = IceMoveSpline->GetComponentLocation().Z;
-	HAIAIMIHelper::Debug_ScreenMessage(IceMoveSpline->K2_GetComponentRotation().ToString());
+	//HAIAIMIHelper::Debug_ScreenMessage(IceMoveSpline->K2_GetComponentRotation().ToString());
 	IceMoveSpline->SetWorldRotation(FRotator(0.f, IceMoveSpline->K2_GetComponentRotation().Yaw, IceMoveSpline->K2_GetComponentRotation().Roll));
 }
 
 void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	if (!bCanAttack)return;
+	AttackEnemy(OverlappedComponent, OtherActor);
+}
 
+void AActionGameCharacter_Aurora::OnQAbilityBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (Cast<AActionGameCharacter>(OtherActor) && AnimInstance->Montage_IsPlaying(AbilityAnims[0]) && bInAbility)
+	{
+		AttackEnemy(OverlappedComponent, OtherActor);
+	}
+}
+
+void AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor)
+{
 	if (AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(OtherActor))
 	{
 		if (Enemy != this)
@@ -374,9 +397,7 @@ void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* Overl
 					Enemy->ResetCombo();
 					Enemy->bInAbility = false;
 					if (AActionAIController* AIControl = Cast<AActionAIController>(Enemy->Controller))
-					{
 						AIControl->SetAIFreezedValue();
-					}
 					});
 
 				GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.f, false);

@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "ActionGameType.generated.h"
 
+#define COLLISION_ICETRACE ECollisionChannel::ECC_GameTraceChannel1
+
 UENUM(BlueprintType)
 namespace EMoveDir
 {

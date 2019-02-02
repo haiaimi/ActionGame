@@ -28,9 +28,8 @@ EBTNodeResult::Type UBTTask_FindEnemyPoint::ExecuteTask(UBehaviorTreeComponent& 
 			{
 				Result = MyBot->GetActorLocation() - MyBot->GetActorRotation().Vector()*100.f;
 				if (AActionGameBot_Aurora* MyBotA = Cast<AActionGameBot_Aurora>(MyBot))
-					MyBotA->SetAIRotation((Enemy->GetActorLocation() - MyBot->GetActorLocation()).GetSafeNormal().ToOrientationRotator());
+					MyBotA->SetAIRotation((Enemy->GetActorLocation() - MyBot->GetActorLocation()).GetSafeNormal2D().ToOrientationRotator());
 			}
-
 		}
 		else
 			Result = Enemy->GetActorLocation() + (MyBot->GetActorLocation() - Enemy->GetActorLocation()).GetSafeNormal()*100.f;

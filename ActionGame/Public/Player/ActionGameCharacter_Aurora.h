@@ -32,6 +32,8 @@ protected:
 
 	virtual void Tick(float DeltaTime)override;
 
+	void AttackEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor);
+
 public:
 	/**ÌøÔ¾¶¯×÷*/
 	virtual void Jump()override;
@@ -64,11 +66,17 @@ public:
 	UFUNCTION()
 	void OnSwordBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
+	UFUNCTION()
+	void OnQAbilityBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
 	void PlayerCanAttack() { bCanAttack = true; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* SwordCollsion;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* QAbilityCollision;
 
 	class USplineComponent* IceMoveSpline;
 

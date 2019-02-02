@@ -3,6 +3,7 @@
 #include "AI/ActionGameBot_Aurora.h"
 #include "AI/ActionAIController.h"
 #include "HAIAIMIHelper.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AActionGameBot_Aurora::AActionGameBot_Aurora():
 	AIMoveDir(EMoveDir::Forward)
@@ -23,6 +24,7 @@ void AActionGameBot_Aurora::Tick(float DeltaTime)
 		FRotator NewRot = FMath::RInterpConstantTo(CurRot, TempRot, DeltaTime, 180.0f);
 		SetActorRotation(NewRot);
 	}
+	//HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(GetCharacterMovement()->MaxWalkSpeed));
 }
 
 void AActionGameBot_Aurora::FaceRotation(FRotator NewRotation, float DeltaTime /*= 0.f*/)
