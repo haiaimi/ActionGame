@@ -281,9 +281,6 @@ void AActionGameCharacter_Aurora::SpawnIcePlatform()
 		return;
 	}
 	FTimerHandle TimerHandle;
-	//首先对前方路况检测
-	FHitResult HitResult1, HitResult2;
-	
 	FVector SpawnLocation;
 	FRotator SpawnRotation = GetActorRotation();
 

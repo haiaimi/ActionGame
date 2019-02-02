@@ -18,13 +18,19 @@ class ACTIONGAME_API AActionGameBot_Aurora : public AActionGameCharacter_Aurora
 public:
 	AActionGameBot_Aurora();
 
+	virtual void Tick(float DeltaTime)override;
+
 	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;
 
 	virtual void AddMovementInput(FVector WorldDirection, float ScaleValue, bool bForce /*=false*/)override;
 
+	void SetAIRotation(FRotator Rotator);
+
 	virtual EMoveDir::Type GetMoveDirection()override;
 
 	virtual void SetMoveDir(EMoveDir::Type InDir)override;
+
+    bool IsMoveBack();
 
 public:
 	/**行为树*/
@@ -33,4 +39,8 @@ public:
 
 	/**AI的移动方向，决定动画*/
 	EMoveDir::Type AIMoveDir;
+
+	FRotator TempRot;
+
+	bool bUpdateRotation;
 };

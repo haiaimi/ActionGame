@@ -84,7 +84,7 @@ bool AActionAIController::ShouldMoveBack()
 	
 	if (AActionGameCharacter_Aurora* Enemy_A = Cast<AActionGameCharacter_Aurora>(Enemy))
 	{
-		if (Enemy_A->bFreezedSlow || Enemy_A->bFreezedStop)  //敌人也处于冰冻减速状态，就硬杠
+		if (Enemy_A->bFreezedSlow || Enemy_A->bFreezedStop || AIPlayer->bInAbility)  //敌人也处于冰冻减速状态，就硬杠
 			Result = false;
 		else
 			Result = Result || Enemy_A->IsCastAbility_R();

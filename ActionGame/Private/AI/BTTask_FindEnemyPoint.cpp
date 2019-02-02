@@ -6,6 +6,7 @@
 #include "ActionGameCharacter.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 #include <NavigationSystem.h>
+#include "ActionGameBot_Aurora.h"
 
 EBTNodeResult::Type UBTTask_FindEnemyPoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
@@ -23,9 +24,11 @@ EBTNodeResult::Type UBTTask_FindEnemyPoint::ExecuteTask(UBehaviorTreeComponent& 
 		if(MyController->IsMovingBack())
 		{
 			const float Distance = (MyBot->GetActorLocation() - Enemy->GetActorLocation()).Size2D();
-			if (Distance < 600)
+			if (Distance < 1000)
 			{
 				Result = MyBot->GetActorLocation() - MyBot->GetActorRotation().Vector()*100.f;
+				if (AActionGameBot_Aurora* MyBotA = Cast<AActionGameBot_Aurora>(MyBot))
+					MyBotA->SetAIRotation((Enemy->GetActorLocation() - MyBot->GetActorLocation()).GetSafeNormal().ToOrientationRotator());
 			}
 
 		}
