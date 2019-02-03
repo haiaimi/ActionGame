@@ -94,22 +94,27 @@ void AActionGameCharacter_Aurora::FreezeEnemy()
 	{
 		if(Iter.GetActor())
 		{
-			if (AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(Iter.GetActor()))
-			{
-				Enemy->bFreezedSlow = true;
-				Enemy->ApplyFreezedParticle(Freezed_Slow);
-				Enemy->GetCharacterMovement()->MaxWalkSpeed = 200.f;
-
-				FTimerHandle TimerHandle;
-				FTimerDelegate TimerDelegate;
-				TimerDelegate.BindLambda([Enemy, this]() {
-					Enemy->bFreezedSlow = false;
-					Enemy->GetCharacterMovement()->MaxWalkSpeed = 600.f;
-					});
-
-				GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.f, false);
-			}
+			FreezeEnemyImpl(Iter.GetActor());
 		}
+	}
+}
+
+void AActionGameCharacter_Aurora::FreezeEnemyImpl(class AActor* InEnemy)
+{
+	if (AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(InEnemy))
+	{
+		Enemy->bFreezedSlow = true;
+		Enemy->ApplyFreezedParticle(Freezed_Slow);
+		Enemy->GetCharacterMovement()->MaxWalkSpeed = 200.f;
+
+		FTimerHandle TimerHandle;
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([Enemy, this]() {
+			Enemy->bFreezedSlow = false;
+			Enemy->GetCharacterMovement()->MaxWalkSpeed = 600.f;
+			});
+
+		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.f, false);
 	}
 }
 
@@ -214,6 +219,9 @@ void AActionGameCharacter_Aurora::Ability_E()
 	Tmp.Z = 50.f;
 	FreezeTransform = FTransform(FRotator(0.f, GetActorRotation().Yaw - 180.f, GetActorRotation().Yaw - 180.f), Tmp);
 	EmitFreeze();
+	FActorSpawnParameters SpawnParameter;
+	SpawnParameter.Owner = this;
+	GetWorld()->SpawnActor<AActor>(EAbilityDetection, GetMesh()->GetSocketTransform(TEXT("Root")), SpawnParameter);
 }
 
 void AActionGameCharacter_Aurora::Ability_R()
@@ -353,6 +361,16 @@ void AActionGameCharacter_Aurora::OnQAbilityBeginOverlap(UPrimitiveComponent* Ov
 	if (Cast<AActionGameCharacter>(OtherActor) && AnimInstance->Montage_IsPlaying(AbilityAnims[0]) && bInAbility)
 	{
 		AttackEnemy(OverlappedComponent, OtherActor);
+	}
+}
+
+void AActionGameCharacter_Aurora::EffectOfAbilityE(class AActor* InEnemy)
+{
+	if (InEnemy == this)return;   //ºöÂÔÍæ¼Ò×ÔÉí
+	if(AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(InEnemy))
+	{
+		FreezeEnemyImpl(InEnemy);
+		Enemy->bFreezedSlow = false;
 	}
 }
 

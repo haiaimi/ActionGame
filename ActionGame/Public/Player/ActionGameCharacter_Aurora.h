@@ -27,6 +27,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void FreezeEnemy();
 
+	void FreezeEnemyImpl(class AActor* Enemy);
+
 protected:
 	virtual void BeginPlay()override;
 
@@ -70,6 +72,9 @@ public:
 	void OnQAbilityBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 	void PlayerCanAttack() { bCanAttack = true; }
+
+	UFUNCTION(BlueprintCallable)
+	void EffectOfAbilityE(class AActor* Enemy);
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
@@ -124,6 +129,10 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> IcePlatform;
+
+	/**用于E技能的范围检测*/
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> EAbilityDetection;
 
 	class AActor* PreIcePlatform;
 

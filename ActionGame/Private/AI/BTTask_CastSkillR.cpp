@@ -10,7 +10,7 @@
 EBTNodeResult::Type UBTTask_CastSkillR::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	AActionAIController* MyController = Cast<AActionAIController>(OwnerComp.GetAIOwner());
-	if (MyController == nullptr)
+	if (MyController == nullptr || MyController->IsMovingBack())
 		return EBTNodeResult::Failed;
 
 	AActionGameCharacter* MyBot = Cast<AActionGameCharacter>(MyController->GetPawn());
@@ -20,7 +20,7 @@ EBTNodeResult::Type UBTTask_CastSkillR::ExecuteTask(UBehaviorTreeComponent& Owne
 	{
 		if ((Enemy->GetActorLocation() - MyBot->GetActorLocation()).Size2D() < 400.f)
 		{
-			if (MyBot->IsAbilityinCooling(2))
+			if (MyBot->IsAbilityinCooling(2) || MyBot->bInAbility || MyBot->bFreezedSlow || MyBot->bFreezedStop)
 				return EBTNodeResult::Failed;
 
 			MyBot->Ability_R();
