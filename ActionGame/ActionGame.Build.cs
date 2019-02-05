@@ -11,5 +11,10 @@ public class ActionGame : ModuleRules
         PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "Json", "GameplayTasks", "NavigationSystem" });
 
         PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+
+        PrivateIncludePaths.AddRange(
+           new string[] {
+                "ActionGame/Private/UI/Widgets"
+           });
     }
 }

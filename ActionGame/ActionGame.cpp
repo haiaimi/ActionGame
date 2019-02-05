@@ -2,8 +2,25 @@
 
 #include "ActionGame.h"
 #include "Modules/ModuleManager.h"
+#include "UI/Styles/FActionGameStyle.h"
 
-IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, ActionGame, "ActionGame" );
+class FActionGameModule :public FDefaultGameModuleImpl
+{
+	virtual void StartupModule()override
+	{
+		//加载样式
+		FSlateStyleRegistry::UnRegisterSlateStyle(FActionGameStyle::GetStyleSetName());
+		FActionGameStyle::Initialize();
+	}
+
+	virtual void ShutdownModule()override
+	{
+		//卸载样式
+		FActionGameStyle::Shutdown();
+	}
+};
+
+IMPLEMENT_PRIMARY_GAME_MODULE( FActionGameModule, ActionGame, "ActionGame" );
  
 
 DEFINE_LOG_CATEGORY(LogHM)
