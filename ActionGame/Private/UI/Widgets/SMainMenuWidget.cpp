@@ -19,7 +19,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 	{
 		TransformGetter.BindLambda([i, this]() {
 			const float CurLerp = AnimHandles[i].GetLerp();
-			FShear2D Shear(FVector2D(15.f, CurLerp*89.f - 89.f)/89);
+			FShear2D Shear(FVector2D(15.f, 270.f*CurLerp-270.f)/90.f);
 			return FSlateRenderTransform(Shear, FVector2D(40.f + i * 40.f, 100.f));
 		});
 		
@@ -48,8 +48,6 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 						.HAlign(EHorizontalAlignment::HAlign_Center)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						.ButtonStyle(ButtonStyle)
-						//.ButtonColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,0.f)))
-						//.OnPressed(this, &SMainMenuWidget::LaunchGame)
 						[
 							SNew(STextBlock)
 							.Text(FText::FromString(FString(TEXT("开始游戏"))))
@@ -73,8 +71,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 						.HAlign(EHorizontalAlignment::HAlign_Center)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						.ButtonStyle(ButtonStyle)
-						//.ButtonColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,0.f)))
-						//.OnPressed(this, &SMainMenuWidget::ShowRank)
+						.OnPressed(this, &SMainMenuWidget::HeroDetails)
 						[
 							SNew(STextBlock)
 							.Text(FText::FromString(FString(TEXT("英雄介绍"))))
@@ -146,10 +143,15 @@ void SMainMenuWidget::SetupAnimation()
 	float StartTime = 0.f;
 	for (int32 i = 0; i < 4; ++i)
 	{
-		AnimHandles[i] = MenuSecquence.AddCurve(StartTime + 0.1f * i, 0.6f, ECurveEaseFunction::QuadOut);
+		AnimHandles[i] = MenuSecquence.AddCurve(StartTime + 0.1f * i, 0.4f, ECurveEaseFunction::QuadOut);
 	}
 
 	MenuSecquence.Play(this->AsShared());
+}
+
+void SMainMenuWidget::HeroDetails()
+{
+	MenuSecquence.Reverse();
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

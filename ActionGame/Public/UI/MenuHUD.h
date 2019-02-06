@@ -21,4 +21,6 @@ public:
 	
 private:
 	TSharedPtr<class SMainMenuWidget> MainMenu;
+
+	TSharedPtr<class SHeroDetailWidget> HeroDetail;
 };

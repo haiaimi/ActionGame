@@ -10,10 +10,10 @@
 /**
  * 
  */
-class SMainMenuWidget : public SCompoundWidget
+class ACTIONGAME_API SHeroDetailWidget : public SCompoundWidget
 {
 public:
-	SLATE_BEGIN_ARGS(SMainMenuWidget)
+	SLATE_BEGIN_ARGS(SHeroDetailWidget)
 	{}
 	SLATE_END_ARGS()
 
@@ -21,15 +21,5 @@ public:
 	void Construct(const FArguments& InArgs);
 
 private:
-	/**…Ë÷√∂Øª≠*/
-	void SetupAnimation();
-
-	void HeroDetails();
-
-private:
-	FCurveSequence MenuSecquence;
-
-	TArray<FCurveHandle> AnimHandles;
-
 	const struct FButtonStyle* ButtonStyle;
 };
