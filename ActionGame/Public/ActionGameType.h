@@ -18,3 +18,18 @@ namespace EMoveDir
 		Right
 	};
 }
+
+USTRUCT(BlueprintType)
+struct FCharacterInfo
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<class USkeletalMesh*> CharMeshs;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<class UAnimMontage*> AbilityAnims;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FText> CharDetails;
+};

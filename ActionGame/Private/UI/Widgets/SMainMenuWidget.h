@@ -6,6 +6,7 @@
 #include "SlateBasics.h"
 #include "SlateExtras.h"
 #include "Widgets/SCompoundWidget.h"
+#include "Player/MenuPlayerController.h"
 
 /**
  * 
@@ -15,6 +16,7 @@ class SMainMenuWidget : public SCompoundWidget
 public:
 	SLATE_BEGIN_ARGS(SMainMenuWidget)
 	{}
+	SLATE_ARGUMENT(TWeakObjectPtr<class AMenuPlayerController>, OwnerController)
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */
@@ -32,4 +34,6 @@ private:
 	TArray<FCurveHandle> AnimHandles;
 
 	const struct FButtonStyle* ButtonStyle;
+
+	TWeakObjectPtr<class AMenuPlayerController> OwnerController;
 };

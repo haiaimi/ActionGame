@@ -4,10 +4,14 @@
 #include "SlateOptMacros.h"
 #include "SlateTypes.h"
 #include "UI/Styles/FActionGameStyle.h"
+#include "GameActors/HeroDetailPlatform.h"
+#include "EngineUtils.h"
+#include "Engine/Engine.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SMainMenuWidget::Construct(const FArguments& InArgs)
 {
+	OwnerController = InArgs._OwnerController;
 	AnimHandles.SetNum(4);
 	TArray<TAttribute<TOptional<FSlateRenderTransform>>> RenderTransformDel;
 	TAttribute<TOptional<FSlateRenderTransform>>::FGetter TransformGetter;
@@ -152,6 +156,19 @@ void SMainMenuWidget::SetupAnimation()
 void SMainMenuWidget::HeroDetails()
 {
 	MenuSecquence.Reverse();
+
+	AHeroDetailPlatform* DetailPlatform = nullptr;
+	if(OwnerController.IsValid())
+	{
+		for (TActorIterator<AHeroDetailPlatform> Iter(OwnerController->GetWorld()); Iter; ++Iter)
+		{
+			DetailPlatform = *Iter;
+			break;
+		}
+
+		OwnerController->SetViewTargetWithBlend(DetailPlatform, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
+	}
+	
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

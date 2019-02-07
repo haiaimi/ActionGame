@@ -16,18 +16,20 @@ void AMenuHUD::DrawHUD()
 {
 	Super::DrawHUD();
 
-	/*if(!MainMenu.IsValid() && GEngine)
+	if(!MainMenu.IsValid() && GEngine)
 	{
-		SAssignNew(MainMenu, SMainMenuWidget);
+		AMenuPlayerController* Controller = Cast<AMenuPlayerController>(GetOwningPlayerController());
+		SAssignNew(MainMenu, SMainMenuWidget)
+		.OwnerController(Controller);
 
 		GEngine->GameViewport->AddViewportWidgetContent(
 			SNew(SWeakWidget)
 			.PossiblyNullContent(MainMenu.ToSharedRef()),
 			0
 			);
-	}*/
+	}
 
-	if(!HeroDetail.IsValid() && GEngine)
+	/*if(!HeroDetail.IsValid() && GEngine)
 	{
 		SAssignNew(HeroDetail, SHeroDetailWidget);
 
@@ -36,5 +38,5 @@ void AMenuHUD::DrawHUD()
 			.PossiblyNullContent(HeroDetail.ToSharedRef()),
 			0
 			);
-	}
+	}*/
 }

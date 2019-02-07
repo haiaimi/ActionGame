@@ -15,7 +15,7 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 		+SOverlay::Slot()
 		.HAlign(EHorizontalAlignment::HAlign_Left)
 		.VAlign(EVerticalAlignment::VAlign_Top)
-		.Padding(FMargin(50.f,0.f,0.f,0.f))
+		.Padding(FMargin(50.f,20.f,0.f,0.f))
 		[
 			SNew(SBox)
 			.HeightOverride(900)
@@ -65,7 +65,6 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 						.HAlign(EHorizontalAlignment::HAlign_Center)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						.Padding(0.f)
-						.
 						[
 							SNew(STextBlock)
 							.Text(FText::FromString(FString(TEXT("皮肤"))))
@@ -92,7 +91,7 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 				[
 					SNew(SVerticalBox)
 					+SVerticalBox::Slot()
-					.FillHeight(3)
+					.FillHeight(4)
 					[
 						SNew(SBox)
 					]
@@ -100,6 +99,20 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 					.FillHeight(1)
 					[
 						SNew(SHorizontalBox)
+						+SHorizontalBox::Slot()
+						.FillWidth(1.f)
+						[
+							SNew(SButton)
+							.HAlign(EHorizontalAlignment::HAlign_Center)
+							.VAlign(EVerticalAlignment::VAlign_Center)
+							.ButtonStyle(ButtonStyle)
+							[
+								SNew(STextBlock)
+								.Text(FText::FromString(FString(TEXT("英雄概况"))))
+								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
+								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+							]
+						]
 						+SHorizontalBox::Slot()
 						.FillWidth(1.f)
 						[
