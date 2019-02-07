@@ -5,6 +5,7 @@
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
 #include "UI/SHeroDetailWidget.h"
+#include "HAIAIMIHelper.h"
 
 AMenuHUD::AMenuHUD():
 	MainMenu(nullptr)
@@ -20,6 +21,7 @@ void AMenuHUD::DrawHUD()
 	{
 		AMenuPlayerController* Controller = Cast<AMenuPlayerController>(GetOwningPlayerController());
 		SAssignNew(MainMenu, SMainMenuWidget)
+		.OwnerHUD(this)
 		.OwnerController(Controller);
 
 		GEngine->GameViewport->AddViewportWidgetContent(
@@ -28,8 +30,11 @@ void AMenuHUD::DrawHUD()
 			0
 			);
 	}
+}
 
-	/*if(!HeroDetail.IsValid() && GEngine)
+void AMenuHUD::ShowCharacterDetail()
+{
+	if(!HeroDetail.IsValid() && GEngine)
 	{
 		SAssignNew(HeroDetail, SHeroDetailWidget);
 
@@ -38,5 +43,5 @@ void AMenuHUD::DrawHUD()
 			.PossiblyNullContent(HeroDetail.ToSharedRef()),
 			0
 			);
-	}*/
+	}
 }

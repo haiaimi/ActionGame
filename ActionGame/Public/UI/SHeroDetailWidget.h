@@ -20,6 +20,13 @@ public:
 	/** Constructs this widget with InArgs */
 	void Construct(const FArguments& InArgs);
 
+protected:
+	void SetupAnimation();
+
 private:
 	const struct FButtonStyle* ButtonStyle;
+
+	FCurveSequence AnimSequence;
+
+	FCurveHandle AnimHandle;
 };

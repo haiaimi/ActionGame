@@ -7,6 +7,7 @@
 #include "SlateExtras.h"
 #include "Widgets/SCompoundWidget.h"
 #include "Player/MenuPlayerController.h"
+#include "UI/MenuHUD.h"
 
 /**
  * 
@@ -16,6 +17,7 @@ class SMainMenuWidget : public SCompoundWidget
 public:
 	SLATE_BEGIN_ARGS(SMainMenuWidget)
 	{}
+	SLATE_ARGUMENT(TWeakObjectPtr<class AMenuHUD>, OwnerHUD)
 	SLATE_ARGUMENT(TWeakObjectPtr<class AMenuPlayerController>, OwnerController)
 	SLATE_END_ARGS()
 
@@ -29,11 +31,15 @@ private:
 	void HeroDetails();
 
 private:
-	FCurveSequence MenuSecquence;
+	TSharedPtr<SVerticalBox> MenuContainer;
+
+	FCurveSequence MenuSequence;
 
 	TArray<FCurveHandle> AnimHandles;
 
 	const struct FButtonStyle* ButtonStyle;
 
 	TWeakObjectPtr<class AMenuPlayerController> OwnerController;
+
+	TWeakObjectPtr<class AMenuHUD> OwnerHUD;
 };

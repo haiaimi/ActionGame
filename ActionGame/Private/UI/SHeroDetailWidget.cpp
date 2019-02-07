@@ -7,15 +7,26 @@
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHeroDetailWidget::Construct(const FArguments& InArgs)
 {
+	using FPaddingParam = TAttribute<FMargin>;
+
+	FSlateBrush* BorderBackground = new FSlateBrush();
+	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.1f));
 	ButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ActionGameButtonStyle"));
+	FPaddingParam::FGetter PadingGetter;
+	PadingGetter.BindLambda([&]() {
+		const float CurLerp = AnimHandle.GetLerp();
+		return FMargin(1970.f - 1920.f*CurLerp, 40.f, 0.f, 0.f);
+		});
+	FPaddingParam PaddingParam;
+	PaddingParam.Bind(PadingGetter);
 
 	ChildSlot
 	[
 		SNew(SOverlay)
 		+SOverlay::Slot()
-		.HAlign(EHorizontalAlignment::HAlign_Left)
+		.HAlign(EHorizontalAlignment::HAlign_Center)
 		.VAlign(EVerticalAlignment::VAlign_Top)
-		.Padding(FMargin(50.f,20.f,0.f,0.f))
+		.Padding(PaddingParam)
 		[
 			SNew(SBox)
 			.HeightOverride(900)
@@ -25,64 +36,73 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 				+SHorizontalBox::Slot()
 				.FillWidth(1)
 				[
-					SNew(SScrollBox)
-					.ScrollBarAlwaysVisible(true)
-					+SScrollBox::Slot()
+					SNew(SBorder)
+					.BorderImage(BorderBackground)
 					[
-						SNew(SBorder)
-						.HAlign(EHorizontalAlignment::HAlign_Center)
-						.VAlign(EVerticalAlignment::VAlign_Center)
-						.Padding(0.f)
+						SNew(SScrollBox)
+						.ScrollBarAlwaysVisible(true)
+						+SScrollBox::Slot()
 						[
-							SNew(STextBlock)
-							.Text(FText::FromString(FString(TEXT("英雄"))))
-							.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+							SNew(SBorder)
+							.HAlign(EHorizontalAlignment::HAlign_Center)
+							.VAlign(EVerticalAlignment::VAlign_Center)
+							.Padding(0.f)
+							[
+								SNew(STextBlock)
+								.Text(FText::FromString(FString(TEXT("英雄"))))
+								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
+								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+							]
+						]
+						+SScrollBox::Slot()
+						[
+							SNew(SButton)
+							.HAlign(EHorizontalAlignment::HAlign_Center)
+							.VAlign(EVerticalAlignment::VAlign_Center)
+							.ButtonStyle(ButtonStyle)
+							[
+								SNew(STextBlock)
+								.Text(FText::FromString(FString(TEXT("Aurora"))))
+								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
+								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+							]
 						]
 					]
-					+SScrollBox::Slot()
-					[
-						SNew(SButton)
-						.HAlign(EHorizontalAlignment::HAlign_Center)
-						.VAlign(EVerticalAlignment::VAlign_Center)
-						.ButtonStyle(ButtonStyle)
-						[
-							SNew(STextBlock)
-							.Text(FText::FromString(FString(TEXT("Aurora"))))
-							.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-						]
-					]
+					
 				]
 				+SHorizontalBox::Slot()
 				.FillWidth(1)
 				[
-					SNew(SScrollBox)
-					.ScrollBarAlwaysVisible(true)
-					+SScrollBox::Slot()
+					SNew(SBorder)
+					.BorderImage(BorderBackground)
 					[
-						SNew(SBorder)
-						.HAlign(EHorizontalAlignment::HAlign_Center)
-						.VAlign(EVerticalAlignment::VAlign_Center)
-						.Padding(0.f)
+						SNew(SScrollBox)
+						.ScrollBarAlwaysVisible(true)
+						+SScrollBox::Slot()
 						[
-							SNew(STextBlock)
-							.Text(FText::FromString(FString(TEXT("皮肤"))))
-							.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+							SNew(SBorder)
+							.HAlign(EHorizontalAlignment::HAlign_Center)
+							.VAlign(EVerticalAlignment::VAlign_Center)
+							.Padding(0.f)
+							[
+								SNew(STextBlock)
+								.Text(FText::FromString(FString(TEXT("皮肤"))))
+								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
+								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+							]
 						]
-					]
-					+SScrollBox::Slot()
-					[
-						SNew(SButton)
-						.HAlign(EHorizontalAlignment::HAlign_Center)
-						.VAlign(EVerticalAlignment::VAlign_Center)
-						.ButtonStyle(ButtonStyle)
+						+SScrollBox::Slot()
 						[
-							SNew(STextBlock)
-							.Text(FText::FromString(FString(TEXT("标准"))))
-							.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+							SNew(SButton)
+							.HAlign(EHorizontalAlignment::HAlign_Center)
+							.VAlign(EVerticalAlignment::VAlign_Center)
+							.ButtonStyle(ButtonStyle)
+							[
+								SNew(STextBlock)
+								.Text(FText::FromString(FString(TEXT("标准"))))
+								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
+								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+							]
 						]
 					]
 				]
@@ -161,5 +181,16 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 			
 		]
 	];
+
+	SetupAnimation();
 }
+
+void SHeroDetailWidget::SetupAnimation()
+{
+	AnimSequence = FCurveSequence();
+	AnimHandle = AnimSequence.AddCurve(0.f, 0.5f, ECurveEaseFunction::QuadOut);
+
+	AnimSequence.Play(this->AsShared());
+}
+
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

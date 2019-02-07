@@ -18,6 +18,8 @@ public:
 	AMenuHUD();
 
 	virtual void DrawHUD()override;
+
+	void ShowCharacterDetail();
 	
 private:
 	TSharedPtr<class SMainMenuWidget> MainMenu;

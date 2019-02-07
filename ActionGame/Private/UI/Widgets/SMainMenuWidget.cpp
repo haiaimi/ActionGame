@@ -12,6 +12,7 @@ BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SMainMenuWidget::Construct(const FArguments& InArgs)
 {
 	OwnerController = InArgs._OwnerController;
+	OwnerHUD = InArgs._OwnerHUD;
 	AnimHandles.SetNum(4);
 	TArray<TAttribute<TOptional<FSlateRenderTransform>>> RenderTransformDel;
 	TAttribute<TOptional<FSlateRenderTransform>>::FGetter TransformGetter;
@@ -24,6 +25,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 		TransformGetter.BindLambda([i, this]() {
 			const float CurLerp = AnimHandles[i].GetLerp();
 			FShear2D Shear(FVector2D(15.f, 270.f*CurLerp-270.f)/90.f);
+			MenuContainer->SetRenderOpacity(CurLerp);
 			return FSlateRenderTransform(Shear, FVector2D(40.f + i * 40.f, 100.f));
 		});
 		
@@ -37,7 +39,8 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 		.HAlign(EHorizontalAlignment::HAlign_Left)
 		.VAlign(EVerticalAlignment::VAlign_Top)
 		[
-			SNew(SVerticalBox)
+			SAssignNew(MenuContainer, SVerticalBox)
+			.RenderOpacity(0.f)
 			+SVerticalBox::Slot()
 			[
 				SNew(SBorder)
@@ -99,8 +102,6 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 						.HAlign(EHorizontalAlignment::HAlign_Center)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						.ButtonStyle(ButtonStyle)
-						//.ButtonColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,0.f)))
-						//.OnPressed(this, &SMainMenuWidget::QuitGame)
 						[
 							SNew(STextBlock)
 							.Text(FText::FromString(FString(TEXT("退出游戏"))))
@@ -124,8 +125,6 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 						.HAlign(EHorizontalAlignment::HAlign_Center)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						.ButtonStyle(ButtonStyle)
-						//.ButtonColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,0.f)))
-						//.OnPressed(this, &SMainMenuWidget::QuitGame)
 						[
 							SNew(STextBlock)
 							.Text(FText::FromString(FString(TEXT("关于"))))
@@ -143,19 +142,19 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 
 void SMainMenuWidget::SetupAnimation()
 {
-	MenuSecquence = FCurveSequence();
+	MenuSequence = FCurveSequence();
 	float StartTime = 0.f;
 	for (int32 i = 0; i < 4; ++i)
 	{
-		AnimHandles[i] = MenuSecquence.AddCurve(StartTime + 0.1f * i, 0.4f, ECurveEaseFunction::QuadOut);
+		AnimHandles[i] = MenuSequence.AddCurve(StartTime + 0.1f * i, 0.4f, ECurveEaseFunction::QuadOut);
 	}
 
-	MenuSecquence.Play(this->AsShared());
+	MenuSequence.Play(this->AsShared());
 }
 
 void SMainMenuWidget::HeroDetails()
 {
-	MenuSecquence.Reverse();
+	MenuSequence.Reverse();
 
 	AHeroDetailPlatform* DetailPlatform = nullptr;
 	if(OwnerController.IsValid())
@@ -167,8 +166,11 @@ void SMainMenuWidget::HeroDetails()
 		}
 
 		OwnerController->SetViewTargetWithBlend(DetailPlatform, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
+		SetEnabled(false);
+		
+		if (OwnerHUD.IsValid())
+			OwnerHUD->ShowCharacterDetail();
 	}
-	
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION
