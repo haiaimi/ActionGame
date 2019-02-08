@@ -3,12 +3,14 @@
 #include "UI/SHeroDetailWidget.h"
 #include "SlateOptMacros.h"
 #include "Styles/FActionGameStyle.h"
+#include "Widgets/SMainMenuWidget.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHeroDetailWidget::Construct(const FArguments& InArgs)
 {
 	using FPaddingParam = TAttribute<FMargin>;
 
+	PreWidget = InArgs._PreWidget;
 	FSlateBrush* BorderBackground = new FSlateBrush();
 	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.1f));
 	ButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ActionGameButtonStyle"));
@@ -183,6 +185,18 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 	];
 
 	SetupAnimation();
+}
+
+void SHeroDetailWidget::BackToPrevious()
+{
+	AnimSequence.Reverse();
+	
+	if(PreWidget.IsValid())
+	{
+		SMainMenuWidget* ptr = static_cast<SMainMenuWidget*>(PreWidget.Get());
+		ptr->ToMainMenu();
+		SetEnabled(false);
+	}
 }
 
 void SHeroDetailWidget::SetupAnimation()

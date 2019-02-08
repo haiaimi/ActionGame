@@ -8,14 +8,17 @@
 #include "Widgets/SCompoundWidget.h"
 #include "Player/MenuPlayerController.h"
 #include "UI/MenuHUD.h"
+#include "UI/SBaseMenuWidget.h"
 
 /**
  * 
  */
-class SMainMenuWidget : public SCompoundWidget
+class SMainMenuWidget : public SBaseMenuWidget
 {
 public:
-	SLATE_BEGIN_ARGS(SMainMenuWidget)
+	SLATE_BEGIN_ARGS(SMainMenuWidget):
+		_OwnerHUD(nullptr),
+		_OwnerController(nullptr)
 	{}
 	SLATE_ARGUMENT(TWeakObjectPtr<class AMenuHUD>, OwnerHUD)
 	SLATE_ARGUMENT(TWeakObjectPtr<class AMenuPlayerController>, OwnerController)
@@ -24,6 +27,8 @@ public:
 	/** Constructs this widget with InArgs */
 	void Construct(const FArguments& InArgs);
 
+	void ToMainMenu();
+
 private:
 	/**…Ë÷√∂Øª≠*/
 	void SetupAnimation();
@@ -31,6 +36,8 @@ private:
 	void HeroDetails();
 
 private:
+	TSharedPtr<SOverlay> MenuOverlay;
+
 	TSharedPtr<SVerticalBox> MenuContainer;
 
 	FCurveSequence MenuSequence;
@@ -42,4 +49,6 @@ private:
 	TWeakObjectPtr<class AMenuPlayerController> OwnerController;
 
 	TWeakObjectPtr<class AMenuHUD> OwnerHUD;
+
+	AActor* MenuShowActor;
 };

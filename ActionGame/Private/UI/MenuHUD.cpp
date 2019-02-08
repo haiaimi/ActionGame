@@ -29,6 +29,7 @@ void AMenuHUD::DrawHUD()
 			.PossiblyNullContent(MainMenu.ToSharedRef()),
 			0
 			);
+		Controller->SetCurWidget(MainMenu);
 	}
 }
 
@@ -36,12 +37,15 @@ void AMenuHUD::ShowCharacterDetail()
 {
 	if(!HeroDetail.IsValid() && GEngine)
 	{
-		SAssignNew(HeroDetail, SHeroDetailWidget);
+		AMenuPlayerController* Controller = Cast<AMenuPlayerController>(GetOwningPlayerController());
+		SAssignNew(HeroDetail, SHeroDetailWidget)
+		.PreWidget(MainMenu);
 
 		GEngine->GameViewport->AddViewportWidgetContent(
 			SNew(SWeakWidget)
 			.PossiblyNullContent(HeroDetail.ToSharedRef()),
 			0
 			);
+		Controller->SetCurWidget(HeroDetail);
 	}
 }

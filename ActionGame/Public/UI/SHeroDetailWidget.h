@@ -6,19 +6,25 @@
 #include "SlateBasics.h"
 #include "SlateExtras.h"
 #include "Widgets/SCompoundWidget.h"
+#include "Interface/AGWidgetInterface.h"
+#include "UI/SBaseMenuWidget.h"
 
 /**
  * 
  */
-class ACTIONGAME_API SHeroDetailWidget : public SCompoundWidget
+class ACTIONGAME_API SHeroDetailWidget : public SBaseMenuWidget
 {
 public:
-	SLATE_BEGIN_ARGS(SHeroDetailWidget)
+	SLATE_BEGIN_ARGS(SHeroDetailWidget):
+		_PreWidget(nullptr)
 	{}
+	SLATE_ARGUMENT(TSharedPtr<SCompoundWidget>, PreWidget)
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */
 	void Construct(const FArguments& InArgs);
+
+	virtual void BackToPrevious()override;
 
 protected:
 	void SetupAnimation();

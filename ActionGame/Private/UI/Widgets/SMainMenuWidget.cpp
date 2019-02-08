@@ -34,7 +34,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 
 	ChildSlot
 	[
-		SNew(SOverlay)
+		SAssignNew(MenuOverlay, SOverlay)
 		+SOverlay::Slot()
 		.HAlign(EHorizontalAlignment::HAlign_Left)
 		.VAlign(EVerticalAlignment::VAlign_Top)
@@ -138,6 +138,26 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 	];
 	
 	SetupAnimation();
+
+	if (OwnerController.IsValid())
+		MenuShowActor = OwnerController->GetViewTarget();
+
+	FChildren* Children = MenuOverlay->GetChildren();
+	TPanelChildren<SOverlay::FOverlaySlot>* PanelChildren = (TPanelChildren<SOverlay::FOverlaySlot>*)Children;
+	(*PanelChildren)[PanelChildren->Num() - 1].ZOrder = 2;
+}
+	
+
+void SMainMenuWidget::ToMainMenu()
+{
+	MenuSequence.Reverse();
+	SetEnabled(true);
+
+	if (MenuShowActor && OwnerController.IsValid())
+	{
+		OwnerController->SetViewTargetWithBlend(MenuShowActor, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
+		OwnerController->SetCurWidget(TSharedPtr<SBaseMenuWidget>(this));
+	}
 }
 
 void SMainMenuWidget::SetupAnimation()

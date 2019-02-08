@@ -18,4 +18,13 @@ public:
 	AMenuPlayerController();
 
 	virtual void BeginPlay()override;
+
+	virtual void SetupInputComponent() override;
+
+	void BackToPreMenu();
+
+	void SetCurWidget(TSharedPtr<class SBaseMenuWidget> InWidget) { CurWidget = InWidget; }
+
+private:
+	TSharedPtr<class SBaseMenuWidget> CurWidget;
 };
