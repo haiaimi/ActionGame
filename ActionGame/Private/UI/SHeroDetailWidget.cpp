@@ -4,12 +4,14 @@
 #include "SlateOptMacros.h"
 #include "Styles/FActionGameStyle.h"
 #include "Widgets/SMainMenuWidget.h"
+#include "TimerManager.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHeroDetailWidget::Construct(const FArguments& InArgs)
 {
 	using FPaddingParam = TAttribute<FMargin>;
 
+	OwnerHUD = InArgs._OwnerHUD;
 	PreWidget = InArgs._PreWidget;
 	FSlateBrush* BorderBackground = new FSlateBrush();
 	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.1f));
@@ -17,7 +19,7 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 	FPaddingParam::FGetter PadingGetter;
 	PadingGetter.BindLambda([&]() {
 		const float CurLerp = AnimHandle.GetLerp();
-		return FMargin(1970.f - 1920.f*CurLerp, 40.f, 0.f, 0.f);
+		return FMargin(1970.f - 1920.f*CurLerp, 40.f, -1870.f + 1920.f*CurLerp, 0.f);
 		});
 	FPaddingParam PaddingParam;
 	PaddingParam.Bind(PadingGetter);
@@ -193,9 +195,18 @@ void SHeroDetailWidget::BackToPrevious()
 	
 	if(PreWidget.IsValid())
 	{
-		SMainMenuWidget* ptr = static_cast<SMainMenuWidget*>(PreWidget.Get());
+		auto ptr = StaticCastSharedPtr<SMainMenuWidget>(PreWidget.Pin());
 		ptr->ToMainMenu();
-		SetEnabled(false);
+	}
+
+	if(OwnerHUD.IsValid())
+	{
+		FTimerDelegate Delegate;
+		Delegate.BindLambda([&]() {
+			OwnerHUD->GetWorldTimerManager().ClearTimer(ResetTimer);
+			OwnerHUD->RemoveDetailWidget();
+			});
+		OwnerHUD->GetWorldTimerManager().SetTimer(ResetTimer, Delegate, 0.4f, false);
 	}
 }
 

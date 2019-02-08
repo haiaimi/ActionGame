@@ -156,7 +156,6 @@ void SMainMenuWidget::ToMainMenu()
 	if (MenuShowActor && OwnerController.IsValid())
 	{
 		OwnerController->SetViewTargetWithBlend(MenuShowActor, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
-		OwnerController->SetCurWidget(TSharedPtr<SBaseMenuWidget>(this));
 	}
 }
 

@@ -4,6 +4,7 @@
 #include "GameFramework/Pawn.h"
 #include "HAIAIMIHelper.h"
 #include "UI/SBaseMenuWidget.h"
+#include "UI/MenuHUD.h"
 
 AMenuPlayerController::AMenuPlayerController()
 {
@@ -29,9 +30,9 @@ void AMenuPlayerController::SetupInputComponent()
 
 void AMenuPlayerController::BackToPreMenu()
 {
-	HAIAIMIHelper::Debug_ScreenMessage(TEXT("Back Menu"));
 	if(CurWidget.IsValid())
 	{
 		CurWidget->BackToPrevious();
+		CurWidget.Reset();
 	}
 }

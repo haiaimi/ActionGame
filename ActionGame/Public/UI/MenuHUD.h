@@ -21,8 +21,11 @@ public:
 
 	void ShowCharacterDetail();
 	
-private:
+	void RemoveDetailWidget();
+public:
 	TSharedPtr<class SMainMenuWidget> MainMenu;
+
+	TSharedPtr<class SWeakWidget> MainMenuContainer;
 
 	TSharedPtr<class SHeroDetailWidget> HeroDetail;
 };

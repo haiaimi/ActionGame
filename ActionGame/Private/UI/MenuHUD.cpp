@@ -21,13 +21,13 @@ void AMenuHUD::DrawHUD()
 	{
 		AMenuPlayerController* Controller = Cast<AMenuPlayerController>(GetOwningPlayerController());
 		SAssignNew(MainMenu, SMainMenuWidget)
-		.OwnerHUD(this)
-		.OwnerController(Controller);
+		.OwnerHUD(MakeWeakObjectPtr(this))
+		.OwnerController(MakeWeakObjectPtr(Controller));
 
 		GEngine->GameViewport->AddViewportWidgetContent(
 			SNew(SWeakWidget)
 			.PossiblyNullContent(MainMenu.ToSharedRef()),
-			0
+			1
 			);
 		Controller->SetCurWidget(MainMenu);
 	}
@@ -39,13 +39,25 @@ void AMenuHUD::ShowCharacterDetail()
 	{
 		AMenuPlayerController* Controller = Cast<AMenuPlayerController>(GetOwningPlayerController());
 		SAssignNew(HeroDetail, SHeroDetailWidget)
-		.PreWidget(MainMenu);
+			.PreWidget(MainMenu)
+			.OwnerHUD(MakeWeakObjectPtr(this));
 
 		GEngine->GameViewport->AddViewportWidgetContent(
-			SNew(SWeakWidget)
+			SAssignNew(MainMenuContainer, SWeakWidget)
 			.PossiblyNullContent(HeroDetail.ToSharedRef()),
-			0
+			1
 			);
 		Controller->SetCurWidget(HeroDetail);
+	}
+}
+
+void AMenuHUD::RemoveDetailWidget()
+{
+	if(HeroDetail.IsValid() && GEngine)
+	{
+		AMenuPlayerController* Controller = Cast<AMenuPlayerController>(GetOwningPlayerController());
+		GEngine->GameViewport->RemoveViewportWidgetContent(MainMenuContainer.ToSharedRef());
+		HeroDetail.Reset();
+		Controller->SetCurWidget(MainMenu);
 	}
 }

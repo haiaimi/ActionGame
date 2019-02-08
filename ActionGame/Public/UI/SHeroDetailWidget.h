@@ -8,6 +8,7 @@
 #include "Widgets/SCompoundWidget.h"
 #include "Interface/AGWidgetInterface.h"
 #include "UI/SBaseMenuWidget.h"
+#include "MenuHUD.h"
 
 /**
  * 
@@ -16,8 +17,10 @@ class ACTIONGAME_API SHeroDetailWidget : public SBaseMenuWidget
 {
 public:
 	SLATE_BEGIN_ARGS(SHeroDetailWidget):
+		_OwnerHUD(nullptr),
 		_PreWidget(nullptr)
 	{}
+	SLATE_ARGUMENT(TWeakObjectPtr<AMenuHUD>, OwnerHUD)
 	SLATE_ARGUMENT(TSharedPtr<SCompoundWidget>, PreWidget)
 	SLATE_END_ARGS()
 
@@ -35,4 +38,8 @@ private:
 	FCurveSequence AnimSequence;
 
 	FCurveHandle AnimHandle;
+
+	TWeakObjectPtr<AMenuHUD> OwnerHUD;
+
+	FTimerHandle ResetTimer;
 };

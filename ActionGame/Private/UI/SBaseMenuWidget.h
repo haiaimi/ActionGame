@@ -15,5 +15,5 @@ class SBaseMenuWidget : public SCompoundWidget
 public:
 	virtual void BackToPrevious() {};
 
-	TSharedPtr<SCompoundWidget> PreWidget;
+	TWeakPtr<SCompoundWidget> PreWidget;
 };
