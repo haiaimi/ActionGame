@@ -67,24 +67,6 @@ void UActionAnimInstance_Aurora::AnimNotify_EndQAbility(UAnimNotify* Notify)
 	}
 }
 
-void UActionAnimInstance_Aurora::AnimNotify_RAbilityWarmUp(UAnimNotify* Notify)
-{
-	APawn* Owner = TryGetPawnOwner();
-	if (AActionGameCharacter_Aurora* CurOwner = Cast<AActionGameCharacter_Aurora>(Owner))
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WarmUpParticle, CurOwner->GetActorTransform());
-	}
-}
-
-void UActionAnimInstance_Aurora::AnimNotify_RAbilityBlast(UAnimNotify* Notify)
-{
-	APawn* Owner = TryGetPawnOwner();
-	if (AActionGameCharacter_Aurora* CurOwner = Cast<AActionGameCharacter_Aurora>(Owner))
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BlastParticle, CurOwner->GetActorTransform());
-	}
-}
-
 void UActionAnimInstance_Aurora::AnimNotify_FreezeEnemy(UAnimNotify* Notify)
 {
 	APawn* Owner = TryGetPawnOwner();

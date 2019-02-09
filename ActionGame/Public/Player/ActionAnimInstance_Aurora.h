@@ -36,21 +36,8 @@ public:
 	void AnimNotify_EndQAbility(UAnimNotify* Notify);
 
 	UFUNCTION()
-	void AnimNotify_RAbilityWarmUp(UAnimNotify* Notify);
-
-	UFUNCTION()
-	void AnimNotify_RAbilityBlast(UAnimNotify* Notify);
-
-	UFUNCTION()
 	void AnimNotify_FreezeEnemy(UAnimNotify* Notify);
 
 	UFUNCTION()
 	void AnimNotify_EndRAbility(UAnimNotify* Notify);
-
-protected:
-	UPROPERTY(EditDefaultsOnly)
-	class UParticleSystem* WarmUpParticle;
-
-	UPROPERTY(EditDefaultsOnly)
-	class UParticleSystem* BlastParticle;
 };
