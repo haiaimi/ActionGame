@@ -6,6 +6,7 @@
 #include "Engine/GameViewportClient.h"
 #include "UI/SHeroDetailWidget.h"
 #include "HAIAIMIHelper.h"
+#include "GameActors/HeroDetailPlatform.h"
 
 AMenuHUD::AMenuHUD():
 	MainMenu(nullptr)
@@ -33,14 +34,15 @@ void AMenuHUD::DrawHUD()
 	}
 }
 
-void AMenuHUD::ShowCharacterDetail()
+void AMenuHUD::ShowCharacterDetail(TWeakObjectPtr<AHeroDetailPlatform> DetailPlatform /*= nullptr*/)
 {
-	if(!HeroDetail.IsValid() && GEngine)
+	if(!HeroDetail.IsValid() && GEngine && DetailPlatform.IsValid())
 	{
 		AMenuPlayerController* Controller = Cast<AMenuPlayerController>(GetOwningPlayerController());
 		SAssignNew(HeroDetail, SHeroDetailWidget)
 			.PreWidget(MainMenu)
-			.OwnerHUD(MakeWeakObjectPtr(this));
+			.OwnerHUD(MakeWeakObjectPtr(this))
+			.DetailPlatform(DetailPlatform);
 
 		GEngine->GameViewport->AddViewportWidgetContent(
 			SAssignNew(MainMenuContainer, SWeakWidget)

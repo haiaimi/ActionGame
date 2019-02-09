@@ -19,7 +19,7 @@ public:
 
 	virtual void DrawHUD()override;
 
-	void ShowCharacterDetail();
+	void ShowCharacterDetail(TWeakObjectPtr<class AHeroDetailPlatform> DetailPlatform =  nullptr);
 	
 	void RemoveDetailWidget();
 public:

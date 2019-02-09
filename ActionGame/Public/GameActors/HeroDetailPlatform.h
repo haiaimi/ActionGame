@@ -24,6 +24,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void PlayMontage(int32 Index);
+
+	void SetCharacterMesh(int32 Index);
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* CharacterMesh;
@@ -34,6 +38,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* ViewCamera;
 
+public:
+	/**所有游戏人物的信息*/
 	UPROPERTY(EditDefaultsOnly)
-	struct FCharacterInfo CharInfo;
+	TArray<struct FCharacterInfo> CharInfos;
 };

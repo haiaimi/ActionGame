@@ -4,6 +4,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Animation/AnimInstance.h"
 
 // Sets default values
 AHeroDetailPlatform::AHeroDetailPlatform()
@@ -31,5 +32,22 @@ void AHeroDetailPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void AHeroDetailPlatform::PlayMontage(int32 Index)
+{
+	if (CharacterMesh && CharInfos[0].AbilityAnims.Num() > Index)
+	{
+		UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
+		AnimInstance->Montage_Play(CharInfos[0].AbilityAnims[Index]);
+	}
+}
+
+void AHeroDetailPlatform::SetCharacterMesh(int32 Index)
+{
+	if (CharacterMesh && CharInfos[0].CharMeshs.Num() > Index)
+	{
+		CharacterMesh->SetSkeletalMesh(CharInfos[0].CharMeshs[Index]);
+	}
 }
 

@@ -5,6 +5,7 @@
 #include "Styles/FActionGameStyle.h"
 #include "Widgets/SMainMenuWidget.h"
 #include "TimerManager.h"
+#include "HAIAIMIHelper.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHeroDetailWidget::Construct(const FArguments& InArgs)
@@ -13,9 +14,15 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 
 	OwnerHUD = InArgs._OwnerHUD;
 	PreWidget = InArgs._PreWidget;
+	DetailPlatform = InArgs._DetailPlatform;
+	TArray<FCharacterInfo> CharacterInfos;
+	if (DetailPlatform.IsValid())
+		CharacterInfos = DetailPlatform->CharInfos;
+
 	FSlateBrush* BorderBackground = new FSlateBrush();
 	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.1f));
 	ButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ActionGameButtonStyle"));
+	ButtonSelectedStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ActionGameSelectedButtonStyle"));
 	FPaddingParam::FGetter PadingGetter;
 	PadingGetter.BindLambda([&]() {
 		const float CurLerp = AnimHandle.GetLerp();
@@ -23,6 +30,16 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 		});
 	FPaddingParam PaddingParam;
 	PaddingParam.Bind(PadingGetter);
+
+	TArray<FSimpleDelegate> AbilityButtonDelegates;
+	AbilityButtonDelegates.SetNum(3);
+	for (int32 i = 0; i < 3; ++i)
+	{
+		AbilityButtonDelegates[i].BindLambda([i, this]() {
+			if (DetailPlatform.IsValid())
+				DetailPlatform->PlayMontage(i);
+			});
+	}
 
 	ChildSlot
 	[
@@ -43,7 +60,7 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 					SNew(SBorder)
 					.BorderImage(BorderBackground)
 					[
-						SNew(SScrollBox)
+						SAssignNew(HerosBar, SScrollBox)
 						.ScrollBarAlwaysVisible(true)
 						+SScrollBox::Slot()
 						[
@@ -58,19 +75,6 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 							]
 						]
-						+SScrollBox::Slot()
-						[
-							SNew(SButton)
-							.HAlign(EHorizontalAlignment::HAlign_Center)
-							.VAlign(EVerticalAlignment::VAlign_Center)
-							.ButtonStyle(ButtonStyle)
-							[
-								SNew(STextBlock)
-								.Text(FText::FromString(FString(TEXT("Aurora"))))
-								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-							]
-						]
 					]
 					
 				]
@@ -80,34 +84,8 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 					SNew(SBorder)
 					.BorderImage(BorderBackground)
 					[
-						SNew(SScrollBox)
+						SAssignNew(HeroSkinsBar, SScrollBox)
 						.ScrollBarAlwaysVisible(true)
-						+SScrollBox::Slot()
-						[
-							SNew(SBorder)
-							.HAlign(EHorizontalAlignment::HAlign_Center)
-							.VAlign(EVerticalAlignment::VAlign_Center)
-							.Padding(0.f)
-							[
-								SNew(STextBlock)
-								.Text(FText::FromString(FString(TEXT("皮肤"))))
-								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-							]
-						]
-						+SScrollBox::Slot()
-						[
-							SNew(SButton)
-							.HAlign(EHorizontalAlignment::HAlign_Center)
-							.VAlign(EVerticalAlignment::VAlign_Center)
-							.ButtonStyle(ButtonStyle)
-							[
-								SNew(STextBlock)
-								.Text(FText::FromString(FString(TEXT("标准"))))
-								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-							]
-						]
 					]
 				]
 				+SHorizontalBox::Slot()
@@ -144,6 +122,7 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 							.HAlign(EHorizontalAlignment::HAlign_Center)
 							.VAlign(EVerticalAlignment::VAlign_Center)
 							.ButtonStyle(ButtonStyle)
+							.OnPressed(AbilityButtonDelegates[0])
 							[
 								SNew(STextBlock)
 								.Text(FText::FromString(FString(TEXT("A"))))
@@ -158,6 +137,7 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 							.HAlign(EHorizontalAlignment::HAlign_Center)
 							.VAlign(EVerticalAlignment::VAlign_Center)
 							.ButtonStyle(ButtonStyle)
+							.OnPressed(AbilityButtonDelegates[1])
 							[
 								SNew(STextBlock)
 								.Text(FText::FromString(FString(TEXT("B"))))
@@ -172,6 +152,7 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 							.HAlign(EHorizontalAlignment::HAlign_Center)
 							.VAlign(EVerticalAlignment::VAlign_Center)
 							.ButtonStyle(ButtonStyle)
+							.OnPressed(AbilityButtonDelegates[2])
 							[
 								SNew(STextBlock)
 								.Text(FText::FromString(FString(TEXT("C"))))
@@ -185,6 +166,38 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 			
 		]
 	];
+
+	HeroButtons.SetNum(CharacterInfos.Num());
+	for (int32 i = 0; i < CharacterInfos.Num(); ++i)
+	{
+		FSimpleDelegate Delegate;
+		Delegate.BindLambda([i, this]() {
+			ShowHeroSkinButtons(i);
+			HeroButtons[i]->SetButtonStyle(ButtonSelectedStyle);
+				for (int32 j = 0; j < HeroButtons.Num(); ++j)
+				{
+					if (j != i)
+						HeroButtons[j]->SetButtonStyle(ButtonStyle);
+				}
+			});
+
+		HerosBar->AddSlot()
+		[
+			SAssignNew(HeroButtons[i], SButton)
+			.HAlign(EHorizontalAlignment::HAlign_Center)
+			.VAlign(EVerticalAlignment::VAlign_Center)
+			.ButtonStyle(ButtonStyle)
+			.OnPressed(Delegate)
+			[
+				SNew(STextBlock)
+				.Text(CharacterInfos[i].CharName)
+				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
+				.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+			]
+		];
+	}
+	HeroButtons[0]->SetButtonStyle(ButtonSelectedStyle);
+	ShowHeroSkinButtons(0);
 
 	SetupAnimation();
 }
@@ -215,7 +228,65 @@ void SHeroDetailWidget::SetupAnimation()
 	AnimSequence = FCurveSequence();
 	AnimHandle = AnimSequence.AddCurve(0.f, 0.5f, ECurveEaseFunction::QuadOut);
 
-	AnimSequence.Play(this->AsShared());
+	AnimSequence.Play(this->AsShared()); 
+}
+
+void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
+{
+	if(HeroSkinsBar.IsValid() && DetailPlatform.IsValid())
+	{
+		SkinButtons.Reset();
+		HeroSkinsBar->ClearChildren();
+		HeroSkinsBar->AddSlot()
+		[
+			SNew(SBorder)
+			.HAlign(EHorizontalAlignment::HAlign_Center)
+			.VAlign(EVerticalAlignment::VAlign_Center)
+			.Padding(0.f)
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(FString(TEXT("皮肤"))))
+				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
+				.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+			]
+		];
+
+		const TArray<FCharacterInfo> CharacterInfos = DetailPlatform->CharInfos;
+		const TArray<FText>& MeshNames = CharacterInfos[Index].MeshNames;
+		SkinButtons.SetNum(MeshNames.Num());
+		for (int32 i = 0; i < MeshNames.Num(); ++i)
+		{
+			FSimpleDelegate Delegate;
+
+			Delegate.BindLambda([i, this]() {
+				if (DetailPlatform.IsValid())
+					DetailPlatform->SetCharacterMesh(i);
+				SkinButtons[i]->SetButtonStyle(ButtonSelectedStyle);
+				for (int32 j = 0; j < SkinButtons.Num(); ++j)
+				{
+					if (j != i)
+						SkinButtons[j]->SetButtonStyle(ButtonStyle);
+				}
+			});
+		
+			HeroSkinsBar->AddSlot()
+			[
+				SAssignNew(SkinButtons[i], SButton)
+				.HAlign(EHorizontalAlignment::HAlign_Center)
+				.VAlign(EVerticalAlignment::VAlign_Center)
+				.ButtonStyle(ButtonStyle)
+				.OnPressed(Delegate)
+				[
+					SNew(STextBlock)
+					.Text(MeshNames[i])
+					.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"), 34))
+					.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+				]
+			];
+		}
+		SkinButtons[0]->SetButtonStyle(ButtonSelectedStyle);
+		DetailPlatform->SetCharacterMesh(0);
+	}
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

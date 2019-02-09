@@ -184,11 +184,14 @@ void SMainMenuWidget::HeroDetails()
 			break;
 		}
 
-		OwnerController->SetViewTargetWithBlend(DetailPlatform, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
-		SetEnabled(false);
+		if(DetailPlatform)
+		{
+			OwnerController->SetViewTargetWithBlend(DetailPlatform, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
+			SetEnabled(false);
 		
-		if (OwnerHUD.IsValid())
-			OwnerHUD->ShowCharacterDetail();
+			if (OwnerHUD.IsValid())
+				OwnerHUD->ShowCharacterDetail(DetailPlatform);
+		}
 	}
 }
 
