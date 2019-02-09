@@ -19,13 +19,8 @@ public:
 
 	virtual void DrawHUD()override;
 
-	void ShowCharacterDetail(TWeakObjectPtr<class AHeroDetailPlatform> DetailPlatform =  nullptr);
-	
-	void RemoveDetailWidget();
 public:
 	TSharedPtr<class SMainMenuWidget> MainMenu;
 
 	TSharedPtr<class SWeakWidget> MainMenuContainer;
-
-	TSharedPtr<class SHeroDetailWidget> HeroDetail;
 };

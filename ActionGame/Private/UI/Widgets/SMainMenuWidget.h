@@ -8,7 +8,8 @@
 #include "Widgets/SCompoundWidget.h"
 #include "Player/MenuPlayerController.h"
 #include "UI/MenuHUD.h"
-#include "UI/SBaseMenuWidget.h"
+#include "SHeroDetailWidget.h"
+#include "SBaseMenuWidget.h"
 
 /**
  * 
@@ -27,7 +28,7 @@ public:
 	/** Constructs this widget with InArgs */
 	void Construct(const FArguments& InArgs);
 
-	void ToMainMenu();
+	virtual void BackToShow()override;
 
 private:
 	/**…Ë÷√∂Øª≠*/
@@ -39,6 +40,8 @@ private:
 	TSharedPtr<SOverlay> MenuOverlay;
 
 	TSharedPtr<SVerticalBox> MenuContainer;
+
+	TSharedPtr<class SHeroDetailWidget> HeroDetail;
 
 	FCurveSequence MenuSequence;
 

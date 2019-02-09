@@ -7,6 +7,7 @@
 #include "GameActors/HeroDetailPlatform.h"
 #include "EngineUtils.h"
 #include "Engine/Engine.h"
+#include "HAIAIMIHelper.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SMainMenuWidget::Construct(const FArguments& InArgs)
@@ -32,126 +33,136 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 		RenderTransformDel[i].Bind(TransformGetter);
 	}
 
+	AHeroDetailPlatform* DetailPlatform = nullptr;
+	if (OwnerController.IsValid())
+	{
+		for (TActorIterator<AHeroDetailPlatform> Iter(OwnerController->GetWorld()); Iter; ++Iter)
+		{
+			DetailPlatform = *Iter;
+			break;
+		}
+	}
+
 	ChildSlot
 	[
 		SAssignNew(MenuOverlay, SOverlay)
 		+SOverlay::Slot()
-		.HAlign(EHorizontalAlignment::HAlign_Left)
-		.VAlign(EVerticalAlignment::VAlign_Top)
 		[
-			SAssignNew(MenuContainer, SVerticalBox)
-			.RenderOpacity(0.f)
-			+SVerticalBox::Slot()
+			SNew(SBorder)
+		]
+	];
+
+	MenuOverlay->AddSlot()
+	.HAlign(EHorizontalAlignment::HAlign_Left)
+	.VAlign(EVerticalAlignment::VAlign_Top)
+	[
+		SAssignNew(MenuContainer, SVerticalBox)
+		.RenderOpacity(0.f)
+		+SVerticalBox::Slot()
+		[
+			SNew(SBorder)
+			.RenderTransform(RenderTransformDel[0])
+			.RenderTransformPivot(FVector2D(0.f, 1.f))
 			[
-				SNew(SBorder)
-				.RenderTransform(RenderTransformDel[0])
-				.RenderTransformPivot(FVector2D(0.f, 1.f))
+				SNew(SBox)
+				.HeightOverride(100.f)
+				.WidthOverride(350.f)
 				[
-					SNew(SBox)
-					.HeightOverride(100.f)
-					.WidthOverride(350.f)
+					SNew(SButton)
+					.HAlign(EHorizontalAlignment::HAlign_Center)
+					.VAlign(EVerticalAlignment::VAlign_Center)
+					.ButtonStyle(ButtonStyle)
 					[
-						SNew(SButton)
-						.HAlign(EHorizontalAlignment::HAlign_Center)
-						.VAlign(EVerticalAlignment::VAlign_Center)
-						.ButtonStyle(ButtonStyle)
-						[
-							SNew(STextBlock)
-							.Text(FText::FromString(FString(TEXT("开始游戏"))))
-							.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-						]
+						SNew(STextBlock)
+						.Text(FText::FromString(FString(TEXT("开始游戏"))))
+						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
+						.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 					]
 				]
 			]
-			+SVerticalBox::Slot()
+		]
+		+SVerticalBox::Slot()
+		[
+			SNew(SBorder)
+			.RenderTransform(RenderTransformDel[1])
+			.RenderTransformPivot(FVector2D(0.f, 1.f))
 			[
-				SNew(SBorder)
-				.RenderTransform(RenderTransformDel[1])
-				.RenderTransformPivot(FVector2D(0.f, 1.f))
+				SNew(SBox)
+				.HeightOverride(100.f)
+				.WidthOverride(350.f)
 				[
-					SNew(SBox)
-					.HeightOverride(100.f)
-					.WidthOverride(350.f)
+					SNew(SButton)
+					.HAlign(EHorizontalAlignment::HAlign_Center)
+					.VAlign(EVerticalAlignment::VAlign_Center)
+					.ButtonStyle(ButtonStyle)
+					.OnPressed(this, &SMainMenuWidget::HeroDetails)
 					[
-						SNew(SButton)
-						.HAlign(EHorizontalAlignment::HAlign_Center)
-						.VAlign(EVerticalAlignment::VAlign_Center)
-						.ButtonStyle(ButtonStyle)
-						.OnPressed(this, &SMainMenuWidget::HeroDetails)
-						[
-							SNew(STextBlock)
-							.Text(FText::FromString(FString(TEXT("英雄介绍"))))
-							.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-						]
+						SNew(STextBlock)
+						.Text(FText::FromString(FString(TEXT("英雄介绍"))))
+						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
+						.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 					]
 				]
 			]
-			+SVerticalBox::Slot()
+		]
+		+SVerticalBox::Slot()
+		[
+			SNew(SBorder)
+			.RenderTransform(RenderTransformDel[2])
+			.RenderTransformPivot(FVector2D(0.f, 1.f))
 			[
-				SNew(SBorder)
-				.RenderTransform(RenderTransformDel[2])
-				.RenderTransformPivot(FVector2D(0.f, 1.f))
+				SNew(SBox)
+				.HeightOverride(100.f)
+				.WidthOverride(350.f)
 				[
-					SNew(SBox)
-					.HeightOverride(100.f)
-					.WidthOverride(350.f)
+					SNew(SButton)
+					.HAlign(EHorizontalAlignment::HAlign_Center)
+					.VAlign(EVerticalAlignment::VAlign_Center)
+					.ButtonStyle(ButtonStyle)
 					[
-						SNew(SButton)
-						.HAlign(EHorizontalAlignment::HAlign_Center)
-						.VAlign(EVerticalAlignment::VAlign_Center)
-						.ButtonStyle(ButtonStyle)
-						[
-							SNew(STextBlock)
-							.Text(FText::FromString(FString(TEXT("退出游戏"))))
-							.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-						]
+						SNew(STextBlock)
+						.Text(FText::FromString(FString(TEXT("退出游戏"))))
+						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
+						.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 					]
 				]
 			]
-			+SVerticalBox::Slot()
+		]
+		+SVerticalBox::Slot()
+		[
+			SNew(SBorder)
+			.RenderTransform(RenderTransformDel[3])
+			.RenderTransformPivot(FVector2D(0.f, 1.f))
 			[
-				SNew(SBorder)
-				.RenderTransform(RenderTransformDel[3])
-				.RenderTransformPivot(FVector2D(0.f, 1.f))
+				SNew(SBox)
+				.HeightOverride(100.f)
+				.WidthOverride(350.f)
 				[
-					SNew(SBox)
-					.HeightOverride(100.f)
-					.WidthOverride(350.f)
+					SNew(SButton)
+					.HAlign(EHorizontalAlignment::HAlign_Center)
+					.VAlign(EVerticalAlignment::VAlign_Center)
+					.ButtonStyle(ButtonStyle)
 					[
-						SNew(SButton)
-						.HAlign(EHorizontalAlignment::HAlign_Center)
-						.VAlign(EVerticalAlignment::VAlign_Center)
-						.ButtonStyle(ButtonStyle)
-						[
-							SNew(STextBlock)
-							.Text(FText::FromString(FString(TEXT("关于"))))
-							.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-						]
+						SNew(STextBlock)
+						.Text(FText::FromString(FString(TEXT("关于"))))
+						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
+						.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 					]
 				]
 			]
 		]
 	];
-	
 	SetupAnimation();
 
 	if (OwnerController.IsValid())
 		MenuShowActor = OwnerController->GetViewTarget();
-
-	FChildren* Children = MenuOverlay->GetChildren();
-	TPanelChildren<SOverlay::FOverlaySlot>* PanelChildren = (TPanelChildren<SOverlay::FOverlaySlot>*)Children;
-	(*PanelChildren)[PanelChildren->Num() - 1].ZOrder = 2;
 }
 	
 
-void SMainMenuWidget::ToMainMenu()
+void SMainMenuWidget::BackToShow()
 {
 	MenuSequence.Reverse();
-	SetEnabled(true);
+	MenuContainer->SetEnabled(true);
 
 	if (MenuShowActor && OwnerController.IsValid())
 	{
@@ -187,10 +198,21 @@ void SMainMenuWidget::HeroDetails()
 		if(DetailPlatform)
 		{
 			OwnerController->SetViewTargetWithBlend(DetailPlatform, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
-			SetEnabled(false);
+			MenuContainer->SetEnabled(false);
 		
-			if (OwnerHUD.IsValid())
-				OwnerHUD->ShowCharacterDetail(DetailPlatform);
+			if (!HeroDetail.IsValid())
+			{
+				MenuOverlay->AddSlot(0)
+				[
+					SAssignNew(HeroDetail, SHeroDetailWidget)
+					.OwnerHUD(OwnerHUD)
+				//.PreWidget(TSharedPtr<SMainMenuWidget>(this))   //这样会造成智能指针循环引用
+				.DetailPlatform(TWeakObjectPtr<AHeroDetailPlatform>(DetailPlatform))
+				];
+			}
+			else
+				HeroDetail->BackToShow();
+			OwnerController->SetCurWidget(HeroDetail);
 		}
 	}
 }

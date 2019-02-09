@@ -1,11 +1,11 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "UI/SHeroDetailWidget.h"
+#include "SHeroDetailWidget.h"
 #include "SlateOptMacros.h"
-#include "Styles/FActionGameStyle.h"
-#include "Widgets/SMainMenuWidget.h"
+#include "SMainMenuWidget.h"
 #include "TimerManager.h"
 #include "HAIAIMIHelper.h"
+#include "UI/Styles/FActionGameStyle.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHeroDetailWidget::Construct(const FArguments& InArgs)
@@ -163,7 +163,6 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 					]
 				]
 			]
-			
 		]
 	];
 
@@ -205,22 +204,17 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 void SHeroDetailWidget::BackToPrevious()
 {
 	AnimSequence.Reverse();
-	
-	if(PreWidget.IsValid())
-	{
-		auto ptr = StaticCastSharedPtr<SMainMenuWidget>(PreWidget.Pin());
-		ptr->ToMainMenu();
-	}
 
 	if(OwnerHUD.IsValid())
 	{
-		FTimerDelegate Delegate;
-		Delegate.BindLambda([&]() {
-			OwnerHUD->GetWorldTimerManager().ClearTimer(ResetTimer);
-			OwnerHUD->RemoveDetailWidget();
-			});
-		OwnerHUD->GetWorldTimerManager().SetTimer(ResetTimer, Delegate, 0.4f, false);
+		auto PreMenu = OwnerHUD->MainMenu;
+		PreMenu->BackToShow();
 	}
+}
+
+void SHeroDetailWidget::BackToShow()
+{
+	AnimSequence.Reverse();
 }
 
 void SHeroDetailWidget::SetupAnimation()

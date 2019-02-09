@@ -7,9 +7,9 @@
 #include "SlateExtras.h"
 #include "Widgets/SCompoundWidget.h"
 #include "Interface/AGWidgetInterface.h"
-#include "UI/SBaseMenuWidget.h"
-#include "MenuHUD.h"
+#include "SBaseMenuWidget.h"
 #include "GameActors/HeroDetailPlatform.h"
+#include "UI/MenuHUD.h"
 
 /**
  * 
@@ -31,6 +31,8 @@ public:
 	void Construct(const FArguments& InArgs);
 
 	virtual void BackToPrevious()override;
+
+	virtual void BackToShow()override;
 
 protected:
 	void SetupAnimation();
