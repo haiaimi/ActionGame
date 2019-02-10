@@ -56,6 +56,10 @@ private:
 
 	FCurveHandle AnimHandle;
 
+	FCurveSequence SkinButtonSequence;
+
+	TArray<FCurveHandle> SkinButtonHandles;
+
 	TWeakObjectPtr<AMenuHUD> OwnerHUD;
 
 	TWeakObjectPtr<AHeroDetailPlatform> DetailPlatform;

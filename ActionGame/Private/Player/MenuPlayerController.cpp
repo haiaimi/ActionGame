@@ -3,7 +3,7 @@
 #include "MenuPlayerController.h"
 #include "GameFramework/Pawn.h"
 #include "HAIAIMIHelper.h"
-#include "UI/SBaseMenuWidget.h"
+#include "UI/Widgets/SBaseMenuWidget.h"
 #include "UI/MenuHUD.h"
 
 AMenuPlayerController::AMenuPlayerController()
@@ -33,6 +33,6 @@ void AMenuPlayerController::BackToPreMenu()
 	if(CurWidget.IsValid())
 	{
 		CurWidget->BackToPrevious();
-		CurWidget.Reset();
+		//CurWidget.Reset();
 	}
 }

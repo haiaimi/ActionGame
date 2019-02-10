@@ -33,16 +33,6 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 		RenderTransformDel[i].Bind(TransformGetter);
 	}
 
-	AHeroDetailPlatform* DetailPlatform = nullptr;
-	if (OwnerController.IsValid())
-	{
-		for (TActorIterator<AHeroDetailPlatform> Iter(OwnerController->GetWorld()); Iter; ++Iter)
-		{
-			DetailPlatform = *Iter;
-			break;
-		}
-	}
-
 	ChildSlot
 	[
 		SAssignNew(MenuOverlay, SOverlay)
@@ -167,6 +157,7 @@ void SMainMenuWidget::BackToShow()
 	if (MenuShowActor && OwnerController.IsValid())
 	{
 		OwnerController->SetViewTargetWithBlend(MenuShowActor, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
+		OwnerController->SetCurWidget(OwnerHUD->MainMenu);  //要注意智能指针之间的引用，不能
 	}
 }
 
@@ -206,8 +197,8 @@ void SMainMenuWidget::HeroDetails()
 				[
 					SAssignNew(HeroDetail, SHeroDetailWidget)
 					.OwnerHUD(OwnerHUD)
-				//.PreWidget(TSharedPtr<SMainMenuWidget>(this))   //这样会造成智能指针循环引用
-				.DetailPlatform(TWeakObjectPtr<AHeroDetailPlatform>(DetailPlatform))
+					//.PreWidget(TSharedPtr<SMainMenuWidget>(this))   //这样会造成智能指针循环引用
+					.DetailPlatform(DetailPlatform)
 				];
 			}
 			else

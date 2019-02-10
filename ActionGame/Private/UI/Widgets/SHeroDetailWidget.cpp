@@ -7,17 +7,19 @@
 #include "HAIAIMIHelper.h"
 #include "UI/Styles/FActionGameStyle.h"
 
+using FPaddingParam = TAttribute<FMargin>;
+using FRenderTransformParam = TAttribute<TOptional<FSlateRenderTransform>>;
+
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHeroDetailWidget::Construct(const FArguments& InArgs)
 {
-	using FPaddingParam = TAttribute<FMargin>;
-
 	OwnerHUD = InArgs._OwnerHUD;
 	PreWidget = InArgs._PreWidget;
 	DetailPlatform = InArgs._DetailPlatform;
 	TArray<FCharacterInfo> CharacterInfos;
 	if (DetailPlatform.IsValid())
 		CharacterInfos = DetailPlatform->CharInfos;
+	SkinButtonHandles.SetNum(6);
 
 	FSlateBrush* BorderBackground = new FSlateBrush();
 	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.1f));
@@ -221,8 +223,12 @@ void SHeroDetailWidget::SetupAnimation()
 {
 	AnimSequence = FCurveSequence();
 	AnimHandle = AnimSequence.AddCurve(0.f, 0.5f, ECurveEaseFunction::QuadOut);
+	for (int32 i = 0; i < SkinButtonHandles.Num(); ++i)
+	{
+		SkinButtonHandles[i] = SkinButtonSequence.AddCurve(0.05f*i, 0.05f*i+0.05f, ECurveEaseFunction::QuadOut);
+	}
 
-	AnimSequence.Play(this->AsShared()); 
+	AnimSequence.Play(this->AsShared());
 }
 
 void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
@@ -262,6 +268,15 @@ void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
 						SkinButtons[j]->SetButtonStyle(ButtonStyle);
 				}
 			});
+
+			FRenderTransformParam::FGetter TransformGetter;
+			TransformGetter.BindLambda([i,this]() {
+				const float CurLerp = SkinButtonHandles[i].GetLerp();
+				SkinButtons[i]->SetRenderOpacity(CurLerp);
+				return FSlateRenderTransform(FVector2D(0.f, (-50.f - i * 50.f)*(1 - CurLerp)));
+				});
+			FRenderTransformParam TransformParam;
+			TransformParam.Bind(TransformGetter);
 		
 			HeroSkinsBar->AddSlot()
 			[
@@ -270,6 +285,7 @@ void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
 				.VAlign(EVerticalAlignment::VAlign_Center)
 				.ButtonStyle(ButtonStyle)
 				.OnPressed(Delegate)
+				.RenderTransform(TransformParam)
 				[
 					SNew(STextBlock)
 					.Text(MeshNames[i])
@@ -280,6 +296,8 @@ void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
 		}
 		SkinButtons[0]->SetButtonStyle(ButtonSelectedStyle);
 		DetailPlatform->SetCharacterMesh(0);
+
+		SkinButtonSequence.Play(this->AsShared());
 	}
 }
 

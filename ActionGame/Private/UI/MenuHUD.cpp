@@ -4,7 +4,6 @@
 #include "Widgets/SMainMenuWidget.h"
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
-#include "SHeroDetailWidget.h"
 #include "HAIAIMIHelper.h"
 #include "GameActors/HeroDetailPlatform.h"
 

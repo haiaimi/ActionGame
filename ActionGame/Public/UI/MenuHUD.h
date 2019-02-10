@@ -21,6 +21,4 @@ public:
 
 public:
 	TSharedPtr<class SMainMenuWidget> MainMenu;
-
-	TSharedPtr<class SWeakWidget> MainMenuContainer;
 };
