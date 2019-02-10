@@ -30,6 +30,8 @@ public:
 
 	virtual void BackToShow()override;
 
+	TSharedPtr<SOverlay>& GetMenuOverlay();
+
 private:
 	/**…Ë÷√∂Øª≠*/
 	void SetupAnimation();

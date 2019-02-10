@@ -6,6 +6,7 @@
 #include "Engine/GameViewportClient.h"
 #include "HAIAIMIHelper.h"
 #include "GameActors/HeroDetailPlatform.h"
+#include "UI/Widgets/SInfoTipWidget.h"
 
 AMenuHUD::AMenuHUD():
 	MainMenu(nullptr)
@@ -31,4 +32,16 @@ void AMenuHUD::DrawHUD()
 			);
 		Controller->SetCurWidget(MainMenu);
 	}
+
+	/*if(!InfoTip.IsValid() && GEngine)
+	{
+		SAssignNew(InfoTip, SInfoTipWidget)
+		.ShowPos(FMargin(960.f,540.f,0.f,0.f));
+
+		GEngine->GameViewport->AddViewportWidgetContent(
+			SNew(SWeakWidget)
+			.PossiblyNullContent(InfoTip.ToSharedRef()),
+			1
+			);
+	}*/
 }

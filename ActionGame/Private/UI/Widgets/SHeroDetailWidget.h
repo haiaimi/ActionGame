@@ -10,6 +10,7 @@
 #include "SBaseMenuWidget.h"
 #include "GameActors/HeroDetailPlatform.h"
 #include "UI/MenuHUD.h"
+#include "SInfoTipWidget.h"
 
 /**
  * 
@@ -39,7 +40,13 @@ protected:
 
 	void ShowHeroSkinButtons(int32 Index);
 
+	void ShowTips();
+
+	void CloseWidget();
+
 private:
+	TSharedPtr<SOverlay> DetailOverlay;
+
 	TSharedPtr<SScrollBox> HerosBar;
 
 	TSharedPtr<SScrollBox> HeroSkinsBar;
@@ -47,6 +54,8 @@ private:
 	TArray<TSharedPtr<SButton>> SkinButtons;
 
 	TArray<TSharedPtr<SButton>> HeroButtons;
+
+	TSharedPtr<SBox> TipWidget;
 
 	const struct FButtonStyle* ButtonStyle;
 

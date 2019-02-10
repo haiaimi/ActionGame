@@ -142,6 +142,19 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 			]
 		]
 	];
+
+	/*MenuOverlay->AddSlot()
+.Padding(FMargin(1000.f,800.f,0.f,0.f))
+	[
+		SNew(SBox)
+		.HeightOverride(400.f)
+		.WidthOverride(500.f)
+		[
+			SNew(SInfoTipWidget)
+		]
+		
+	];*/
+
 	SetupAnimation();
 
 	if (OwnerController.IsValid())
@@ -159,6 +172,11 @@ void SMainMenuWidget::BackToShow()
 		OwnerController->SetViewTargetWithBlend(MenuShowActor, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
 		OwnerController->SetCurWidget(OwnerHUD->MainMenu);  //要注意智能指针之间的引用，不能
 	}
+}
+
+TSharedPtr<SOverlay>& SMainMenuWidget::GetMenuOverlay()
+{
+	return MenuOverlay;
 }
 
 void SMainMenuWidget::SetupAnimation()
@@ -207,5 +225,6 @@ void SMainMenuWidget::HeroDetails()
 		}
 	}
 }
-
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION
+
+

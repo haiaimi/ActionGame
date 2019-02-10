@@ -21,4 +21,6 @@ public:
 
 public:
 	TSharedPtr<class SMainMenuWidget> MainMenu;
+
+	TSharedPtr<class SInfoTipWidget> InfoTip;
 };

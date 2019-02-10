@@ -45,7 +45,7 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 
 	ChildSlot
 	[
-		SNew(SOverlay)
+		SAssignNew(DetailOverlay, SOverlay)
 		+SOverlay::Slot()
 		.HAlign(EHorizontalAlignment::HAlign_Center)
 		.VAlign(EVerticalAlignment::VAlign_Top)
@@ -125,6 +125,8 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 							.VAlign(EVerticalAlignment::VAlign_Center)
 							.ButtonStyle(ButtonStyle)
 							.OnPressed(AbilityButtonDelegates[0])
+							.OnHovered(this,&SHeroDetailWidget::ShowTips)
+							.OnUnhovered(this, &SHeroDetailWidget::CloseWidget)
 							[
 								SNew(STextBlock)
 								.Text(FText::FromString(FString(TEXT("A"))))
@@ -299,6 +301,33 @@ void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
 
 		SkinButtonSequence.Play(this->AsShared());
 	}
+}
+
+void SHeroDetailWidget::ShowTips()
+{
+	if (TipWidget.IsValid())return;
+	DetailOverlay->AddSlot()
+	[
+		SAssignNew(TipWidget, SBox)
+		.HeightOverride(400.f)
+		.WidthOverride(500.f)
+		.Padding(FMargin(1300.f,840.f,0.f,0.f))
+		[
+			SNew(SInfoTipWidget)
+			.ShowPos(FMargin(1300.f,540.f,0.f,0.f))
+		]
+		
+	];
+	HAIAIMIHelper::Debug_ScreenMessage(TEXT("On Horver"));
+}
+
+void SHeroDetailWidget::CloseWidget()
+{
+	HAIAIMIHelper::Debug_ScreenMessage(TEXT("On UnHorver"));
+	if (!TipWidget.IsValid())return;
+	bool bDeleted = DetailOverlay->RemoveSlot(TipWidget.ToSharedRef());
+	if (bDeleted)HAIAIMIHelper::Debug_ScreenMessage(TEXT("Has Been Deleted"));
+	TipWidget.Reset();
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION
