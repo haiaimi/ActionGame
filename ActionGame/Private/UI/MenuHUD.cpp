@@ -11,7 +11,7 @@
 AMenuHUD::AMenuHUD():
 	MainMenu(nullptr)
 {
-
+	
 }
 
 void AMenuHUD::DrawHUD()

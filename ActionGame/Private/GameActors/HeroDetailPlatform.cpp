@@ -34,12 +34,12 @@ void AHeroDetailPlatform::Tick(float DeltaTime)
 
 }
 
-void AHeroDetailPlatform::PlayMontage(int32 Index)
+void AHeroDetailPlatform::PlayMontage(int32 CharIndex, int32 MontageIndex)
 {
-	if (CharacterMesh && CharInfos[0].AbilityAnims.Num() > Index)
+	if (CharacterMesh && CharInfos.Num() > CharIndex && CharInfos[0].AbilityAnims.Num() > MontageIndex)
 	{
 		UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
-		AnimInstance->Montage_Play(CharInfos[0].AbilityAnims[Index]);
+		AnimInstance->Montage_Play(CharInfos[CharIndex].AbilityAnims[MontageIndex]);
 	}
 }
 

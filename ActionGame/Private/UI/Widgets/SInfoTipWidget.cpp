@@ -13,79 +13,73 @@ void SInfoTipWidget::Construct(const FArguments& InArgs)
 
 	FSlateBrush* TextBrush = new FSlateBrush();
 	TextBrush->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.3f));
-	FMargin ShowPos = InArgs._ShowPos;
 
 	FPaddingParam ::FGetter TransformGetter;
-	TransformGetter.BindLambda([ShowPos, this]() {
+	TransformGetter.BindLambda([this]() {
 		const float CurLerp = AnimHandle.GetLerp();
 		SetRenderOpacity(CurLerp);
-		return FMargin(0.f, - 500.f + 500.f*CurLerp, 0.f, -100.f);
+		float Bottom = 400.f - 400.f*CurLerp;
+		return FMargin(0.f, - 400.f + 400.f*CurLerp, 0.f, Bottom);
 		});
 	FPaddingParam  TransformParam;
 	TransformParam.Bind(TransformGetter);
 
 	ChildSlot
-	.HAlign(EHorizontalAlignment::HAlign_Left)
-	.VAlign(EVerticalAlignment::VAlign_Top)
+	.HAlign(EHorizontalAlignment::HAlign_Fill)
+	.VAlign(EVerticalAlignment::VAlign_Fill)
+	.Padding(TransformParam)
 	[
-		SNew(SBox)
-		.HeightOverride(400.f)
-		.WidthOverride(500.f)
-		.Padding(TransformParam)
+		SNew(SHorizontalBox)
+		+SHorizontalBox::Slot()
+		.FillWidth(0.5f)
 		[
-			SNew(SHorizontalBox)
-			+SHorizontalBox::Slot()
-			.FillWidth(0.5f)
+			SNew(SBorder)
+			.BorderImage(BorderBrush)
+		]
+		+SHorizontalBox::Slot()
+		.FillWidth(20.f)
+		[
+			SNew(SVerticalBox)
+			+SVerticalBox::Slot()
+			.FillHeight(1.5f)
 			[
 				SNew(SBorder)
 				.BorderImage(BorderBrush)
+				.VAlign(EVerticalAlignment::VAlign_Center)
+				[
+					SNew(STextBlock)
+					.Text(FText::FromString(FString(TEXT("Tips"))))
+					.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),22))
+					.ColorAndOpacity(FSlateColor(FLinearColor(0.f,0.f,0.f,1.f)))
+				]
 			]
-			+SHorizontalBox::Slot()
-			.FillWidth(20.f)
+			+SVerticalBox::Slot()
+			.FillHeight(10.f)
 			[
-				SNew(SVerticalBox)
-				+SVerticalBox::Slot()
-				.FillHeight(1.5f)
+				SNew(SBorder)
+				.BorderImage(TextBrush)
 				[
-					SNew(SBorder)
-					.BorderImage(BorderBrush)
-					.VAlign(EVerticalAlignment::VAlign_Center)
-					[
-						SNew(STextBlock)
-						.Text(FText::FromString(FString(TEXT("Tips"))))
-						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),22))
-						.ColorAndOpacity(FSlateColor(FLinearColor(0.f,0.f,0.f,1.f)))
-					]
-				]
-				+SVerticalBox::Slot()
-				.FillHeight(10.f)
-				[
-					SNew(SBorder)
-					.BorderImage(TextBrush)
-					[
-						SNew(STextBlock)
-						.AutoWrapText(true)
-						.WrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping)
-						.Text(FText::FromString(FString(TEXT("Contentffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"))))
-						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),22))
-						.ColorAndOpacity(FSlateColor(FLinearColor(0.f,0.f,0.f,1.f)))
-					]
-				]
-				+SVerticalBox::Slot()
-				.FillHeight(0.5f)
-				[
-					SNew(SBorder)
-					.BorderImage(BorderBrush)
+					SNew(STextBlock)
+					.AutoWrapText(true)
+					.WrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping)
+					.Text(InArgs._TipContent)
+					.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),22))
+					.ColorAndOpacity(FSlateColor(FLinearColor(0.f,0.f,0.f,1.f)))
 				]
 			]
-			+SHorizontalBox::Slot()
-			.FillWidth(0.5f)
+			+SVerticalBox::Slot()
+			.FillHeight(0.5f)
 			[
 				SNew(SBorder)
 				.BorderImage(BorderBrush)
 			]
 		]
-		
+		+SHorizontalBox::Slot()
+		.FillWidth(0.5f)
+		[
+			SNew(SBorder)
+			.BorderImage(BorderBrush)
+		]
 	];
 
 	SetupAnimation();

@@ -144,7 +144,9 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 	];
 
 	/*MenuOverlay->AddSlot()
-.Padding(FMargin(1000.f,800.f,0.f,0.f))
+	.HAlign(EHorizontalAlignment::HAlign_Left)
+	.VAlign(EVerticalAlignment::VAlign_Top)
+	.Padding(FMargin(960.f,540.f,0.f,0.f))
 	[
 		SNew(SBox)
 		.HeightOverride(400.f)

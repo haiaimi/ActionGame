@@ -24,7 +24,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void PlayMontage(int32 Index);
+	void PlayMontage(int32 CharIndex, int32 MontageIndex);
 
 	void SetCharacterMesh(int32 Index);
 

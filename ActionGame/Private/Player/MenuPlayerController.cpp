@@ -14,8 +14,8 @@ AMenuPlayerController::AMenuPlayerController()
 void AMenuPlayerController::BeginPlay()
 {
 	SetInputMode(FInputModeGameOnly());
-
 	GetPawn()->SetActorHiddenInGame(true);
+	ConsoleCommand("r.SetRes 1920x1080");
 }
 
 void AMenuPlayerController::SetupInputComponent()
@@ -33,6 +33,5 @@ void AMenuPlayerController::BackToPreMenu()
 	if(CurWidget.IsValid())
 	{
 		CurWidget->BackToPrevious();
-		//CurWidget.Reset();
 	}
 }

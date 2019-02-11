@@ -40,7 +40,7 @@ protected:
 
 	void ShowHeroSkinButtons(int32 Index);
 
-	void ShowTips();
+	void ShowTips(const FText& ShowText);
 
 	void CloseWidget();
 
@@ -51,9 +51,13 @@ private:
 
 	TSharedPtr<SScrollBox> HeroSkinsBar;
 
+	TSharedPtr<SHorizontalBox> AbilityButtonContainer;
+
 	TArray<TSharedPtr<SButton>> SkinButtons;
 
 	TArray<TSharedPtr<SButton>> HeroButtons;
+
+	TArray<TSharedPtr<SButton>> AbilityButtons;
 
 	TSharedPtr<SBox> TipWidget;
 

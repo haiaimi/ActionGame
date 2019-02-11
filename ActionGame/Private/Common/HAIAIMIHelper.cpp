@@ -48,8 +48,10 @@ FVector2D HAIAIMIHelper::ConvertToNormalCoord(FVector2D Pos)
 	{
 		FVector2D Size;
 		GEngine->GameViewport->GetViewportSize(Size);
-		Res.X = Pos.X * 1920.f / Size.X;
+		//Res.X = Pos.X * 1920.f / Size.X;
 		Res.Y = Pos.Y * 1080.f / Size.Y;
+		const float NormalWidth = Size.Y*(16.f / 9.f);
+		Res.X = Pos.X * 1920.f / NormalWidth;
 	}
 	
 	return Res;

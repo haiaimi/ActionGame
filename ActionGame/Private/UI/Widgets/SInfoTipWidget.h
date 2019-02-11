@@ -13,11 +13,9 @@
 class SInfoTipWidget : public SCompoundWidget
 {
 public:
-	SLATE_BEGIN_ARGS(SInfoTipWidget):
-	_ShowPos(FMargin(960.f,540.f,0.f,0.f))
+	SLATE_BEGIN_ARGS(SInfoTipWidget)
 	{}
 	SLATE_ARGUMENT(FText, TipContent)
-	SLATE_ARGUMENT(FMargin, ShowPos)
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */

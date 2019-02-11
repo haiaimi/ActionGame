@@ -6,9 +6,12 @@
 #include "TimerManager.h"
 #include "HAIAIMIHelper.h"
 #include "UI/Styles/FActionGameStyle.h"
+#include "Engine/Engine.h"
+#include "Engine/GameViewportClient.h"
 
 using FPaddingParam = TAttribute<FMargin>;
 using FRenderTransformParam = TAttribute<TOptional<FSlateRenderTransform>>;
+const TArray<FString> AbilityButtonNames = { TEXT("人物概况"),TEXT("A"),TEXT("B"),TEXT("C") };
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHeroDetailWidget::Construct(const FArguments& InArgs)
@@ -32,16 +35,6 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 		});
 	FPaddingParam PaddingParam;
 	PaddingParam.Bind(PadingGetter);
-
-	TArray<FSimpleDelegate> AbilityButtonDelegates;
-	AbilityButtonDelegates.SetNum(3);
-	for (int32 i = 0; i < 3; ++i)
-	{
-		AbilityButtonDelegates[i].BindLambda([i, this]() {
-			if (DetailPlatform.IsValid())
-				DetailPlatform->PlayMontage(i);
-			});
-	}
 
 	ChildSlot
 	[
@@ -102,73 +95,33 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 					+SVerticalBox::Slot()
 					.FillHeight(1)
 					[
-						SNew(SHorizontalBox)
-						+SHorizontalBox::Slot()
-						.FillWidth(1.f)
-						[
-							SNew(SButton)
-							.HAlign(EHorizontalAlignment::HAlign_Center)
-							.VAlign(EVerticalAlignment::VAlign_Center)
-							.ButtonStyle(ButtonStyle)
-							[
-								SNew(STextBlock)
-								.Text(FText::FromString(FString(TEXT("英雄概况"))))
-								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-							]
-						]
-						+SHorizontalBox::Slot()
-						.FillWidth(1.f)
-						[
-							SNew(SButton)
-							.HAlign(EHorizontalAlignment::HAlign_Center)
-							.VAlign(EVerticalAlignment::VAlign_Center)
-							.ButtonStyle(ButtonStyle)
-							.OnPressed(AbilityButtonDelegates[0])
-							.OnHovered(this,&SHeroDetailWidget::ShowTips)
-							.OnUnhovered(this, &SHeroDetailWidget::CloseWidget)
-							[
-								SNew(STextBlock)
-								.Text(FText::FromString(FString(TEXT("A"))))
-								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-							]
-						]
-						+SHorizontalBox::Slot()
-						.FillWidth(1.f)
-						[
-							SNew(SButton)
-							.HAlign(EHorizontalAlignment::HAlign_Center)
-							.VAlign(EVerticalAlignment::VAlign_Center)
-							.ButtonStyle(ButtonStyle)
-							.OnPressed(AbilityButtonDelegates[1])
-							[
-								SNew(STextBlock)
-								.Text(FText::FromString(FString(TEXT("B"))))
-								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-							]
-						]
-						+SHorizontalBox::Slot()
-						.FillWidth(1.f)
-						[
-							SNew(SButton)
-							.HAlign(EHorizontalAlignment::HAlign_Center)
-							.VAlign(EVerticalAlignment::VAlign_Center)
-							.ButtonStyle(ButtonStyle)
-							.OnPressed(AbilityButtonDelegates[2])
-							[
-								SNew(STextBlock)
-								.Text(FText::FromString(FString(TEXT("C"))))
-								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-							]
-						]
+						SAssignNew(AbilityButtonContainer, SHorizontalBox)
 					]
 				]
 			]
 		]
 	];
+
+	AbilityButtons.SetNum(4);
+	for (int32 i = 0; i < 4; ++i)
+	{
+		AbilityButtonContainer->AddSlot()
+		.FillWidth(1.f)
+		[
+			SAssignNew(AbilityButtons[i], SButton)
+			.HAlign(EHorizontalAlignment::HAlign_Center)
+			.VAlign(EVerticalAlignment::VAlign_Center)
+			.ButtonStyle(ButtonStyle)
+			.OnUnhovered(this, &SHeroDetailWidget::CloseWidget)
+			[
+				SNew(STextBlock)
+				.Text(FText::FromString(AbilityButtonNames[i]))
+				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
+				.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+			]
+		];
+	}
+	
 
 	HeroButtons.SetNum(CharacterInfos.Num());
 	for (int32 i = 0; i < CharacterInfos.Num(); ++i)
@@ -299,34 +252,88 @@ void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
 		SkinButtons[0]->SetButtonStyle(ButtonSelectedStyle);
 		DetailPlatform->SetCharacterMesh(0);
 
+		
+		if (DetailPlatform.IsValid())
+		{
+			TArray<FCharacterInfo>& CharacterInfos = DetailPlatform->CharInfos;
+			TArray<FOnClicked> AbilityButtonDelegates;
+			AbilityButtonDelegates.SetNum(3);
+			for (int32 i = 0; i < 3; ++i)
+			{
+				FOnClicked AbilityButtonDelegate;
+				AbilityButtonDelegate.BindLambda([i, Index, this]() {
+					if (DetailPlatform.IsValid())
+						DetailPlatform->PlayMontage(Index, i);
+					return FReply::Handled();
+					});
+				AbilityButtons[i + 1]->SetOnClicked(AbilityButtonDelegate);
+			}
+
+			for (int32 i = 0; i < 4; ++i)
+			{
+				FSimpleDelegate AbilityButtonDelegate;
+				AbilityButtonDelegate.BindLambda([i, Index, CharacterInfos, this]() {
+					ShowTips(CharacterInfos[Index].CharName);
+					});
+				AbilityButtons[i]->SetOnHovered(AbilityButtonDelegate);
+			}
+		}
+
 		SkinButtonSequence.Play(this->AsShared());
 	}
 }
 
-void SHeroDetailWidget::ShowTips()
+void SHeroDetailWidget::ShowTips(const FText& ShowText)
 {
 	if (TipWidget.IsValid())return;
+
+	FPaddingParam::FGetter PadingGetter;
+	PadingGetter.BindLambda([&]() {
+			if(OwnerHUD.IsValid() && OwnerHUD->GetOwningPlayerController())
+			{
+				FVector2D MousePos, ViewportSize;
+				OwnerHUD->GetOwningPlayerController()->GetMousePosition(MousePos.X, MousePos.Y);
+
+				MousePos.Y -= 100.f;
+				MousePos.X += 60.f;
+				if (GEngine)
+				{
+					GEngine->GameViewport->GetViewportSize(ViewportSize);
+					const float NormalWidth = ViewportSize.Y*(16.f / 9.f);
+					if ((ViewportSize.X - MousePos.X)*1920.f / NormalWidth < 500.f)
+						MousePos.X -= 620.f*(ViewportSize.Y / 1080.f);
+				}
+				MousePos = HAIAIMIHelper::ConvertToNormalCoord(MousePos);   //获取鼠标位置
+
+				float Bottom = 0.f;
+				if (MousePos.Y + 400.f > 1080.f)
+				Bottom = 1080.f - MousePos.Y - 400.f;
+				return FMargin(MousePos.X, MousePos.Y, 0.f, Bottom);
+			}
+			return FMargin();
+		});
+	FPaddingParam PaddingParam;
+	PaddingParam.Bind(PadingGetter);
+
 	DetailOverlay->AddSlot()
+	.HAlign(EHorizontalAlignment::HAlign_Left)
+	.VAlign(EVerticalAlignment::VAlign_Top)
+	.Padding(PaddingParam)
 	[
 		SAssignNew(TipWidget, SBox)
 		.HeightOverride(400.f)
 		.WidthOverride(500.f)
-		.Padding(FMargin(1300.f,840.f,0.f,0.f))
 		[
 			SNew(SInfoTipWidget)
-			.ShowPos(FMargin(1300.f,540.f,0.f,0.f))
+			.TipContent(ShowText)
 		]
-		
 	];
-	HAIAIMIHelper::Debug_ScreenMessage(TEXT("On Horver"));
 }
 
 void SHeroDetailWidget::CloseWidget()
 {
-	HAIAIMIHelper::Debug_ScreenMessage(TEXT("On UnHorver"));
 	if (!TipWidget.IsValid())return;
 	bool bDeleted = DetailOverlay->RemoveSlot(TipWidget.ToSharedRef());
-	if (bDeleted)HAIAIMIHelper::Debug_ScreenMessage(TEXT("Has Been Deleted"));
 	TipWidget.Reset();
 }
 
