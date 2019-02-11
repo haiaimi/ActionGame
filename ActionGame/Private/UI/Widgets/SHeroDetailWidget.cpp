@@ -213,9 +213,9 @@ void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
 		{
 			FSimpleDelegate Delegate;
 
-			Delegate.BindLambda([i, this]() {
+			Delegate.BindLambda([i, Index, this]() {
 				if (DetailPlatform.IsValid())
-					DetailPlatform->SetCharacterMesh(i);
+					DetailPlatform->SetCharacterMesh(Index, i);
 				SkinButtons[i]->SetButtonStyle(ButtonSelectedStyle);
 				for (int32 j = 0; j < SkinButtons.Num(); ++j)
 				{
@@ -250,7 +250,7 @@ void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
 			];
 		}
 		SkinButtons[0]->SetButtonStyle(ButtonSelectedStyle);
-		DetailPlatform->SetCharacterMesh(0);
+		DetailPlatform->SetCharacterMesh(Index, 0);
 
 		
 		if (DetailPlatform.IsValid())

@@ -25,6 +25,12 @@ public:
 
 	void SetCurWidget(TSharedPtr<class SBaseMenuWidget> InWidget) { CurWidget = InWidget; }
 
+	void BeginMouseClicked();
+
+	void EndMouseClicked();
+
 private:
 	TSharedPtr<class SBaseMenuWidget> CurWidget;
+
+	class AHeroDetailPlatform* CurDetailPlatform;
 };
