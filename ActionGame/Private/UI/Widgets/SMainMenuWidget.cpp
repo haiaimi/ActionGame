@@ -9,20 +9,21 @@
 #include "Engine/Engine.h"
 #include "HAIAIMIHelper.h"
 #include "SSelectBoxWidget.h"
+#include "SSettingsWidget.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SMainMenuWidget::Construct(const FArguments& InArgs)
 {
 	OwnerController = InArgs._OwnerController;
 	OwnerHUD = InArgs._OwnerHUD;
-	AnimHandles.SetNum(4);
+	AnimHandles.SetNum(5);
 	TArray<TAttribute<TOptional<FSlateRenderTransform>>> RenderTransformDel;
 	TAttribute<TOptional<FSlateRenderTransform>>::FGetter TransformGetter;
-	RenderTransformDel.SetNum(4);
+	RenderTransformDel.SetNum(5);
 
 	ButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ActionGameButtonStyle"));
 
-	for (int32 i = 0; i < 4; ++i)
+	for (int32 i = 0; i < 5; ++i)
 	{
 		TransformGetter.BindLambda([i, this]() {
 			const float CurLerp = AnimHandles[i].GetLerp();
@@ -110,6 +111,30 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 					.HAlign(EHorizontalAlignment::HAlign_Center)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					.ButtonStyle(ButtonStyle)
+					.OnPressed(this, &SMainMenuWidget::GameSetting)
+					[
+						SNew(STextBlock)
+						.Text(FText::FromString(FString(TEXT("游戏设置"))))
+						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
+						.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+					]
+				]
+			]
+		]
+		+SVerticalBox::Slot()
+		[
+			SNew(SBorder)
+			.RenderTransform(RenderTransformDel[3])
+			.RenderTransformPivot(FVector2D(0.f, 1.f))
+			[
+				SNew(SBox)
+				.HeightOverride(100.f)
+				.WidthOverride(350.f)
+				[
+					SNew(SButton)
+					.HAlign(EHorizontalAlignment::HAlign_Center)
+					.VAlign(EVerticalAlignment::VAlign_Center)
+					.ButtonStyle(ButtonStyle)
 					.OnPressed(this, &SMainMenuWidget::QuitGame)
 					[
 						SNew(STextBlock)
@@ -123,7 +148,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 		+SVerticalBox::Slot()
 		[
 			SNew(SBorder)
-			.RenderTransform(RenderTransformDel[3])
+			.RenderTransform(RenderTransformDel[4])
 			.RenderTransformPivot(FVector2D(0.f, 1.f))
 			[
 				SNew(SBox)
@@ -146,17 +171,10 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 	];
 
 	/*MenuOverlay->AddSlot()
-	.HAlign(EHorizontalAlignment::HAlign_Left)
-	.VAlign(EVerticalAlignment::VAlign_Top)
-	.Padding(FMargin(960.f,540.f,0.f,0.f))
+	.HAlign(EHorizontalAlignment::HAlign_Fill)
+	.VAlign(EVerticalAlignment::VAlign_Fill)
 	[
-		SNew(SBox)
-		.HeightOverride(400.f)
-		.WidthOverride(500.f)
-		[
-			SNew(SInfoTipWidget)
-		]
-		
+		SNew(SSettingsWidget)
 	];*/
 
 	SetupAnimation();
@@ -187,7 +205,7 @@ void SMainMenuWidget::SetupAnimation()
 {
 	MenuSequence = FCurveSequence();
 	float StartTime = 0.f;
-	for (int32 i = 0; i < 4; ++i)
+	for (int32 i = 0; i < 5; ++i)
 	{
 		AnimHandles[i] = MenuSequence.AddCurve(StartTime + 0.1f * i, 0.4f, ECurveEaseFunction::QuadOut);
 	}
@@ -228,6 +246,23 @@ void SMainMenuWidget::HeroDetails()
 			OwnerController->SetCurWidget(HeroDetail);
 		}
 	}
+}
+
+void SMainMenuWidget::GameSetting()
+{
+	MenuSequence.Reverse();
+
+	if (!SettingWidget.IsValid())
+	{
+		MenuOverlay->AddSlot()
+		.HAlign(EHorizontalAlignment::HAlign_Fill)
+		.VAlign(EVerticalAlignment::VAlign_Fill)
+		[
+			SAssignNew(SettingWidget, SSettingsWidget)
+		];
+	}
+	else
+		SettingWidget->BackToShow();
 }
 
 void SMainMenuWidget::QuitGame()

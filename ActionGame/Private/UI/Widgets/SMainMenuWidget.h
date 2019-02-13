@@ -10,6 +10,7 @@
 #include "UI/MenuHUD.h"
 #include "SHeroDetailWidget.h"
 #include "SBaseMenuWidget.h"
+#include "SSettingsWidget.h"
 
 /**
  * 
@@ -38,6 +39,8 @@ private:
 
 	void HeroDetails();
 
+	void GameSetting();
+
 	void QuitGame();
 
 private:
@@ -46,6 +49,8 @@ private:
 	TSharedPtr<SVerticalBox> MenuContainer;
 
 	TSharedPtr<class SHeroDetailWidget> HeroDetail;
+
+	TSharedPtr<class SSettingsWidget> SettingWidget;
 
 	FCurveSequence MenuSequence;
 
