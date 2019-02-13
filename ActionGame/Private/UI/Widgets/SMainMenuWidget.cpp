@@ -8,6 +8,7 @@
 #include "EngineUtils.h"
 #include "Engine/Engine.h"
 #include "HAIAIMIHelper.h"
+#include "SSelectBoxWidget.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SMainMenuWidget::Construct(const FArguments& InArgs)
@@ -109,6 +110,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 					.HAlign(EHorizontalAlignment::HAlign_Center)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					.ButtonStyle(ButtonStyle)
+					.OnPressed(this, &SMainMenuWidget::QuitGame)
 					[
 						SNew(STextBlock)
 						.Text(FText::FromString(FString(TEXT("退出游戏"))))
@@ -227,6 +229,12 @@ void SMainMenuWidget::HeroDetails()
 		}
 	}
 }
-END_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
+void SMainMenuWidget::QuitGame()
+{
+	if (OwnerController.IsValid())
+		OwnerController->ConsoleCommand("quit");
+}
+
+END_SLATE_FUNCTION_BUILD_OPTIMIZATION
 

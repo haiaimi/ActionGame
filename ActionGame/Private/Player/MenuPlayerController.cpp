@@ -8,6 +8,8 @@
 #include "GameFramework/PlayerInput.h"
 #include "Engine/LocalPlayer.h"
 #include "GameActors/HeroDetailPlatform.h"
+#include "GameFramework/GameUserSettings.h"
+#include "CoreGlobals.h"
 
 AMenuPlayerController::AMenuPlayerController():
 	CurDetailPlatform(nullptr)
@@ -22,9 +24,23 @@ void AMenuPlayerController::BeginPlay()
 	SetInputMode(FInputModeGameOnly());
 	GetLocalPlayer()->ViewportClient->SetCaptureMouseOnClick(EMouseCaptureMode::CaptureDuringMouseDown);    //鼠标按下时就监听事件，不然需要双击
 	GetLocalPlayer()->ViewportClient->SetMouseLockMode(EMouseLockMode::LockAlways);
-
 	GetPawn()->SetActorHiddenInGame(true);
-	ConsoleCommand("r.SetRes 1920x1080");
+	UGameUserSettings::GetGameUserSettings()->SetAntiAliasingQuality(3);
+	UGameUserSettings::GetGameUserSettings()->SetFullscreenMode(EWindowMode::Windowed);
+	UGameUserSettings::GetGameUserSettings()->ApplySettings(false);
+	//HAIAIMIHelper::Debug_ScreenMessage(*GGameUserSettingsIni, 10.f);
+
+	/*const TCHAR* Section = TEXT("ScalabilityGroups");
+
+	if(GConfig)
+	{
+		HAIAIMIHelper::Debug_ScreenMessage(TEXT("GConfig"), 10.f);
+		GConfig->SetInt(Section, TEXT("sg.AntiAliasingQuality"), 0, GGameUserSettingsIni);
+		GConfig->Flush(false, GGameUserSettingsIni);
+
+		GConfig->SetInt(TEXT("haiaimi"), TEXT("one"), 0, GGameIni);
+		GConfig->Flush(false, GGameIni);
+	}*/
 }
 
 void AMenuPlayerController::SetupInputComponent()

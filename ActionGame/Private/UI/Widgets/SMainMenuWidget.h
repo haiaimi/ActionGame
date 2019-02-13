@@ -38,6 +38,8 @@ private:
 
 	void HeroDetails();
 
+	void QuitGame();
+
 private:
 	TSharedPtr<SOverlay> MenuOverlay;
 

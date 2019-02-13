@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(config=GameUserSettings)
 class ACTIONGAME_API AMenuPlayerController : public APlayerController
 {
 	GENERATED_BODY()
