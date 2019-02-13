@@ -3,15 +3,14 @@
 #include "SSelectBoxWidget.h"
 #include "SlateOptMacros.h"
 #include "UI/Styles/FActionGameStyle.h"
-#include "UI/Styles/UIAssetWidgetStyle.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SSelectBoxWidget::Construct(const FArguments& InArgs)
 {
-	ButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ActionGameButtonStyle"));
-	UIStyle = &FActionGameStyle::Get().GetWidgetStyle<FUIAssetStyle>(TEXT("ActionGameUIAssetStyle"));
+	BackwardButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("BackwardButtonStyle"));
+	ForwardButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ForwardButtonStyle"));
 	FSlateBrush* BorderBackground = new FSlateBrush();
-	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.2f));
+	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.5f));
 
 	SelectContent = InArgs._SelectContent;
 	if (InArgs._CurSelection < SelectContent.Num())
@@ -24,42 +23,43 @@ void SSelectBoxWidget::Construct(const FArguments& InArgs)
 	.HAlign(EHorizontalAlignment::HAlign_Fill)
 	.VAlign(EVerticalAlignment::VAlign_Fill)
 	[
-		SNew(SHorizontalBox)
-		+SHorizontalBox::Slot()
-		.AutoWidth()
+		SNew(SBorder)
+		.BorderImage(BorderBackground)
 		[
-			SAssignNew(LeftButton, SButton)
-			.ButtonStyle(ButtonStyle)
-			.OnPressed(this, &SSelectBoxWidget::ToBack)
-			.IsEnabled(CurSelection != 0)
+			SNew(SHorizontalBox)
+			+SHorizontalBox::Slot()
+			.FillWidth(1)
+			.HAlign(EHorizontalAlignment::HAlign_Left)
+			.VAlign(EVerticalAlignment::VAlign_Center)
 			[
-				SNew(SImage)
-				.Image(&UIStyle->ArrowBackward)
+				SNew(STextBlock)
+				.Text(InArgs._SelectName)
+				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),22))
 			]
-		]
-		+SHorizontalBox::Slot()
-		.FillWidth(1)
-		[
-			SNew(SBorder)
+			+SHorizontalBox::Slot()
+			.AutoWidth()
+			[
+				SAssignNew(LeftButton, SButton)
+				.ButtonStyle(BackwardButtonStyle)
+				.OnPressed(this, &SSelectBoxWidget::ToBack)
+				.IsEnabled(CurSelection != 0)
+			]
+			+SHorizontalBox::Slot()
+			.FillWidth(1)
 			.HAlign(EHorizontalAlignment::HAlign_Center)
 			.VAlign(EVerticalAlignment::VAlign_Center)
-			.BorderImage(BorderBackground)
 			[
 				SAssignNew(SelectionText, STextBlock)
 				.Text(InitContent)
-				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
+				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),22))
 			]
-		]
-		+SHorizontalBox::Slot()
-		.AutoWidth()
-		[
-			SAssignNew(RightButton, SButton)
-			.ButtonStyle(ButtonStyle)
-			.OnPressed(this, &SSelectBoxWidget::ToForward)
-			.IsEnabled(CurSelection != SelectContent.Num() - 1)
+			+SHorizontalBox::Slot()
+			.AutoWidth()
 			[
-				SNew(SImage)
-				.Image(&UIStyle->ArrowForward)
+				SAssignNew(RightButton, SButton)
+				.ButtonStyle(ForwardButtonStyle)
+				.OnPressed(this, &SSelectBoxWidget::ToForward)
+				.IsEnabled(CurSelection != SelectContent.Num() - 1)
 			]
 		]
 	];

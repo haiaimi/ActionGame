@@ -17,6 +17,7 @@ public:
 
 	SLATE_BEGIN_ARGS(SSelectBoxWidget)
 	{}
+	SLATE_ARGUMENT(FText, SelectName)
 	SLATE_ARGUMENT(TArray<FString>, SelectContent)
 	SLATE_ARGUMENT(int32, CurSelection)
 	SLATE_END_ARGS()
@@ -30,9 +31,9 @@ public:
 
 	void ToForward();
 private:
-	const struct FButtonStyle* ButtonStyle;
+	const struct FButtonStyle* BackwardButtonStyle;
 
-	const struct FUIAssetStyle* UIStyle;
+	const struct FButtonStyle* ForwardButtonStyle;
 
 	TSharedPtr<STextBlock> SelectionText;
 
