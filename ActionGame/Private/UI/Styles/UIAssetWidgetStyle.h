@@ -20,10 +20,8 @@ struct FUIAssetStyle : public FSlateWidgetStyle
 	virtual ~FUIAssetStyle();
 
 	UPROPERTY(EditAnywhere, Category = Appearance)
-	struct FSlateBrush  ArrowBackward;
+	struct FSlateBrush DividingLine;
 
-	UPROPERTY(EditAnywhere, Category = Appearance)
-	struct FSlateBrush  ArrowForward;
 
 	// FSlateWidgetStyle
 	virtual void GetResources(TArray<const FSlateBrush*>& OutBrushes) const override;

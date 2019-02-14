@@ -11,12 +11,15 @@
 #include "SSelectBoxWidget.h"
 #include "SSettingsWidget.h"
 
+using FPaddingParam = TAttribute<FMargin>;
+
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SMainMenuWidget::Construct(const FArguments& InArgs)
 {
 	OwnerController = InArgs._OwnerController;
 	OwnerHUD = InArgs._OwnerHUD;
 	AnimHandles.SetNum(5);
+	ButtonBorders.SetNum(5);
 	TArray<TAttribute<TOptional<FSlateRenderTransform>>> RenderTransformDel;
 	TAttribute<TOptional<FSlateRenderTransform>>::FGetter TransformGetter;
 	RenderTransformDel.SetNum(5);
@@ -28,7 +31,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 		TransformGetter.BindLambda([i, this]() {
 			const float CurLerp = AnimHandles[i].GetLerp();
 			FShear2D Shear(FVector2D(15.f, 270.f*CurLerp-270.f)/90.f);
-			MenuContainer->SetRenderOpacity(CurLerp);
+			ButtonBorders[i]->SetRenderOpacity(CurLerp);
 			return FSlateRenderTransform(Shear, FVector2D(40.f + i * 40.f, 100.f));
 		});
 		
@@ -49,10 +52,9 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 	.VAlign(EVerticalAlignment::VAlign_Top)
 	[
 		SAssignNew(MenuContainer, SVerticalBox)
-		.RenderOpacity(0.f)
 		+SVerticalBox::Slot()
 		[
-			SNew(SBorder)
+			SAssignNew(ButtonBorders[0], SBorder)
 			.RenderTransform(RenderTransformDel[0])
 			.RenderTransformPivot(FVector2D(0.f, 1.f))
 			[
@@ -75,7 +77,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 		]
 		+SVerticalBox::Slot()
 		[
-			SNew(SBorder)
+			SAssignNew(ButtonBorders[1], SBorder)
 			.RenderTransform(RenderTransformDel[1])
 			.RenderTransformPivot(FVector2D(0.f, 1.f))
 			[
@@ -99,7 +101,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 		]
 		+SVerticalBox::Slot()
 		[
-			SNew(SBorder)
+			SAssignNew(ButtonBorders[2], SBorder)
 			.RenderTransform(RenderTransformDel[2])
 			.RenderTransformPivot(FVector2D(0.f, 1.f))
 			[
@@ -123,7 +125,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 		]
 		+SVerticalBox::Slot()
 		[
-			SNew(SBorder)
+			SAssignNew(ButtonBorders[3], SBorder)
 			.RenderTransform(RenderTransformDel[3])
 			.RenderTransformPivot(FVector2D(0.f, 1.f))
 			[
@@ -147,7 +149,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 		]
 		+SVerticalBox::Slot()
 		[
-			SNew(SBorder)
+			SAssignNew(ButtonBorders[4], SBorder)
 			.RenderTransform(RenderTransformDel[4])
 			.RenderTransformPivot(FVector2D(0.f, 1.f))
 			[
@@ -207,9 +209,8 @@ void SMainMenuWidget::SetupAnimation()
 	float StartTime = 0.f;
 	for (int32 i = 0; i < 5; ++i)
 	{
-		AnimHandles[i] = MenuSequence.AddCurve(StartTime + 0.1f * i, 0.4f, ECurveEaseFunction::QuadOut);
+		AnimHandles[i] = MenuSequence.AddCurve(StartTime + 0.1f * i, 0.3f, ECurveEaseFunction::QuadOut);
 	}
-
 	MenuSequence.Play(this->AsShared());
 }
 
@@ -254,15 +255,35 @@ void SMainMenuWidget::GameSetting()
 
 	if (!SettingWidget.IsValid())
 	{
+		FPaddingParam ::FGetter TransformGetter;
+		TransformGetter.BindLambda([&]() {
+			if (!SettingWidget.IsValid())return FMargin();
+			const float CurLerp = SettingWidget->GetCurAnimLerp();
+			SettingWidget->SetRenderOpacity(CurLerp);
+			float Bottom = 400.f - 400.f*CurLerp;
+			return FMargin(1980.f - 1980.f*CurLerp, 0.f, -1980.f + 1980.f*CurLerp, 0.f);
+			});
+		FPaddingParam  TransformParam;
+		TransformParam.Bind(TransformGetter);
+
 		MenuOverlay->AddSlot()
-		.HAlign(EHorizontalAlignment::HAlign_Fill)
-		.VAlign(EVerticalAlignment::VAlign_Fill)
+		.HAlign(EHorizontalAlignment::HAlign_Left)
+		.VAlign(EVerticalAlignment::VAlign_Top)
 		[
-			SAssignNew(SettingWidget, SSettingsWidget)
+			SAssignNew(SettingsBox, SBox)
+			.HeightOverride(1080)
+			.WidthOverride(1920)
+			.Padding(TransformParam)
+			[
+				SAssignNew(SettingWidget, SSettingsWidget)
+				.OwnerHUD(OwnerHUD.IsValid() ? OwnerHUD : nullptr)
+			]
 		];
 	}
 	else
 		SettingWidget->BackToShow();
+	if (SettingWidget.IsValid())
+		OwnerController->SetCurWidget(SettingWidget);
 }
 
 void SMainMenuWidget::QuitGame()

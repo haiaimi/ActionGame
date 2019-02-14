@@ -28,13 +28,13 @@ void SSelectBoxWidget::Construct(const FArguments& InArgs)
 		[
 			SNew(SHorizontalBox)
 			+SHorizontalBox::Slot()
-			.FillWidth(1)
+			.FillWidth(2)
 			.HAlign(EHorizontalAlignment::HAlign_Left)
 			.VAlign(EVerticalAlignment::VAlign_Center)
 			[
 				SNew(STextBlock)
 				.Text(InArgs._SelectName)
-				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),22))
+				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),18))
 			]
 			+SHorizontalBox::Slot()
 			.AutoWidth()
@@ -51,7 +51,7 @@ void SSelectBoxWidget::Construct(const FArguments& InArgs)
 			[
 				SAssignNew(SelectionText, STextBlock)
 				.Text(InitContent)
-				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),22))
+				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),18))
 			]
 			+SHorizontalBox::Slot()
 			.AutoWidth()

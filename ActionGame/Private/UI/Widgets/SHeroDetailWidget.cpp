@@ -177,10 +177,10 @@ void SHeroDetailWidget::BackToShow()
 void SHeroDetailWidget::SetupAnimation()
 {
 	AnimSequence = FCurveSequence();
-	AnimHandle = AnimSequence.AddCurve(0.f, 0.5f, ECurveEaseFunction::QuadOut);
+	AnimHandle = AnimSequence.AddCurve(0.f, 0.5f, ECurveEaseFunction::CubicOut);
 	for (int32 i = 0; i < SkinButtonHandles.Num(); ++i)
 	{
-		SkinButtonHandles[i] = SkinButtonSequence.AddCurve(0.05f*i, 0.05f*i+0.05f, ECurveEaseFunction::QuadOut);
+		SkinButtonHandles[i] = SkinButtonSequence.AddCurve(0.05f*i, 0.05f*i+0.05f, ECurveEaseFunction::CubicOut);
 	}
 
 	AnimSequence.Play(this->AsShared());

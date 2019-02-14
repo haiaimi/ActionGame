@@ -50,6 +50,10 @@ private:
 
 	TSharedPtr<class SHeroDetailWidget> HeroDetail;
 
+	TArray<TSharedPtr<class SBorder>> ButtonBorders;
+
+	TSharedPtr<class SBox> SettingsBox;
+
 	TSharedPtr<class SSettingsWidget> SettingWidget;
 
 	FCurveSequence MenuSequence;
