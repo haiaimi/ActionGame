@@ -7,6 +7,18 @@
 #include "SSelectBoxWidget.h"
 #include "SMainMenuWidget.h"
 #include "SDividingLineWidget.h"
+#include "GameFramework/GameUserSettings.h"
+
+#define GETGRAPHICLEVEL(EffectName)\
+	UGameUserSettings::GetGameUserSettings()->Get##EffectName##Quality()
+
+#define SETGRAPHICLEVEL(EffectName)\
+	SSelectBoxWidget::FExecuteSelection EffectName;\
+	EffectName##.BindLambda([&](float level) {\
+			UGameUserSettings::GetGameUserSettings()->SetAntiAliasingQuality(level);\
+			UGameUserSettings::GetGameUserSettings()->ApplySettings(false);\
+			GConfig->Flush(false, GGameUserSettingsIni);\
+		});
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SSettingsWidget::Construct(const FArguments& InArgs)
@@ -18,6 +30,8 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 	TagButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("TagButtonStyle"));
 	FSlateBrush* BorderBackground = new FSlateBrush();
 	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.2f));
+
+	SETGRAPHICLEVEL(SelectionDelegate)
 
 	TArray<FString> TempText = { TEXT("Low"),TEXT("Medium"),TEXT("High"),TEXT("Ultra") };
 	ChildSlot
@@ -93,7 +107,8 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 							SNew(SSelectBoxWidget)
 							.SelectName(FText::FromString(TEXT("抗锯齿")))
 							.SelectContent(TempText)
-							.CurSelection(2.f)
+							.CurSelection(GETGRAPHICLEVEL(AntiAliasing))
+							.ExecuteSelection(SelectionDelegate)
 						]
 						+SScrollBox::Slot()
 						.Padding(1.f)

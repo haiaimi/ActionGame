@@ -25,9 +25,9 @@ void AMenuPlayerController::BeginPlay()
 	GetLocalPlayer()->ViewportClient->SetCaptureMouseOnClick(EMouseCaptureMode::CaptureDuringMouseDown);    //鼠标按下时就监听事件，不然需要双击
 	GetLocalPlayer()->ViewportClient->SetMouseLockMode(EMouseLockMode::LockAlways);
 	GetPawn()->SetActorHiddenInGame(true);
-	UGameUserSettings::GetGameUserSettings()->SetAntiAliasingQuality(3);
+	/*UGameUserSettings::GetGameUserSettings()->SetAntiAliasingQuality(3);
 	UGameUserSettings::GetGameUserSettings()->SetFullscreenMode(EWindowMode::Windowed);
-	UGameUserSettings::GetGameUserSettings()->ApplySettings(false);
+	UGameUserSettings::GetGameUserSettings()->ApplySettings(false);*/
 	//HAIAIMIHelper::Debug_ScreenMessage(*GGameUserSettingsIni, 10.f);
 
 	/*const TCHAR* Section = TEXT("ScalabilityGroups");

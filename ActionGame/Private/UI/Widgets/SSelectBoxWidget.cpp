@@ -7,6 +7,7 @@
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SSelectBoxWidget::Construct(const FArguments& InArgs)
 {
+	ExecuteSelection = InArgs._ExecuteSelection;
 	BackwardButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("BackwardButtonStyle"));
 	ForwardButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ForwardButtonStyle"));
 	FSlateBrush* BorderBackground = new FSlateBrush();

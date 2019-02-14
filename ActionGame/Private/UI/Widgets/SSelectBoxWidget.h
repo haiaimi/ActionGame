@@ -20,6 +20,7 @@ public:
 	SLATE_ARGUMENT(FText, SelectName)
 	SLATE_ARGUMENT(TArray<FString>, SelectContent)
 	SLATE_ARGUMENT(int32, CurSelection)
+	SLATE_EVENT(FExecuteSelection, ExecuteSelection)
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */
