@@ -37,6 +37,8 @@ private:
 	/**…Ë÷√∂Øª≠*/
 	void SetupAnimation();
 
+	void StartGame();
+
 	void HeroDetails();
 
 	void GameSetting();

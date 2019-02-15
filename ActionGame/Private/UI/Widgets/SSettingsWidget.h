@@ -8,16 +8,20 @@
 #include "Widgets/SCompoundWidget.h"
 #include "SBaseMenuWidget.h"
 #include "MenuHUD.h"
+#include "MenuPlayerController.h"
 
 /**
  * 
  */
 class SSettingsWidget : public SBaseMenuWidget
 {
+	using FRenderTransformParam = TAttribute<TOptional<FSlateRenderTransform>>;
+
 public:
 	SLATE_BEGIN_ARGS(SSettingsWidget)
 	{}
 	SLATE_ARGUMENT(TWeakObjectPtr<AMenuHUD>, OwnerHUD)
+	SLATE_ARGUMENT(TWeakObjectPtr<class AMenuPlayerController>, OwnerController)
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */
@@ -38,9 +42,29 @@ private:
 
 	const struct FButtonStyle* TagButtonStyle;
 
+	TArray<TSharedPtr<SButton>> SettingTagButtons;
+
+	TSharedPtr<SScrollBox> SettingList;
+
 	FCurveSequence AnimSequence;
 
 	FCurveHandle AnimHandle;
 
+	/**选项按键的动画*/
+	TArray<FCurveHandle> SettingButtonHandles;
+
+	TArray<FRenderTransformParam> ButtonTransformParams;
+
 	TWeakObjectPtr<AMenuHUD> OwnerHUD;
+
+	TWeakObjectPtr<class AMenuPlayerController> OwnerController;
+
+private:
+	/**设置按键高亮*/
+	void SetTagButtonHighlight(int32 ButtonIndex);
+
+	void ShowGraphicSettingList();
+
+	/**显示操作设置列表*/
+	void ShowOperationSettingList();
 };

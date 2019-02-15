@@ -10,6 +10,7 @@
 #include "HAIAIMIHelper.h"
 #include "SSelectBoxWidget.h"
 #include "SSettingsWidget.h"
+#include "Kismet/GameplayStatics.h"
 
 using FPaddingParam = TAttribute<FMargin>;
 
@@ -66,6 +67,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 					.HAlign(EHorizontalAlignment::HAlign_Center)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					.ButtonStyle(ButtonStyle)
+					.OnPressed(this, &SMainMenuWidget::StartGame)
 					[
 						SNew(STextBlock)
 						.Text(FText::FromString(FString(TEXT("开始游戏"))))
@@ -214,6 +216,12 @@ void SMainMenuWidget::SetupAnimation()
 	MenuSequence.Play(this->AsShared());
 }
 
+void SMainMenuWidget::StartGame()
+{
+	if (OwnerController.IsValid())
+		UGameplayStatics::OpenLevel(OwnerController.Get(), TEXT("/Game/GameLevels/GameMap"));
+}
+
 void SMainMenuWidget::HeroDetails()
 {
 	MenuSequence.Reverse();
@@ -277,6 +285,7 @@ void SMainMenuWidget::GameSetting()
 			[
 				SAssignNew(SettingWidget, SSettingsWidget)
 				.OwnerHUD(OwnerHUD.IsValid() ? OwnerHUD : nullptr)
+				.OwnerController(OwnerController.IsValid() ? OwnerController : nullptr)
 			]
 		];
 	}

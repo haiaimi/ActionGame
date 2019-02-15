@@ -18,7 +18,7 @@ void SDividingLineWidget::Construct(const FArguments& InArgs)
 			SNew(SImage)
 			.Image(&UIStyle->DividingLine)
 			.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,0.7f)))
-			.RenderTransform(FSlateRenderTransform(FScale2D(1.7f, 0.7f)))
+			.RenderTransform(FSlateRenderTransform(FScale2D(1.7f, 0.35f)))
 			.RenderTransformPivot(FVector2D(0.5f,0.5f))
 		]
 		+SHorizontalBox::Slot()
@@ -28,7 +28,7 @@ void SDividingLineWidget::Construct(const FArguments& InArgs)
 		[
 			SNew(STextBlock)
 			.Text(InArgs._CategoryName)
-			.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),13))
+			.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),22))
 			.ColorAndOpacity(FSlateColor(FLinearColor(1.f, 1.f, 1.f, 0.5f)))
 		]
 		+SHorizontalBox::Slot()
@@ -37,7 +37,7 @@ void SDividingLineWidget::Construct(const FArguments& InArgs)
 			SNew(SImage)
 			.Image(&UIStyle->DividingLine)
 			.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,0.7f)))
-			.RenderTransform(FSlateRenderTransform(FScale2D(1.7f, 0.7f)))
+			.RenderTransform(FSlateRenderTransform(FScale2D(1.7f, 0.35f)))
 			.RenderTransformPivot(FVector2D(0.5f,0.5f))
 		]
 	];
