@@ -8,24 +8,38 @@ BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SSelectBoxWidget::Construct(const FArguments& InArgs)
 {
 	ExecuteSelection = InArgs._ExecuteSelection;
+	SelectBoxButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("SelectBoxButtonStyle"));
 	BackwardButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("BackwardButtonStyle"));
 	ForwardButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ForwardButtonStyle"));
-	FSlateBrush* BorderBackground = new FSlateBrush();
-	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.5f));
 
 	SelectContent = InArgs._SelectContent;
+	SelectionOnHovered = InArgs._SelectionOnHovered;
+
 	if (InArgs._CurSelection < SelectContent.Num())
 		CurSelection = InArgs._CurSelection;
 	else
 		CurSelection = 0;
 	FText InitContent = SelectContent.Num() == 0 ? FText::FromString(TEXT("Null Content")) : FText::FromString(SelectContent[CurSelection]);
-
+	//SetColorAndOpacity()
 	ChildSlot
 	.HAlign(EHorizontalAlignment::HAlign_Fill)
 	.VAlign(EVerticalAlignment::VAlign_Fill)
 	[
-		SNew(SBorder)
-		.BorderImage(BorderBackground)
+		SNew(SButton)
+		.ButtonStyle(SelectBoxButtonStyle)
+		.OnHovered_Lambda([&]() {
+			if (SelectionName.IsValid())
+				SelectionName->SetColorAndOpacity(FSlateColor(FLinearColor(0.f, 0.f, 0.f, 1.f)));
+			if (SelectionText.IsValid())
+				SelectionText->SetColorAndOpacity(FSlateColor(FLinearColor(0.f, 0.f, 0.f, 1.f)));
+			SelectionOnHovered.ExecuteIfBound();
+			})
+		.OnUnhovered_Lambda([&]() {
+			if (SelectionName.IsValid())
+				SelectionName->SetColorAndOpacity(FSlateColor(FLinearColor(1.f, 1.f, 1.f, 1.f)));
+			if (SelectionText.IsValid())
+				SelectionText->SetColorAndOpacity(FSlateColor(FLinearColor(1.f, 1.f, 1.f, 1.f)));
+			})
 		[
 			SNew(SHorizontalBox)
 			+SHorizontalBox::Slot()
@@ -33,9 +47,10 @@ void SSelectBoxWidget::Construct(const FArguments& InArgs)
 			.HAlign(EHorizontalAlignment::HAlign_Left)
 			.VAlign(EVerticalAlignment::VAlign_Center)
 			[
-				SNew(STextBlock)
+				SAssignNew(SelectionName, STextBlock)
 				.Text(InArgs._SelectName)
 				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),18))
+				.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 			]
 			+SHorizontalBox::Slot()
 			.AutoWidth()
@@ -53,6 +68,7 @@ void SSelectBoxWidget::Construct(const FArguments& InArgs)
 				SAssignNew(SelectionText, STextBlock)
 				.Text(InitContent)
 				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),18))
+				.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 			]
 			+SHorizontalBox::Slot()
 			.AutoWidth()

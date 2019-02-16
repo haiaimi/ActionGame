@@ -42,9 +42,15 @@ private:
 
 	const struct FButtonStyle* TagButtonStyle;
 
+	const struct FButtonStyle* ApplySettingButtonStyle;
+
 	TArray<TSharedPtr<SButton>> SettingTagButtons;
 
 	TSharedPtr<SScrollBox> SettingList;
+	
+	TSharedPtr<STextBlock> SettingTitle;
+
+	TSharedPtr<STextBlock> SettingDetails;
 
 	FCurveSequence AnimSequence;
 
@@ -59,6 +65,10 @@ private:
 
 	TWeakObjectPtr<class AMenuPlayerController> OwnerController;
 
+	FIntPoint NewResolution;
+
+	EWindowMode::Type NewFullscreenMode;
+
 private:
 	/**设置按键高亮*/
 	void SetTagButtonHighlight(int32 ButtonIndex);
@@ -67,4 +77,6 @@ private:
 
 	/**显示操作设置列表*/
 	void ShowOperationSettingList();
+
+	void ClearScrollBox();
 };

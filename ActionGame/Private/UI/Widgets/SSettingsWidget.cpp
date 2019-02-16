@@ -42,9 +42,12 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 	using FPaddingParam = TAttribute<FMargin>;
 	OwnerHUD = InArgs._OwnerHUD;
 	OwnerController = InArgs._OwnerController;
+	NewResolution = UGameUserSettings::GetGameUserSettings()->GetScreenResolution();
+	NewFullscreenMode = UGameUserSettings::GetGameUserSettings()->GetFullscreenMode();
 	ButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ActionGameButtonStyle"));
 	BackButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("BackButtonStyle"));
 	TagButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("TagButtonStyle"));
+	ApplySettingButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ApplySettingButtonStyle"));
 	FSlateBrush* BorderBackground = new FSlateBrush();
 	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.2f));
 	SettingTagButtons.SetNum(2);
@@ -133,18 +136,38 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 					[
 						SAssignNew(SettingList, SScrollBox)
 						.ScrollBarAlwaysVisible(true)
+
 					]
-					+SHorizontalBox::Slot()
+					+ SHorizontalBox::Slot()
 					.FillWidth(1.f)
-					.HAlign(EHorizontalAlignment::HAlign_Center)
-					.VAlign(EVerticalAlignment::VAlign_Center)
+					.HAlign(EHorizontalAlignment::HAlign_Fill)
+					.VAlign(EVerticalAlignment::VAlign_Fill)
 					[
-						SNew(STextBlock)
-						.AutoWrapText(true)
-						.WrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping)
-						.Text(FText::FromString(TEXT("content content content content content content content content ...")))
-						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),15))
-						.ColorAndOpacity(FSlateColor(FLinearColor(0.f,0.f,0.f,1.f)))
+						SNew(SVerticalBox)
+						+SVerticalBox::Slot()
+						.FillHeight(2)
+						.HAlign(EHorizontalAlignment::HAlign_Fill)
+						.VAlign(EVerticalAlignment::VAlign_Center)
+						[
+							SAssignNew(SettingTitle, STextBlock)
+							.AutoWrapText(true)
+							.Justification(ETextJustify::Center)
+							.WrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping)
+							.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),40))
+							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+						]
+						+SVerticalBox::Slot()
+						.FillHeight(3)
+						.HAlign(EHorizontalAlignment::HAlign_Fill)
+						.VAlign(EVerticalAlignment::VAlign_Top)
+						[
+							SAssignNew(SettingDetails, STextBlock)
+							.AutoWrapText(true)
+							.Justification(ETextJustify::Center)
+							.WrappingPolicy(ETextWrappingPolicy::AllowPerCharacterWrapping)
+							.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),20))
+							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+						]
 					]
 				]
 				+SVerticalBox::Slot()
@@ -152,17 +175,50 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 				[
 					SNew(SHorizontalBox)
 					+SHorizontalBox::Slot()
-					.FillWidth(1.f)
+					.AutoWidth()
 					[
-						SNew(SButton)
-						.OnPressed(this, &SSettingsWidget::BackToPrevious)
-						.ButtonStyle(BackButtonStyle)
-						.RenderTransform(FSlateRenderTransform(FVector2D(-100.f, 0.f)))
+						SNew(SBox)
+						.WidthOverride(100.f)
+						[
+							SNew(SButton)
+							.OnPressed(this, &SSettingsWidget::BackToPrevious)
+							.ButtonStyle(BackButtonStyle)
+							.RenderTransform(FSlateRenderTransform(FVector2D(-100.f, 0.f)))
+						]
 					]
 					+SHorizontalBox::Slot()
-					.FillWidth(15.f)
+					.AutoWidth()
 					[
-						SNew(SBorder)
+						SNew(SBox)
+						.WidthOverride(200.f)
+						.Padding(30)
+						[
+							SNew(SButton)
+							.HAlign(EHorizontalAlignment::HAlign_Center)
+							.VAlign(EVerticalAlignment::VAlign_Center)
+							.ButtonStyle(ApplySettingButtonStyle)
+							.Visibility_Lambda([&]() {
+									if (NewResolution == UGameUserSettings::GetGameUserSettings()->GetScreenResolution() &&
+										NewFullscreenMode == UGameUserSettings::GetGameUserSettings()->GetFullscreenMode())return EVisibility::Hidden;
+									return EVisibility::Visible;
+								})
+							.IsEnabled_Lambda([&]() {
+									if (NewResolution == UGameUserSettings::GetGameUserSettings()->GetScreenResolution() &&
+										NewFullscreenMode == UGameUserSettings::GetGameUserSettings()->GetFullscreenMode())return false;
+									return true;
+								})
+							.OnPressed_Lambda([&]() {
+									UGameUserSettings::GetGameUserSettings()->SetScreenResolution(NewResolution);
+									UGameUserSettings::GetGameUserSettings()->SetFullscreenMode(NewFullscreenMode);
+									UGameUserSettings::GetGameUserSettings()->ApplySettings(false);
+								})
+							[
+								SNew(STextBlock)
+								.Text(FText::FromString(TEXT("应用更改")))
+								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),24))
+								//.ColorAndOpacity_Lambda()
+							]
+						]
 					]
 				]
 			]
@@ -179,12 +235,12 @@ void SSettingsWidget::SetupAnimation()
 	AnimHandle = AnimSequence.AddCurve(0.f, 0.5f, ECurveEaseFunction::CubicOut);
 	for (int32 i = 0; i < 15; ++i)
 	{
-		SettingButtonHandles[i] = AnimSequence.AddCurve(0.4f + i * 0.08f, 0.08f*i, ECurveEaseFunction::CubicOut);
+		SettingButtonHandles[i] = AnimSequence.AddCurve(0.4f + i * 0.05f, 0.04f*i, ECurveEaseFunction::CubicOut);
 
 		FRenderTransformParam::FGetter TransformGetter;
 		TransformGetter.BindLambda([i,this]() {
 			const float CurLerp = SettingButtonHandles[i].GetLerp();
-			return FSlateRenderTransform(FVector2D(0.f, (-60.f - i * 60.f)*(1 - CurLerp)));
+			return FSlateRenderTransform(FVector2D(0.f, (-80.f - i * 60.f)*(1 - CurLerp)));
 			});
 
 		ButtonTransformParams[i].Bind(TransformGetter);
@@ -195,6 +251,7 @@ void SSettingsWidget::SetupAnimation()
 
 void SSettingsWidget::BackToPrevious()
 {
+	ClearScrollBox();
 	AnimSequence.Play(this->AsShared(), false, 0.5f);
 	AnimSequence.Reverse();
 	
@@ -208,6 +265,7 @@ void SSettingsWidget::BackToPrevious()
 void SSettingsWidget::BackToShow()
 {
 	AnimSequence.Reverse();
+	ShowGraphicSettingList();
 }
 
 void SSettingsWidget::SetTagButtonHighlight(int32 ButtonIndex)
@@ -225,8 +283,11 @@ void SSettingsWidget::ShowGraphicSettingList()
 {
 	if(SettingList.IsValid())
 	{
+		SettingTitle->SetText(FText::FromString(TEXT("画面")));
+		SettingDetails->SetText(FText::FromString(TEXT("输出画面选项")));
+
 		SetTagButtonHighlight(0);
-		SettingList->ClearChildren();
+		ClearScrollBox();
 		int32 AnimIndex = 0;
 
 		SETGRAPHICLEVEL(AntiAliasing)
@@ -276,10 +337,12 @@ void SSettingsWidget::ShowGraphicSettingList()
 			.SelectContent(FullScreenModeText)
 			.CurSelection((int32)UGameUserSettings::GetGameUserSettings()->GetFullscreenMode())
 			.ExecuteSelection_Lambda([&](float level) {
-				UGameUserSettings::GetGameUserSettings()->SetFullscreenMode((EWindowMode::Type)((int32)level));
-				UGameUserSettings::GetGameUserSettings()->ApplySettings(false);
-				GConfig->Flush(false, GGameUserSettingsIni);
-			})
+				NewFullscreenMode = (EWindowMode::Type)((int32)level);
+				})
+			.SelectionOnHovered_Lambda([&]() {
+				SettingTitle->SetText((FText::FromString(TEXT("全屏模式"))));
+				SettingDetails->SetText(FText::FromString(TEXT("游戏在显示器上的显示模式")));
+				})
 		];
 
 		int32 ResIndex = 0;
@@ -294,8 +357,11 @@ void SSettingsWidget::ShowGraphicSettingList()
 			.SelectContent(ResolutionText)
 			.CurSelection(ResIndex != -1 ? ResIndex : 1)
 			.ExecuteSelection_Lambda([&](float level) {
-				UGameUserSettings::GetGameUserSettings()->SetScreenResolution(Resolutions[(int32)level]);
-				UGameUserSettings::GetGameUserSettings()->ApplySettings(false);
+				NewResolution = Resolutions[(int32)level];
+				})
+			.SelectionOnHovered_Lambda([&]() {
+				SettingTitle->SetText((FText::FromString(TEXT("全屏分辨率"))));
+				SettingDetails->SetText(FText::FromString(TEXT("显卡输出分辨率，越高画面越清晰，但是会影响性能，玩家要做好权衡")));
 				})
 		];
 
@@ -312,6 +378,10 @@ void SSettingsWidget::ShowGraphicSettingList()
 				UGameUserSettings::GetGameUserSettings()->ApplySettings(false);
 				GConfig->Flush(false, GGameUserSettingsIni);
 			})
+			.SelectionOnHovered_Lambda([&]() {
+				SettingTitle->SetText((FText::FromString(TEXT("垂直同步"))));
+				SettingDetails->SetText(FText::FromString(TEXT("显卡输出显示器的固定帧率，可以缓解画面撕裂，但是会造成输入延迟")));
+				})
 		];
 
 		int32 FrameLimitIndex = 0;
@@ -331,6 +401,10 @@ void SSettingsWidget::ShowGraphicSettingList()
 				GConfig->Flush(false, GGameUserSettingsIni);
 			})
 			.IsEnabled_Lambda([&]() { return !UGameUserSettings::GetGameUserSettings()->IsVSyncEnabled(); })
+			.SelectionOnHovered_Lambda([&]() {
+				SettingTitle->SetText((FText::FromString(TEXT("最大帧率"))));
+				SettingDetails->SetText(FText::FromString(TEXT("显卡输出的最高帧率，越高越流畅")));
+				})
 		];
 
 
@@ -353,6 +427,10 @@ void SSettingsWidget::ShowGraphicSettingList()
 				if (OwnerController.IsValid())
 					OwnerController->ConsoleCommand(FString::Printf(TEXT("r.MotionBlurQuality %d"), MotionBlurLevel));
 			})
+			.SelectionOnHovered_Lambda([&]() {
+				SettingTitle->SetText((FText::FromString(TEXT("动态模糊"))));
+				SettingDetails->SetText(FText::FromString(TEXT("帧间加入模糊效果，可以缓解帧数低时的卡顿感，帧数高不需要打开")));
+				})
 		];
 
 		SettingList->AddSlot()
@@ -372,6 +450,10 @@ void SSettingsWidget::ShowGraphicSettingList()
 			.SelectContent(GraphicLevelText)
 			.CurSelection(GETGRAPHICLEVEL(AntiAliasing))
 			.ExecuteSelection(AntiAliasing)
+			.SelectionOnHovered_Lambda([&]() {
+				SettingTitle->SetText((FText::FromString(TEXT("抗锯齿"))));
+				SettingDetails->SetText(FText::FromString(TEXT("减少画面锯齿感，提升画面观感，使画面更加柔和")));
+				})
 		];
 
 		SettingList->AddSlot()
@@ -383,6 +465,10 @@ void SSettingsWidget::ShowGraphicSettingList()
 			.SelectContent(GraphicLevelText)
 			.CurSelection(GETGRAPHICLEVEL(Shadow))
 			.ExecuteSelection(Shadow)
+			.SelectionOnHovered_Lambda([&]() {
+				SettingTitle->SetText((FText::FromString(TEXT("阴影质量"))));
+				SettingDetails->SetText(FText::FromString(TEXT("阴影渲染质量，越高效果越真实，也消耗性能")));
+				})
 		];
 
 		SettingList->AddSlot()
@@ -394,6 +480,10 @@ void SSettingsWidget::ShowGraphicSettingList()
 			.SelectContent(GraphicLevelText)
 			.CurSelection(GETGRAPHICLEVEL(PostProcessing))
 			.ExecuteSelection(PostProcessing)
+			.SelectionOnHovered_Lambda([&]() {
+				SettingTitle->SetText((FText::FromString(TEXT("后期处理"))));
+				SettingDetails->SetText(FText::FromString(TEXT("游戏后处理")));
+				})
 		];
 
 		SettingList->AddSlot()
@@ -405,6 +495,10 @@ void SSettingsWidget::ShowGraphicSettingList()
 			.SelectContent(GraphicLevelText)
 			.CurSelection(GETGRAPHICLEVEL(ViewDistance))
 			.ExecuteSelection(ViewDistance)
+			.SelectionOnHovered_Lambda([&]() {
+				SettingTitle->SetText((FText::FromString(TEXT("视图距离"))));
+				SettingDetails->SetText(FText::FromString(TEXT("可渲染的最大距离")));
+				})
 		];
 
 		SettingList->AddSlot()
@@ -416,6 +510,10 @@ void SSettingsWidget::ShowGraphicSettingList()
 			.SelectContent(GraphicLevelText)
 			.CurSelection(GETGRAPHICLEVEL(Texture))
 			.ExecuteSelection(Texture)
+			.SelectionOnHovered_Lambda([&]() {
+				SettingTitle->SetText((FText::FromString(TEXT("纹理质量"))));
+				SettingDetails->SetText(FText::FromString(TEXT("贴图的精细程度，越高越清晰，但是会占用较多性能和显存")));
+				})
 		];
 
 		SettingList->AddSlot()
@@ -427,6 +525,10 @@ void SSettingsWidget::ShowGraphicSettingList()
 			.SelectContent(GraphicLevelText)
 			.CurSelection(GETGRAPHICLEVEL(VisualEffect))
 			.ExecuteSelection(VisualEffect)
+			.SelectionOnHovered_Lambda([&]() {
+				SettingTitle->SetText((FText::FromString(TEXT("特效"))));
+				SettingDetails->SetText(FText::FromString(TEXT("粒子效果")));
+				})
 		];
 
 		SettingList->AddSlot()
@@ -438,6 +540,10 @@ void SSettingsWidget::ShowGraphicSettingList()
 			.SelectContent(GraphicLevelText)
 			.CurSelection(GETGRAPHICLEVEL(Foliage))
 			.ExecuteSelection(Foliage)
+			.SelectionOnHovered_Lambda([&]() {
+				SettingTitle->SetText((FText::FromString(TEXT("植被"))));
+				SettingDetails->SetText(FText::FromString(TEXT("植被渲染质量")));
+				})
 		];
 
 		if (AnimSequence.GetSequenceTime() >= 0.5f)
@@ -450,8 +556,15 @@ void SSettingsWidget::ShowOperationSettingList()
 	if (SettingList.IsValid())
 	{
 		SetTagButtonHighlight(1);
-		SettingList->ClearChildren();
+		ClearScrollBox();
 	}
+}
+
+void SSettingsWidget::ClearScrollBox()
+{
+	SettingList->ClearChildren();
+	NewResolution = UGameUserSettings::GetGameUserSettings()->GetScreenResolution();
+	NewFullscreenMode = UGameUserSettings::GetGameUserSettings()->GetFullscreenMode();
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

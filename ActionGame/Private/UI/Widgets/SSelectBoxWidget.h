@@ -21,6 +21,7 @@ public:
 	SLATE_ARGUMENT(TArray<FString>, SelectContent)
 	SLATE_ARGUMENT(int32, CurSelection)
 	SLATE_EVENT(FExecuteSelection, ExecuteSelection)
+	SLATE_EVENT(FSimpleDelegate, SelectionOnHovered)
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */
@@ -32,9 +33,13 @@ public:
 
 	void ToForward();
 private:
+	const struct FButtonStyle* SelectBoxButtonStyle;
+
 	const struct FButtonStyle* BackwardButtonStyle;
 
 	const struct FButtonStyle* ForwardButtonStyle;
+
+	TSharedPtr<STextBlock> SelectionName;
 
 	TSharedPtr<STextBlock> SelectionText;
 
@@ -47,4 +52,6 @@ private:
 	int32 CurSelection;
 
 	FExecuteSelection ExecuteSelection;
+
+	FSimpleDelegate SelectionOnHovered;
 };
