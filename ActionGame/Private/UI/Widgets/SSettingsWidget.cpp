@@ -10,23 +10,10 @@
 #include "GameFramework/GameUserSettings.h"
 #include "CoreGlobals.h"
 
+
+
 #define GETGRAPHICLEVEL(EffectName)\
 	UGameUserSettings::GetGameUserSettings()->Get##EffectName##Quality()
-
-static const TArray<FString> FullScreenModeText = { TEXT("全屏"),TEXT("无边框"),TEXT("窗口") };
-
-static const TArray<FString> ResolutionText = { TEXT("1280 x 720"),TEXT("1920 x 1080"),TEXT("2560 x 1440") };
-
-static const TArray<FString> OnOffText = { TEXT("关闭"),TEXT("开启")};
-
-static const TArray<FString> FrameLimitText = { TEXT("30"),TEXT("60"), TEXT("90"), TEXT("144"), TEXT("200")};
-
-static const TArray<FString> GraphicLevelText = { TEXT("Low"),TEXT("Medium"),TEXT("High"),TEXT("Ultra") };
-
-static const TArray<float> FrameLimitNum = { 30.f,60.f,90.f,144.f,200.f };
-
-static const TArray<FIntPoint> Resolutions = { FIntPoint(1280, 720), FIntPoint(1920, 1080), FIntPoint(2560, 1440) };
-
 
 #define SETGRAPHICLEVEL(EffectName)\
 	SSelectBoxWidget::FExecuteSelection EffectName;\
@@ -36,7 +23,22 @@ static const TArray<FIntPoint> Resolutions = { FIntPoint(1280, 720), FIntPoint(1
 			GConfig->Flush(false, GGameUserSettingsIni);\
 		});
 
-BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
+#define LOCTEXT_NAMESPACE "ActionGame.UI.Setting"
+
+static const TArray<FText> FullScreenModeText = { LOCTEXT("Fullscreen","全屏"),LOCTEXT("WindowedFullscreen","无边框"),LOCTEXT("Windowed","窗口") };
+
+static const TArray<FText> ResolutionText = { LOCTEXT("720p","1280 x 720"),LOCTEXT("1080p","1920 x 1080"),LOCTEXT("1440p","2560 x 1440") };
+
+static const TArray<FText> OnOffText = { LOCTEXT("Close","关闭"),LOCTEXT("Open","开启")};
+
+static const TArray<FText> FrameLimitText = { LOCTEXT("Frame30","30"),LOCTEXT("Frame30","60"), LOCTEXT("Frame90","90"), LOCTEXT("Frame144","144"), LOCTEXT("Frame200","200")};
+
+static const TArray<FText> GraphicLevelText = { LOCTEXT("Low","低"),LOCTEXT("Medium","中"),LOCTEXT("High","高"),LOCTEXT("Ultra","极致") };
+
+static const TArray<float> FrameLimitNum = { 30.f,60.f,90.f,144.f,200.f };
+
+static const TArray<FIntPoint> Resolutions = { FIntPoint(1280, 720), FIntPoint(1920, 1080), FIntPoint(2560, 1440) };
+
 void SSettingsWidget::Construct(const FArguments& InArgs)
 {
 	using FPaddingParam = TAttribute<FMargin>;
@@ -48,11 +50,12 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 	BackButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("BackButtonStyle"));
 	TagButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("TagButtonStyle"));
 	ApplySettingButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ApplySettingButtonStyle"));
-	FSlateBrush* BorderBackground = new FSlateBrush();
-	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.2f));
+	BorderBackground = new FSlateBrush();
+	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.f));
 	SettingTagButtons.SetNum(2);
 	SettingButtonHandles.SetNum(15);
 	ButtonTransformParams.SetNum(15);
+	SettingBorders.SetNum(15);
 
 	ChildSlot
 	.HAlign(EHorizontalAlignment::HAlign_Fill)
@@ -240,6 +243,8 @@ void SSettingsWidget::SetupAnimation()
 		FRenderTransformParam::FGetter TransformGetter;
 		TransformGetter.BindLambda([i,this]() {
 			const float CurLerp = SettingButtonHandles[i].GetLerp();
+			if (SettingBorders[i].IsValid())
+				SettingBorders[i]->SetRenderOpacity(CurLerp);
 			return FSlateRenderTransform(FVector2D(0.f, (-80.f - i * 60.f)*(1 - CurLerp)));
 			});
 
@@ -321,90 +326,105 @@ void SSettingsWidget::ShowGraphicSettingList()
 			});
 
 		SettingList->AddSlot()
-		.Padding(1.f)
 		[
-			SNew(SDividingLineWidget)
-			.RenderTransform(ButtonTransformParams[AnimIndex++])
-			.CategoryName(FText::FromString(TEXT("基础设置")))
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			[
+				SNew(SDividingLineWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.CategoryName(FText::FromString(TEXT("基础设置")))
+			]
 		];
 
 		SettingList->AddSlot()
-		.Padding(1.f)
 		[
-			SNew(SSelectBoxWidget)
-			.RenderTransform(ButtonTransformParams[AnimIndex++])
-			.SelectName(FText::FromString(TEXT("全屏模式")))
-			.SelectContent(FullScreenModeText)
-			.CurSelection((int32)UGameUserSettings::GetGameUserSettings()->GetFullscreenMode())
-			.ExecuteSelection_Lambda([&](float level) {
-				NewFullscreenMode = (EWindowMode::Type)((int32)level);
-				})
-			.SelectionOnHovered_Lambda([&]() {
-				SettingTitle->SetText((FText::FromString(TEXT("全屏模式"))));
-				SettingDetails->SetText(FText::FromString(TEXT("游戏在显示器上的显示模式")));
-				})
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			[
+				SNew(SSelectBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(FText::FromString(TEXT("全屏模式")))
+				.SelectContent(FullScreenModeText)
+				.CurSelection((int32)UGameUserSettings::GetGameUserSettings()->GetFullscreenMode())
+				.ExecuteSelection_Lambda([&](float level) {
+					NewFullscreenMode = (EWindowMode::Type)((int32)level);
+					})
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText((FText::FromString(TEXT("全屏模式"))));
+					SettingDetails->SetText(FText::FromString(TEXT("游戏在显示器上的显示模式")));
+					})
+			]
 		];
 
 		int32 ResIndex = 0;
 		Resolutions.Find(UGameUserSettings::GetGameUserSettings()->GetScreenResolution(), ResIndex);
 
 		SettingList->AddSlot()
-		.Padding(1.f)
 		[
-			SNew(SSelectBoxWidget)
-			.RenderTransform(ButtonTransformParams[AnimIndex++])
-			.SelectName(FText::FromString(TEXT("全屏分辨率")))
-			.SelectContent(ResolutionText)
-			.CurSelection(ResIndex != -1 ? ResIndex : 1)
-			.ExecuteSelection_Lambda([&](float level) {
-				NewResolution = Resolutions[(int32)level];
-				})
-			.SelectionOnHovered_Lambda([&]() {
-				SettingTitle->SetText((FText::FromString(TEXT("全屏分辨率"))));
-				SettingDetails->SetText(FText::FromString(TEXT("显卡输出分辨率，越高画面越清晰，但是会影响性能，玩家要做好权衡")));
-				})
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			[
+				SNew(SSelectBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(FText::FromString(TEXT("全屏分辨率")))
+				.SelectContent(ResolutionText)
+				.CurSelection(ResIndex != -1 ? ResIndex : 1)
+				.ExecuteSelection_Lambda([&](float level) {
+					NewResolution = Resolutions[(int32)level];
+					})
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText((FText::FromString(TEXT("全屏分辨率"))));
+					SettingDetails->SetText(FText::FromString(TEXT("显卡输出分辨率，越高画面越清晰，但是会影响性能，玩家要做好权衡")));
+					})
+			]
 		];
 
 		SettingList->AddSlot()
-		.Padding(1.f)
 		[
-			SNew(SSelectBoxWidget)
-			.RenderTransform(ButtonTransformParams[AnimIndex++])
-			.SelectName(FText::FromString(TEXT("垂直同步")))
-			.SelectContent(OnOffText)
-			.CurSelection((int32)UGameUserSettings::GetGameUserSettings()->IsVSyncEnabled())
-			.ExecuteSelection_Lambda([&](float level) {
-				UGameUserSettings::GetGameUserSettings()->SetVSyncEnabled(level == 1.f);
-				UGameUserSettings::GetGameUserSettings()->ApplySettings(false);
-				GConfig->Flush(false, GGameUserSettingsIni);
-			})
-			.SelectionOnHovered_Lambda([&]() {
-				SettingTitle->SetText((FText::FromString(TEXT("垂直同步"))));
-				SettingDetails->SetText(FText::FromString(TEXT("显卡输出显示器的固定帧率，可以缓解画面撕裂，但是会造成输入延迟")));
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			[
+				SNew(SSelectBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(FText::FromString(TEXT("垂直同步")))
+				.SelectContent(OnOffText)
+				.CurSelection((int32)UGameUserSettings::GetGameUserSettings()->IsVSyncEnabled())
+				.ExecuteSelection_Lambda([&](float level) {
+					UGameUserSettings::GetGameUserSettings()->SetVSyncEnabled(level == 1.f);
+					UGameUserSettings::GetGameUserSettings()->ApplySettings(false);
+					GConfig->Flush(false, GGameUserSettingsIni);
 				})
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText((FText::FromString(TEXT("垂直同步"))));
+					SettingDetails->SetText(FText::FromString(TEXT("显卡输出显示器的固定帧率，可以缓解画面撕裂，但是会造成输入延迟")));
+					})
+			]
 		];
 
 		int32 FrameLimitIndex = 0;
 		FrameLimitNum.Find(UGameUserSettings::GetGameUserSettings()->GetFrameRateLimit(), FrameLimitIndex);
 
 		SettingList->AddSlot()
-		.Padding(1.f)
 		[
-			SNew(SSelectBoxWidget)
-			.RenderTransform(ButtonTransformParams[AnimIndex++])
-			.SelectName(FText::FromString(TEXT("最大帧率")))
-			.SelectContent(FrameLimitText)
-			.CurSelection(FrameLimitIndex != -1 ? FrameLimitIndex : 4)
-			.ExecuteSelection_Lambda([&](float level) {
-				UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(FrameLimitNum[(int32)level]);
-				UGameUserSettings::GetGameUserSettings()->ApplySettings(false);
-				GConfig->Flush(false, GGameUserSettingsIni);
-			})
-			.IsEnabled_Lambda([&]() { return !UGameUserSettings::GetGameUserSettings()->IsVSyncEnabled(); })
-			.SelectionOnHovered_Lambda([&]() {
-				SettingTitle->SetText((FText::FromString(TEXT("最大帧率"))));
-				SettingDetails->SetText(FText::FromString(TEXT("显卡输出的最高帧率，越高越流畅")));
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			[
+				SNew(SSelectBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(FText::FromString(TEXT("最大帧率")))
+				.SelectContent(FrameLimitText)
+				.CurSelection(FrameLimitIndex != -1 ? FrameLimitIndex : 4)
+				.ExecuteSelection_Lambda([&](float level) {
+					UGameUserSettings::GetGameUserSettings()->SetFrameRateLimit(FrameLimitNum[(int32)level]);
+					UGameUserSettings::GetGameUserSettings()->ApplySettings(false);
+					GConfig->Flush(false, GGameUserSettingsIni);
 				})
+				.IsEnabled_Lambda([&]() { return !UGameUserSettings::GetGameUserSettings()->IsVSyncEnabled(); })
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText((FText::FromString(TEXT("最大帧率"))));
+					SettingDetails->SetText(FText::FromString(TEXT("显卡输出的最高帧率，越高越流畅")));
+					})
+			]
 		];
 
 
@@ -412,138 +432,165 @@ void SSettingsWidget::ShowGraphicSettingList()
 		GConfig->GetBool(TEXT("haiaimi"), TEXT("MotionBlur"), Ref, GGameIni);
 
 		SettingList->AddSlot()
-		.Padding(1.f)
 		[
-			SNew(SSelectBoxWidget)
-			.RenderTransform(ButtonTransformParams[AnimIndex++])
-			.SelectName(FText::FromString(TEXT("动态模糊")))
-			.SelectContent(OnOffText)
-			.CurSelection((int32)Ref)
-			.ExecuteSelection_Lambda([&](float level) {
-				GConfig->SetBool(TEXT("haiaimi"), TEXT("MotionBlur"), level == 1.f, GGameIni);
-				GConfig->Flush(false, GGameIni);
-				int32 MotionBlurLevel = level == 1.f ? 2 : 0;
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			[
+				SNew(SSelectBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(FText::FromString(TEXT("动态模糊")))
+				.SelectContent(OnOffText)
+				.CurSelection((int32)Ref)
+				.ExecuteSelection_Lambda([&](float level) {
+					GConfig->SetBool(TEXT("haiaimi"), TEXT("MotionBlur"), level == 1.f, GGameIni);
+					GConfig->Flush(false, GGameIni);
+					int32 MotionBlurLevel = level == 1.f ? 2 : 0;
 	
-				if (OwnerController.IsValid())
-					OwnerController->ConsoleCommand(FString::Printf(TEXT("r.MotionBlurQuality %d"), MotionBlurLevel));
-			})
-			.SelectionOnHovered_Lambda([&]() {
-				SettingTitle->SetText((FText::FromString(TEXT("动态模糊"))));
-				SettingDetails->SetText(FText::FromString(TEXT("帧间加入模糊效果，可以缓解帧数低时的卡顿感，帧数高不需要打开")));
+					if (OwnerController.IsValid())
+						OwnerController->ConsoleCommand(FString::Printf(TEXT("r.MotionBlurQuality %d"), MotionBlurLevel));
 				})
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText((FText::FromString(TEXT("动态模糊"))));
+					SettingDetails->SetText(FText::FromString(TEXT("帧间加入模糊效果，可以缓解帧数低时的卡顿感，帧数高不需要打开")));
+					})
+			]
 		];
 
 		SettingList->AddSlot()
-		.Padding(1.f)
 		[
-			SNew(SDividingLineWidget)
-			.RenderTransform(ButtonTransformParams[AnimIndex++])
-			.CategoryName(FText::FromString(TEXT("画面渲染")))
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			[
+				SNew(SDividingLineWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.CategoryName(FText::FromString(TEXT("画面渲染")))
+			]
 		];
 
 		SettingList->AddSlot()
-		.Padding(1.f)
 		[
-			SNew(SSelectBoxWidget)
-			.RenderTransform(ButtonTransformParams[AnimIndex++])
-			.SelectName(FText::FromString(TEXT("抗锯齿")))
-			.SelectContent(GraphicLevelText)
-			.CurSelection(GETGRAPHICLEVEL(AntiAliasing))
-			.ExecuteSelection(AntiAliasing)
-			.SelectionOnHovered_Lambda([&]() {
-				SettingTitle->SetText((FText::FromString(TEXT("抗锯齿"))));
-				SettingDetails->SetText(FText::FromString(TEXT("减少画面锯齿感，提升画面观感，使画面更加柔和")));
-				})
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			[
+				SNew(SSelectBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(FText::FromString(TEXT("抗锯齿")))
+				.SelectContent(GraphicLevelText)
+				.CurSelection(GETGRAPHICLEVEL(AntiAliasing))
+				.ExecuteSelection(AntiAliasing)
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText((FText::FromString(TEXT("抗锯齿"))));
+					SettingDetails->SetText(FText::FromString(TEXT("减少画面锯齿感，提升画面观感，使画面更加柔和")));
+					})
+			]
 		];
 
 		SettingList->AddSlot()
-		.Padding(1.f)
 		[
-			SNew(SSelectBoxWidget)
-			.RenderTransform(ButtonTransformParams[AnimIndex++])
-			.SelectName(FText::FromString(TEXT("阴影质量")))
-			.SelectContent(GraphicLevelText)
-			.CurSelection(GETGRAPHICLEVEL(Shadow))
-			.ExecuteSelection(Shadow)
-			.SelectionOnHovered_Lambda([&]() {
-				SettingTitle->SetText((FText::FromString(TEXT("阴影质量"))));
-				SettingDetails->SetText(FText::FromString(TEXT("阴影渲染质量，越高效果越真实，也消耗性能")));
-				})
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			[
+				SNew(SSelectBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(FText::FromString(TEXT("阴影质量")))
+				.SelectContent(GraphicLevelText)
+				.CurSelection(GETGRAPHICLEVEL(Shadow))
+				.ExecuteSelection(Shadow)
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText((FText::FromString(TEXT("阴影质量"))));
+					SettingDetails->SetText(FText::FromString(TEXT("阴影渲染质量，越高效果越真实，也消耗性能")));
+					})
+			]
 		];
 
 		SettingList->AddSlot()
-		.Padding(1.f)
 		[
-			SNew(SSelectBoxWidget)
-			.RenderTransform(ButtonTransformParams[AnimIndex++])
-			.SelectName(FText::FromString(TEXT("后期处理")))
-			.SelectContent(GraphicLevelText)
-			.CurSelection(GETGRAPHICLEVEL(PostProcessing))
-			.ExecuteSelection(PostProcessing)
-			.SelectionOnHovered_Lambda([&]() {
-				SettingTitle->SetText((FText::FromString(TEXT("后期处理"))));
-				SettingDetails->SetText(FText::FromString(TEXT("游戏后处理")));
-				})
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			[
+				SNew(SSelectBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(FText::FromString(TEXT("后期处理")))
+				.SelectContent(GraphicLevelText)
+				.CurSelection(GETGRAPHICLEVEL(PostProcessing))
+				.ExecuteSelection(PostProcessing)
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText((FText::FromString(TEXT("后期处理"))));
+					SettingDetails->SetText(FText::FromString(TEXT("游戏后处理")));
+					})
+			]
 		];
 
 		SettingList->AddSlot()
-		.Padding(1.f)
 		[
-			SNew(SSelectBoxWidget)
-			.RenderTransform(ButtonTransformParams[AnimIndex++])
-			.SelectName(FText::FromString(TEXT("视图距离")))
-			.SelectContent(GraphicLevelText)
-			.CurSelection(GETGRAPHICLEVEL(ViewDistance))
-			.ExecuteSelection(ViewDistance)
-			.SelectionOnHovered_Lambda([&]() {
-				SettingTitle->SetText((FText::FromString(TEXT("视图距离"))));
-				SettingDetails->SetText(FText::FromString(TEXT("可渲染的最大距离")));
-				})
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			[
+				SNew(SSelectBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(FText::FromString(TEXT("视图距离")))
+				.SelectContent(GraphicLevelText)
+				.CurSelection(GETGRAPHICLEVEL(ViewDistance))
+				.ExecuteSelection(ViewDistance)
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText((FText::FromString(TEXT("视图距离"))));
+					SettingDetails->SetText(FText::FromString(TEXT("可渲染的最大距离")));
+					})
+			]
 		];
 
 		SettingList->AddSlot()
-		.Padding(1.f)
 		[
-			SNew(SSelectBoxWidget)
-			.RenderTransform(ButtonTransformParams[AnimIndex++])
-			.SelectName(FText::FromString(TEXT("纹理质量")))
-			.SelectContent(GraphicLevelText)
-			.CurSelection(GETGRAPHICLEVEL(Texture))
-			.ExecuteSelection(Texture)
-			.SelectionOnHovered_Lambda([&]() {
-				SettingTitle->SetText((FText::FromString(TEXT("纹理质量"))));
-				SettingDetails->SetText(FText::FromString(TEXT("贴图的精细程度，越高越清晰，但是会占用较多性能和显存")));
-				})
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			[
+				SNew(SSelectBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(FText::FromString(TEXT("纹理质量")))
+				.SelectContent(GraphicLevelText)
+				.CurSelection(GETGRAPHICLEVEL(Texture))
+				.ExecuteSelection(Texture)
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText((FText::FromString(TEXT("纹理质量"))));
+					SettingDetails->SetText(FText::FromString(TEXT("贴图的精细程度，越高越清晰，但是会占用较多性能和显存")));
+					})
+			]
 		];
 
 		SettingList->AddSlot()
-		.Padding(1.f)
 		[
-			SNew(SSelectBoxWidget)
-			.RenderTransform(ButtonTransformParams[AnimIndex++])
-			.SelectName(FText::FromString(TEXT("特效")))
-			.SelectContent(GraphicLevelText)
-			.CurSelection(GETGRAPHICLEVEL(VisualEffect))
-			.ExecuteSelection(VisualEffect)
-			.SelectionOnHovered_Lambda([&]() {
-				SettingTitle->SetText((FText::FromString(TEXT("特效"))));
-				SettingDetails->SetText(FText::FromString(TEXT("粒子效果")));
-				})
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			[
+				SNew(SSelectBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(FText::FromString(TEXT("特效")))
+				.SelectContent(GraphicLevelText)
+				.CurSelection(GETGRAPHICLEVEL(VisualEffect))
+				.ExecuteSelection(VisualEffect)
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText((FText::FromString(TEXT("特效"))));
+					SettingDetails->SetText(FText::FromString(TEXT("粒子效果")));
+					})
+			]
 		];
 
 		SettingList->AddSlot()
-		.Padding(1.f)
 		[
-			SNew(SSelectBoxWidget)
-			.RenderTransform(ButtonTransformParams[AnimIndex++])
-			.SelectName(FText::FromString(TEXT("植被")))
-			.SelectContent(GraphicLevelText)
-			.CurSelection(GETGRAPHICLEVEL(Foliage))
-			.ExecuteSelection(Foliage)
-			.SelectionOnHovered_Lambda([&]() {
-				SettingTitle->SetText((FText::FromString(TEXT("植被"))));
-				SettingDetails->SetText(FText::FromString(TEXT("植被渲染质量")));
-				})
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			[
+				SNew(SSelectBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(FText::FromString(TEXT("植被")))
+				.SelectContent(GraphicLevelText)
+				.CurSelection(GETGRAPHICLEVEL(Foliage))
+				.ExecuteSelection(Foliage)
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText((FText::FromString(TEXT("植被"))));
+					SettingDetails->SetText(FText::FromString(TEXT("植被渲染质量")));
+					})
+			]
 		];
 
 		if (AnimSequence.GetSequenceTime() >= 0.5f)
@@ -563,8 +610,9 @@ void SSettingsWidget::ShowOperationSettingList()
 void SSettingsWidget::ClearScrollBox()
 {
 	SettingList->ClearChildren();
+	//SettingBorders.Reset(15);
 	NewResolution = UGameUserSettings::GetGameUserSettings()->GetScreenResolution();
 	NewFullscreenMode = UGameUserSettings::GetGameUserSettings()->GetFullscreenMode();
 }
 
-END_SLATE_FUNCTION_BUILD_OPTIMIZATION
+#undef LOCTEXT_NAMESPACE

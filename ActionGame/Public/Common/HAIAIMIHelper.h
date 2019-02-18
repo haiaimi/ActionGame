@@ -21,6 +21,8 @@ public:
 
 	static FVector2D ConvertToNormalCoord(FVector2D Pos);
 
+	void ChangeLocalization(FString target);
+
 	/**用于切换关卡是播放音乐*/
 	template< class UserClass >	
 	FORCEINLINE static FTimerHandle PlaySoundAndCall(UWorld* World, const FSlateSound& Sound, UserClass* inObj, typename TBaseDelegate<void>::TUObjectMethodDelegate< UserClass >::FMethodPtr inMethod)

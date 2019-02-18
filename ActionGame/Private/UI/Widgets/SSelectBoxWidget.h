@@ -18,7 +18,7 @@ public:
 	SLATE_BEGIN_ARGS(SSelectBoxWidget)
 	{}
 	SLATE_ARGUMENT(FText, SelectName)
-	SLATE_ARGUMENT(TArray<FString>, SelectContent)
+	SLATE_ARGUMENT(TArray<FText>, SelectContent)
 	SLATE_ARGUMENT(int32, CurSelection)
 	SLATE_EVENT(FExecuteSelection, ExecuteSelection)
 	SLATE_EVENT(FSimpleDelegate, SelectionOnHovered)
@@ -47,7 +47,7 @@ private:
 
 	TSharedPtr<SButton> RightButton;
 
-	TArray<FString> SelectContent;
+	TArray<FText> SelectContent;
 
 	int32 CurSelection;
 

@@ -57,6 +57,11 @@ FVector2D HAIAIMIHelper::ConvertToNormalCoord(FVector2D Pos)
 	return Res;
 }
 
+void HAIAIMIHelper::ChangeLocalization(FString target)
+{
+	FInternationalization::Get().SetCurrentCulture(target);
+}
+
 void HAIAIMIHelper::SaveScore(uint32 newScore)
 {
 	/*UScoreSaveGame* CurSaveGame = NewObject<UScoreSaveGame>();

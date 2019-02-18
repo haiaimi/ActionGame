@@ -19,7 +19,7 @@ void SSelectBoxWidget::Construct(const FArguments& InArgs)
 		CurSelection = InArgs._CurSelection;
 	else
 		CurSelection = 0;
-	FText InitContent = SelectContent.Num() == 0 ? FText::FromString(TEXT("Null Content")) : FText::FromString(SelectContent[CurSelection]);
+	FText InitContent = SelectContent.Num() == 0 ? FText::FromString(TEXT("Null Content")) : SelectContent[CurSelection];
 	//SetColorAndOpacity()
 	ChildSlot
 	.HAlign(EHorizontalAlignment::HAlign_Fill)
@@ -91,7 +91,7 @@ void SSelectBoxWidget::ToBack()
 {
 	if (CurSelection > 0 && --CurSelection < SelectContent.Num())
 	{
-		SelectionText->SetText(FText::FromString(SelectContent[CurSelection]));
+		SelectionText->SetText(SelectContent[CurSelection]);
 		if (CurSelection == 0)
 			LeftButton->SetEnabled(false);
 	}
@@ -104,7 +104,7 @@ void SSelectBoxWidget::ToForward()
 {
 	if (CurSelection < SelectContent.Num() - 1 && ++CurSelection < SelectContent.Num())
 	{
-		SelectionText->SetText(FText::FromString(SelectContent[CurSelection]));
+		SelectionText->SetText(SelectContent[CurSelection]);
 		if(CurSelection == SelectContent.Num() - 1)
 			RightButton->SetEnabled(false);
 	}

@@ -44,7 +44,11 @@ private:
 
 	const struct FButtonStyle* ApplySettingButtonStyle;
 
+	FSlateBrush* BorderBackground;
+
 	TArray<TSharedPtr<SButton>> SettingTagButtons;
+
+	TArray<TSharedPtr<SBorder>> SettingBorders;
 
 	TSharedPtr<SScrollBox> SettingList;
 	
