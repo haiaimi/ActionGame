@@ -7,6 +7,7 @@
 #include "FileHelper.h"
 #include "JsonSerializer.h"
 #include "JsonValue.h"
+#include "Culture.h"
 
 FString HAIAIMIHelper::RelativePath = FString(TEXT("LevelConfig"));
 TArray<TSharedPtr<FJsonValue>> HAIAIMIHelper::JsonParser = {};
@@ -55,6 +56,11 @@ FVector2D HAIAIMIHelper::ConvertToNormalCoord(FVector2D Pos)
 	}
 	
 	return Res;
+}
+
+FString HAIAIMIHelper::GetLocalization()
+{
+	return FInternationalization::Get().GetCurrentCulture().Get().GetName();
 }
 
 void HAIAIMIHelper::ChangeLocalization(FString target)

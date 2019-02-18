@@ -11,7 +11,10 @@
 
 using FPaddingParam = TAttribute<FMargin>;
 using FRenderTransformParam = TAttribute<TOptional<FSlateRenderTransform>>;
-const TArray<FString> AbilityButtonNames = { TEXT("人物概况"),TEXT("A"),TEXT("B"),TEXT("C") };
+
+#define LOCTEXT_NAMESPACE "ActionGame.UI.HeroDetail"
+
+const TArray<FText> AbilityButtonNames = { LOCTEXT("Overview","人物概况"),LOCTEXT("A","A"),LOCTEXT("B","B"),LOCTEXT("C","C") };
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHeroDetailWidget::Construct(const FArguments& InArgs)
@@ -65,7 +68,7 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 							.Padding(0.f)
 							[
 								SNew(STextBlock)
-								.Text(FText::FromString(FString(TEXT("英雄"))))
+								.Text(LOCTEXT("Hero","英雄"))
 								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
 								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 							]
@@ -115,7 +118,7 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 			.OnUnhovered(this, &SHeroDetailWidget::CloseWidget)
 			[
 				SNew(STextBlock)
-				.Text(FText::FromString(AbilityButtonNames[i]))
+				.Text(AbilityButtonNames[i])
 				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
 				.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 			]
@@ -200,7 +203,7 @@ void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
 			.Padding(0.f)
 			[
 				SNew(STextBlock)
-				.Text(FText::FromString(FString(TEXT("皮肤"))))
+				.Text(LOCTEXT("Skin","皮肤"))
 				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
 				.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 			]
@@ -338,3 +341,5 @@ void SHeroDetailWidget::CloseWidget()
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION
+
+#undef LOCTEXT_NAMESPACE

@@ -21,7 +21,9 @@ public:
 
 	static FVector2D ConvertToNormalCoord(FVector2D Pos);
 
-	void ChangeLocalization(FString target);
+	static FString GetLocalization();
+
+	static void ChangeLocalization(FString target);
 
 	/**用于切换关卡是播放音乐*/
 	template< class UserClass >	

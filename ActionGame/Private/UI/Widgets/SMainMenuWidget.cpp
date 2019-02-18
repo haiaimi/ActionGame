@@ -14,6 +14,8 @@
 
 using FPaddingParam = TAttribute<FMargin>;
 
+#define LOCTEXT_NAMESPACE "ActionGame.UI.MainMenu"
+
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SMainMenuWidget::Construct(const FArguments& InArgs)
 {
@@ -70,7 +72,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 					.OnPressed(this, &SMainMenuWidget::StartGame)
 					[
 						SNew(STextBlock)
-						.Text(FText::FromString(FString(TEXT("开始游戏"))))
+						.Text(LOCTEXT("Start","开始游戏"))
 						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
 						.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 					]
@@ -94,7 +96,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 					.OnPressed(this, &SMainMenuWidget::HeroDetails)
 					[
 						SNew(STextBlock)
-						.Text(FText::FromString(FString(TEXT("英雄介绍"))))
+						.Text(LOCTEXT("Heros","英雄介绍"))
 						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
 						.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 					]
@@ -118,7 +120,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 					.OnPressed(this, &SMainMenuWidget::GameSetting)
 					[
 						SNew(STextBlock)
-						.Text(FText::FromString(FString(TEXT("游戏设置"))))
+						.Text(LOCTEXT("Setting","游戏设置"))
 						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
 						.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 					]
@@ -142,7 +144,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 					.OnPressed(this, &SMainMenuWidget::QuitGame)
 					[
 						SNew(STextBlock)
-						.Text(FText::FromString(FString(TEXT("退出游戏"))))
+						.Text(LOCTEXT("Quit","退出游戏"))
 						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
 						.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 					]
@@ -165,7 +167,7 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 					.ButtonStyle(ButtonStyle)
 					[
 						SNew(STextBlock)
-						.Text(FText::FromString(FString(TEXT("关于"))))
+						.Text(LOCTEXT("About","关于"))
 						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
 						.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 					]
@@ -303,3 +305,4 @@ void SMainMenuWidget::QuitGame()
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
+#undef LOCTEXT_NAMESPACE

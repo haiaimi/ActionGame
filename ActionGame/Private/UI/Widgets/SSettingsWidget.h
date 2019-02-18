@@ -82,5 +82,7 @@ private:
 	/**显示操作设置列表*/
 	void ShowOperationSettingList();
 
+	void ShowCommonSetting();
+
 	void ClearScrollBox();
 };
