@@ -15,7 +15,7 @@ class SHeroShowItem : public SCompoundWidget
 {
 public:
 	SLATE_BEGIN_ARGS(SHeroShowItem):
-		_BorderScale(1.2f,1.2f),
+		_BorderScale(1.f,1.f),
 		_ImageScale(0.8f,0.8f),
 		_HoverScale(1.f),
 		_Image(nullptr)
@@ -45,6 +45,6 @@ private:
 	float HoverScale;
 
 	const FSlateBrush* Image;
-
+	
 	const FButtonStyle* TagButtonStyle;
 };

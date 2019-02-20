@@ -26,6 +26,9 @@ public:
 	virtual void BackToPrevious()override;
 
 private:
+	/**Ìí¼ÓÓ¢ĞÛÍ·Ïñ*/
+	void AddHeroHeads();
+private:
 	TSharedPtr<SScrollBox> HeroList;
 
 	TSharedPtr<SSkinsScrollBox> SkinList;

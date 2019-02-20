@@ -85,13 +85,6 @@ void SStartGameWidget::Construct(const FArguments& InArgs)
 					[
 						SAssignNew(HeroList, SScrollBox)
 						.ScrollBarAlwaysVisible(true)
-						+SScrollBox::Slot()
-						[
-							SNew(SBox)
-							.WidthOverride(800.f)
-							.HeightOverride(200.f)
-						]
-						
 					]
 					+ SHorizontalBox::Slot()
 					.FillWidth(1.f)
@@ -139,6 +132,48 @@ void SStartGameWidget::Construct(const FArguments& InArgs)
 			]
 		]
 	];
+
+	AddHeroHeads();
+}
+
+void SStartGameWidget::AddHeroHeads()
+{
+	int32 HeroNums = 20;
+
+	if(HeroList.IsValid())
+	{
+		for (int32 i = 0; i < 1 + HeroNums / 4; ++i)
+		{
+			TSharedPtr<SHorizontalBox> HeadContainer;
+			TSharedPtr<SBox> TempBox =
+			SNew(SBox)
+			.WidthOverride(800.f)
+			.HeightOverride(200.f)
+			[
+				SAssignNew(HeadContainer, SHorizontalBox)
+			];
+
+			for (int32 j = 0; j < 4; ++j)
+			{
+				if (i * 4 + j < HeroNums)
+				{
+					HeadContainer->AddSlot()
+					[
+						SNew(SHeroShowItem)
+						.Image(&UIStyle->HeroHeadImage)
+						.HoverScale(1.1f)
+					];
+				}
+				else
+					break;
+			}
+
+			HeroList->AddSlot()
+			[
+				TempBox.ToSharedRef()
+			];
+		}
+	}
 }
 
 void SStartGameWidget::BackToPrevious()

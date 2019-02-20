@@ -47,7 +47,7 @@ void SSkinsScrollBox::SetSkinItems()
 				.VAlign(EVerticalAlignment::VAlign_Fill)
 				[
 					SAssignNew(SkinItems[i], SHeroShowItem)
-					.BorderScale(FVector2D(1.f, 1.f))
+					.BorderScale(FVector2D(0.9f, 0.9f))
 					.ImageScale(FVector2D(0.87f, 0.91f))
 					.HoverScale(1.1f)
 					.Image(&(*SkinImageBrushs)[i])

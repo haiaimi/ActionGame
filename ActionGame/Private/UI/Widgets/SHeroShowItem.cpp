@@ -11,6 +11,7 @@ void SHeroShowItem::Construct(const FArguments& InArgs)
 	ImageScale = InArgs._ImageScale;
 	HoverScale = InArgs._HoverScale;
 	Image = InArgs._Image;
+
 	UIStyle = &FActionGameStyle::Get().GetWidgetStyle<FUIAssetStyle>(TEXT("ActionGameUIAssetStyle"));
 	TagButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("TagButtonStyle"));
 
@@ -26,6 +27,8 @@ void SHeroShowItem::Construct(const FArguments& InArgs)
 		.OnUnhovered_Lambda([&]() {
 		ItemBorder->SetRenderTransform(FSlateRenderTransform(FScale2D(BorderScale)));
 			})
+		.HAlign(EHorizontalAlignment::HAlign_Center)
+			.VAlign(EVerticalAlignment::VAlign_Center)
 		[
 			SAssignNew(ItemBorder, SBorder)
 			.RenderTransform(FSlateRenderTransform(FScale2D(BorderScale)))
