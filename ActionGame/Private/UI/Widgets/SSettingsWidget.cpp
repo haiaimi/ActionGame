@@ -227,7 +227,6 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 					.AutoWidth()
 					[
 						SNew(SBox)
-						.WidthOverride(200.f)
 						.Padding(30)
 						[
 							SNew(SButton)
@@ -249,11 +248,17 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 									UGameUserSettings::GetGameUserSettings()->SetFullscreenMode(NewFullscreenMode);
 									UGameUserSettings::GetGameUserSettings()->ApplySettings(false);
 								})
+							.OnHovered_Lambda([&]() {
+									ApplySettingText->SetColorAndOpacity(FSlateColor(FLinearColor(0.f, 0.f, 0.f, 1.f)));
+								})
+							.OnUnhovered_Lambda([&]() {
+									ApplySettingText->SetColorAndOpacity(FSlateColor(FLinearColor(1.f, 1.f, 1.f, 1.f)));
+								})
 							[
-								SNew(STextBlock)
+								SAssignNew(ApplySettingText, STextBlock)
 								.Text(LOCTEXT("ApplySetting","应用更改"))
 								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),24))
-								//.ColorAndOpacity_Lambda()
+								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 							]
 						]
 					]

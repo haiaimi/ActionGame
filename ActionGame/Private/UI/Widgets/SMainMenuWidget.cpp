@@ -176,12 +176,17 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 		]
 	];
 
-	/*MenuOverlay->AddSlot()
-	.HAlign(EHorizontalAlignment::HAlign_Fill)
-	.VAlign(EVerticalAlignment::VAlign_Fill)
+	MenuOverlay->AddSlot()
+	.HAlign(EHorizontalAlignment::HAlign_Left)
+	.VAlign(EVerticalAlignment::VAlign_Top)
 	[
-		SNew(SSettingsWidget)
-	];*/
+		SNew(SBox)
+		.HeightOverride(1080)
+		.WidthOverride(1920)
+		[
+			SAssignNew(StartGameWidget, SStartGameWidget)
+		]
+	];
 
 	SetupAnimation();
 

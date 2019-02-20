@@ -56,6 +56,8 @@ private:
 
 	TSharedPtr<STextBlock> SettingDetails;
 
+	TSharedPtr<STextBlock> ApplySettingText;
+
 	FCurveSequence AnimSequence;
 
 	FCurveHandle AnimHandle;

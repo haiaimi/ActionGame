@@ -22,6 +22,11 @@ struct FUIAssetStyle : public FSlateWidgetStyle
 	UPROPERTY(EditAnywhere, Category = Appearance)
 	struct FSlateBrush DividingLine;
 
+	UPROPERTY(EditAnywhere, Category = Appearance)
+	struct FSlateBrush HeroItemBorder;
+
+	UPROPERTY(EditAnywhere, Category = Appearance)
+	TArray<struct FSlateBrush> HeroSkinImages;
 
 	// FSlateWidgetStyle
 	virtual void GetResources(TArray<const FSlateBrush*>& OutBrushes) const override;

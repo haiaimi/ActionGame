@@ -11,6 +11,7 @@
 #include "SHeroDetailWidget.h"
 #include "SBaseMenuWidget.h"
 #include "SSettingsWidget.h"
+#include "SStartGameWidget.h"
 
 /**
  * 
@@ -55,6 +56,8 @@ private:
 	TArray<TSharedPtr<class SBorder>> ButtonBorders;
 
 	TSharedPtr<class SBox> SettingsBox;
+
+	TSharedPtr<class SStartGameWidget> StartGameWidget;
 
 	TSharedPtr<class SSettingsWidget> SettingWidget;
 
