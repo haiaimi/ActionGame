@@ -28,7 +28,8 @@ void SHeroShowItem::Construct(const FArguments& InArgs)
 		ItemBorder->SetRenderTransform(FSlateRenderTransform(FScale2D(BorderScale)));
 			})
 		.HAlign(EHorizontalAlignment::HAlign_Center)
-			.VAlign(EVerticalAlignment::VAlign_Center)
+		.VAlign(EVerticalAlignment::VAlign_Center)
+		.OnPressed(InArgs._OnPressed)
 		[
 			SAssignNew(ItemBorder, SBorder)
 			.RenderTransform(FSlateRenderTransform(FScale2D(BorderScale)))

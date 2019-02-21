@@ -176,18 +176,6 @@ void SMainMenuWidget::Construct(const FArguments& InArgs)
 		]
 	];
 
-	MenuOverlay->AddSlot()
-	.HAlign(EHorizontalAlignment::HAlign_Left)
-	.VAlign(EVerticalAlignment::VAlign_Top)
-	[
-		SNew(SBox)
-		.HeightOverride(1080)
-		.WidthOverride(1920)
-		[
-			SAssignNew(StartGameWidget, SStartGameWidget)
-		]
-	];
-
 	SetupAnimation();
 
 	if (OwnerController.IsValid())
@@ -225,12 +213,41 @@ void SMainMenuWidget::SetupAnimation()
 
 void SMainMenuWidget::StartGame()
 {
-	if (OwnerController.IsValid())
-		UGameplayStatics::OpenLevel(OwnerController.Get(), TEXT("/Game/GameLevels/GameMap"));
+	if (MenuSequence.IsInReverse())return;
+	MenuSequence.Reverse();
+	if (!StartGameWidget.IsValid())
+	{
+		MenuOverlay->AddSlot()
+			.HAlign(EHorizontalAlignment::HAlign_Left)
+			.VAlign(EVerticalAlignment::VAlign_Top)
+			[
+				SNew(SBox)
+				.HeightOverride(1080)
+				.WidthOverride(1920)
+				.RenderTransform_Lambda([&]() {
+				if (!StartGameWidget.IsValid())return FSlateRenderTransform(FVector2D::ZeroVector);
+				const float CurLerp = StartGameWidget->GetCurAnimLerp();
+				return FSlateRenderTransform(FVector2D(1920.f*(1.f - CurLerp), 0.f));
+					})
+				[
+					SAssignNew(StartGameWidget, SStartGameWidget)
+					.OwnerHUD(OwnerHUD)
+				]
+			];
+	}
+	else
+		StartGameWidget->BackToShow();
+
+	if (StartGameWidget.IsValid())
+		OwnerController->SetCurWidget(StartGameWidget);
+
+	/*if (OwnerController.IsValid())
+		UGameplayStatics::OpenLevel(OwnerController.Get(), TEXT("/Game/GameLevels/GameMap"));*/
 }
 
 void SMainMenuWidget::HeroDetails()
 {
+	if (MenuSequence.IsInReverse())return;
 	MenuSequence.Reverse();
 
 	AHeroDetailPlatform* DetailPlatform = nullptr;
@@ -266,6 +283,7 @@ void SMainMenuWidget::HeroDetails()
 
 void SMainMenuWidget::GameSetting()
 {
+	if (MenuSequence.IsInReverse())return;
 	MenuSequence.Reverse();
 
 	if (!SettingWidget.IsValid())

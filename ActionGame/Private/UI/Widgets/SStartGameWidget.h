@@ -9,6 +9,7 @@
 #include "SBaseMenuWidget.h"
 #include "SSkinsScrollBox.h"
 #include "../Styles/UIAssetWidgetStyle.h"
+#include "MenuHUD.h"
 
 /**
  * 
@@ -18,6 +19,7 @@ class SStartGameWidget : public SBaseMenuWidget
 public:
 	SLATE_BEGIN_ARGS(SStartGameWidget)
 	{}
+	SLATE_ARGUMENT(TWeakObjectPtr<AMenuHUD>, OwnerHUD)
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */
@@ -25,10 +27,23 @@ public:
 
 	virtual void BackToPrevious()override;
 
+	virtual void BackToShow()override;
+
+	FORCEINLINE float GetCurAnimLerp() { return StartingPageHandle.GetLerp(); }
+
 private:
+	void SetupAnimation();
+
 	/**ÃÌº””¢–€Õ∑œÒ*/
 	void AddHeroHeads();
+
 private:
+	FCurveSequence AnimSequence;
+
+	FCurveHandle StartingPageHandle;
+		
+	TArray<FCurveHandle> AnimHandles;
+
 	TSharedPtr<SScrollBox> HeroList;
 
 	TSharedPtr<SSkinsScrollBox> SkinList;
@@ -36,4 +51,8 @@ private:
 	const struct FUIAssetStyle* UIStyle;
 
 	const struct FButtonStyle* BackButtonStyle;
+
+	const struct FButtonStyle* ButtonStyle;
+
+	TWeakObjectPtr<AMenuHUD> OwnerHUD;
 };

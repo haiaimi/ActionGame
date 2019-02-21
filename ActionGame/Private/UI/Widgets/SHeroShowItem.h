@@ -24,6 +24,7 @@ public:
 	SLATE_ARGUMENT(FVector2D, ImageScale)
 	SLATE_ARGUMENT(float, HoverScale)
 	SLATE_ARGUMENT(const FSlateBrush*, Image)
+	SLATE_EVENT(FSimpleDelegate, OnPressed)
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */

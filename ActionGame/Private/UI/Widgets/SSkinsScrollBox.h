@@ -23,7 +23,10 @@ public:
 	/** Constructs this widget with InArgs */
 	void Construct(const FArguments& InArgs);
 
-	void SetSkinImages(TArray<struct FSlateBrush>* InImages);
+	void SetSkinImages(const TArray<struct FSlateBrush>* InImages);
+
+private:
+	void SetupAnimation(int32 ItemCounts);
 
 	void SetSkinItems();
 
@@ -33,4 +36,8 @@ private:
 	TArray<TSharedPtr<SHeroShowItem>> SkinItems;
 
 	const TArray<struct FSlateBrush>* SkinImageBrushs;
+
+	FCurveSequence AnimSequence;
+
+	TArray<FCurveHandle> AnimHandles;
 };

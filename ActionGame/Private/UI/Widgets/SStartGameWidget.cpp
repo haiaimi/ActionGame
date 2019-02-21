@@ -4,6 +4,7 @@
 #include "SlateOptMacros.h"
 #include "SBackgroundBlur.h"
 #include "../Styles/FActionGameStyle.h"
+#include "SMainMenuWidget.h"
 
 
 #define LOCTEXT_NAMESPACE "ActionGame.UI.StartGame"
@@ -11,8 +12,10 @@
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SStartGameWidget::Construct(const FArguments& InArgs)
 {
+	OwnerHUD = InArgs._OwnerHUD;
 	BackButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("BackButtonStyle"));
 	UIStyle = &FActionGameStyle::Get().GetWidgetStyle<FUIAssetStyle>(TEXT("ActionGameUIAssetStyle"));
+	ButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ActionGameButtonStyle"));
 
 	ChildSlot
 	.HAlign(EHorizontalAlignment::HAlign_Fill)
@@ -128,12 +131,50 @@ void SStartGameWidget::Construct(const FArguments& InArgs)
 							.RenderTransform(FSlateRenderTransform(FVector2D(-100.f, 0.f)))
 						]
 					]
+					+SHorizontalBox::Slot()
+					.AutoWidth()
+					[
+						SNew(SBox)
+						.WidthOverride(1400.f)
+					]
+					+SHorizontalBox::Slot()
+					.AutoWidth()
+					[
+						SNew(SBox)
+						
+						.VAlign(EVerticalAlignment::VAlign_Center)
+						[
+							SNew(SButton)
+							.HAlign(EHorizontalAlignment::HAlign_Center)
+							.VAlign(EVerticalAlignment::VAlign_Center)
+							.ButtonStyle(ButtonStyle)
+							[
+								SNew(STextBlock)
+								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),35))
+								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+								.Text(LOCTEXT("StartGame","游戏开始"))
+							]
+						]
+					]
 				]
 			]
 		]
 	];
-
+	SetupAnimation();
 	AddHeroHeads();
+}
+
+void SStartGameWidget::SetupAnimation()
+{
+	AnimSequence = FCurveSequence();
+	AnimHandles.SetNum(6);
+
+	StartingPageHandle = AnimSequence.AddCurve(0.f, 0.5f, ECurveEaseFunction::CubicOut);
+
+	for (int32 i = 0; i < 6; ++i)
+		AnimHandles[i] = AnimSequence.AddCurve(0.35f + 0.1f*i, 0.2f, ECurveEaseFunction::CubicOut);
+
+	AnimSequence.Play(this->AsShared());
 }
 
 void SStartGameWidget::AddHeroHeads()
@@ -149,6 +190,11 @@ void SStartGameWidget::AddHeroHeads()
 			SNew(SBox)
 			.WidthOverride(800.f)
 			.HeightOverride(200.f)
+			.RenderTransform_Lambda([i, this]() {
+				const float CurLerp = AnimHandles[i].GetLerp();
+				return FSlateRenderTransform(FVector2D(0.f, (5 - i)*200.f*(1 - CurLerp)));
+				})
+
 			[
 				SAssignNew(HeadContainer, SHorizontalBox)
 			];
@@ -162,6 +208,9 @@ void SStartGameWidget::AddHeroHeads()
 						SNew(SHeroShowItem)
 						.Image(&UIStyle->HeroHeadImage)
 						.HoverScale(1.1f)
+						.OnPressed_Lambda([&]() {
+							SkinList->SetSkinImages(&UIStyle->HeroSkinImages);
+							})
 					];
 				}
 				else
@@ -178,7 +227,19 @@ void SStartGameWidget::AddHeroHeads()
 
 void SStartGameWidget::BackToPrevious()
 {
+	AnimSequence.Play(this->AsShared(), false, 0.5f);
+	AnimSequence.Reverse();
+	
+	if(OwnerHUD.IsValid())
+	{
+		auto PreMenu = OwnerHUD->MainMenu;
+		PreMenu->BackToShow();
+	}
+}
 
+void SStartGameWidget::BackToShow()
+{
+	AnimSequence.Play(this->AsShared(), false);
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION
