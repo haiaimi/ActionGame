@@ -105,7 +105,7 @@ void SStartGameWidget::Construct(const FArguments& InArgs)
 						.FillHeight(1.f)
 						[
 							SAssignNew(SkinList, SSkinsScrollBox)
-							.SkinImageBrushs(&UIStyle->HeroSkinImages)
+							.SkinImageBrushs(&UIStyle->Skins[0].Skins)
 						]
 						+ SVerticalBox::Slot()
 						.AutoHeight()
@@ -179,7 +179,7 @@ void SStartGameWidget::SetupAnimation()
 
 void SStartGameWidget::AddHeroHeads()
 {
-	int32 HeroNums = 20;
+	int32 HeroNums = UIStyle->HeroHeadImages.Num();
 
 	if(HeroList.IsValid())
 	{
@@ -204,13 +204,20 @@ void SStartGameWidget::AddHeroHeads()
 				if (i * 4 + j < HeroNums)
 				{
 					HeadContainer->AddSlot()
+					.AutoWidth()
 					[
-						SNew(SHeroShowItem)
-						.Image(&UIStyle->HeroHeadImage)
-						.HoverScale(1.1f)
-						.OnPressed_Lambda([&]() {
-							SkinList->SetSkinImages(&UIStyle->HeroSkinImages);
-							})
+						SNew(SBox)
+						.WidthOverride(200.f)
+						.HeightOverride(200.f)
+						[
+							SNew(SHeroShowItem)
+							.Image(&UIStyle->HeroHeadImages[i*4+j])
+							.HoverScale(1.1f)
+							.OnPressed_Lambda([i,j,this]() {
+								if (i * 4 + j < UIStyle->Skins.Num())
+									SkinList->SetSkinImages(&UIStyle->Skins[i * 4 + j].Skins);
+								})
+						]
 					];
 				}
 				else

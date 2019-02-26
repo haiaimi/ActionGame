@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Styling/SlateWidgetStyle.h"
 #include "SlateWidgetStyleContainerBase.h"
+#include "ActionGameType.h"
 
 #include "UIAssetWidgetStyle.generated.h"
 
@@ -29,7 +30,10 @@ struct FUIAssetStyle : public FSlateWidgetStyle
 	TArray<struct FSlateBrush> HeroSkinImages;
 
 	UPROPERTY(EditAnywhere, Category = Appearance)
-	struct FSlateBrush HeroHeadImage;
+	TArray<struct FSlateBrush> HeroHeadImages;
+
+	UPROPERTY(EditAnywhere, Category = Appearance)
+	TArray<struct FSkinBrushes> Skins;
 
 	// FSlateWidgetStyle
 	virtual void GetResources(TArray<const FSlateBrush*>& OutBrushes) const override;
