@@ -266,12 +266,24 @@ void SMainMenuWidget::HeroDetails()
 		
 			if (!HeroDetail.IsValid())
 			{
-				MenuOverlay->AddSlot(0)
+				MenuOverlay->AddSlot()
+				.HAlign(EHorizontalAlignment::HAlign_Left)
+				.VAlign(EVerticalAlignment::VAlign_Top)
 				[
+					SNew(SBox)
+					.HeightOverride(1080)
+					.WidthOverride(1920)
+					.RenderTransform_Lambda([&]() {
+					if (!HeroDetail.IsValid())return FSlateRenderTransform(FVector2D::ZeroVector);
+					const float CurLerp = HeroDetail->GetCurAnimLerp();
+					return FSlateRenderTransform(FVector2D(1920.f*(1.f - CurLerp), 0.f));
+						})
+					[
 					SAssignNew(HeroDetail, SHeroDetailWidget)
 					.OwnerHUD(OwnerHUD)
 					//.PreWidget(TSharedPtr<SMainMenuWidget>(this))   //这样会造成智能指针循环引用
 					.DetailPlatform(DetailPlatform)
+					]
 				];
 			}
 			else

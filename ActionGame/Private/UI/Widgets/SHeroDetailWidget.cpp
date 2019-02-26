@@ -31,6 +31,7 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.1f));
 	ButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ActionGameButtonStyle"));
 	ButtonSelectedStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ActionGameSelectedButtonStyle"));
+	BackButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("BackButtonStyle"));
 	FPaddingParam::FGetter PadingGetter;
 	PadingGetter.BindLambda([&]() {
 		const float CurLerp = AnimHandle.GetLerp();
@@ -40,16 +41,65 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 	PaddingParam.Bind(PadingGetter);
 
 	ChildSlot
+	.HAlign(EHorizontalAlignment::HAlign_Fill)
+	.VAlign(EVerticalAlignment::VAlign_Fill)
 	[
-		SAssignNew(DetailOverlay, SOverlay)
-		+SOverlay::Slot()
-		.HAlign(EHorizontalAlignment::HAlign_Center)
-		.VAlign(EVerticalAlignment::VAlign_Top)
-		.Padding(PaddingParam)
+		SNew(SHorizontalBox)
+		+SHorizontalBox::Slot()
+		.AutoWidth()
 		[
 			SNew(SBox)
-			.HeightOverride(900)
-			.WidthOverride(1800)
+			.WidthOverride(100.f)
+		]
+		+SHorizontalBox::Slot()
+		.FillWidth(1.f)
+		[
+			SNew(SVerticalBox)
+			+SVerticalBox::Slot()
+			.FillHeight(0.8)
+			.HAlign(EHorizontalAlignment::HAlign_Left)
+			.VAlign(EVerticalAlignment::VAlign_Center)
+			[
+				SNew(STextBlock)
+				.Text(LOCTEXT("HeroDetails","人物细节"))
+				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),40))
+				.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+			]
+			+SVerticalBox::Slot()
+			.FillHeight(0.3f)
+			[
+				SNew(SHorizontalBox)
+				+SHorizontalBox::Slot()
+				.AutoWidth()
+				[
+					SNew(SBox)
+					.WidthOverride(300.f)
+					.HAlign(EHorizontalAlignment::HAlign_Center)
+					.VAlign(EVerticalAlignment::VAlign_Center)
+					[
+						SNew(STextBlock)
+						.Text(LOCTEXT("Heros","英雄"))
+						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),30))
+						.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+					]
+				]
+				+SHorizontalBox::Slot()
+				.AutoWidth()
+				[
+					SNew(SBox)
+					.WidthOverride(300.f)
+					.HAlign(EHorizontalAlignment::HAlign_Center)
+					.VAlign(EVerticalAlignment::VAlign_Center)
+					[
+						SNew(STextBlock)
+						.Text(LOCTEXT("Skins","皮肤"))
+						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),30))
+						.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+					]
+				]
+			]
+			+SVerticalBox::Slot()
+			.FillHeight(4.f)
 			[
 				SNew(SHorizontalBox)
 				+SHorizontalBox::Slot()
@@ -60,19 +110,6 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 					[
 						SAssignNew(HerosBar, SScrollBox)
 						.ScrollBarAlwaysVisible(true)
-						+SScrollBox::Slot()
-						[
-							SNew(SBorder)
-							.HAlign(EHorizontalAlignment::HAlign_Center)
-							.VAlign(EVerticalAlignment::VAlign_Center)
-							.Padding(0.f)
-							[
-								SNew(STextBlock)
-								.Text(LOCTEXT("Hero","英雄"))
-								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-							]
-						]
 					]
 					
 				]
@@ -99,6 +136,23 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 					.FillHeight(1)
 					[
 						SAssignNew(AbilityButtonContainer, SHorizontalBox)
+					]
+				]
+			]
+			+SVerticalBox::Slot()
+			.FillHeight(0.6f)
+			[
+				SNew(SHorizontalBox)
+				+SHorizontalBox::Slot()
+				.AutoWidth()
+				[
+					SNew(SBox)
+					.WidthOverride(100.f)
+					[
+						SNew(SButton)
+						.OnPressed(this, &SHeroDetailWidget::BackToPrevious)
+						.ButtonStyle(BackButtonStyle)
+						.RenderTransform(FSlateRenderTransform(FVector2D(-100.f, 0.f)))
 					]
 				]
 			]
@@ -195,19 +249,6 @@ void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
 	{
 		SkinButtons.Reset();
 		HeroSkinsBar->ClearChildren();
-		HeroSkinsBar->AddSlot()
-		[
-			SNew(SBorder)
-			.HAlign(EHorizontalAlignment::HAlign_Center)
-			.VAlign(EVerticalAlignment::VAlign_Center)
-			.Padding(0.f)
-			[
-				SNew(STextBlock)
-				.Text(LOCTEXT("Skin","皮肤"))
-				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),34))
-				.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-			]
-		];
 
 		const TArray<FCharacterInfo> CharacterInfos = DetailPlatform->CharInfos;
 		const TArray<FText>& MeshNames = CharacterInfos[Index].MeshNames;
@@ -318,26 +359,34 @@ void SHeroDetailWidget::ShowTips(const FText& ShowText)
 	FPaddingParam PaddingParam;
 	PaddingParam.Bind(PadingGetter);
 
-	DetailOverlay->AddSlot()
-	.HAlign(EHorizontalAlignment::HAlign_Left)
-	.VAlign(EVerticalAlignment::VAlign_Top)
-	.Padding(PaddingParam)
-	[
-		SAssignNew(TipWidget, SBox)
-		.HeightOverride(400.f)
-		.WidthOverride(500.f)
+	if(OwnerHUD.IsValid())
+	{
+		auto PreMenu = OwnerHUD->MainMenu;
+		PreMenu->GetMenuOverlay()->AddSlot()
+		.HAlign(EHorizontalAlignment::HAlign_Left)
+		.VAlign(EVerticalAlignment::VAlign_Top)
+		.Padding(PaddingParam)
 		[
-			SNew(SInfoTipWidget)
-			.TipContent(ShowText)
-		]
-	];
+			SAssignNew(TipWidget, SBox)
+			.HeightOverride(400.f)
+			.WidthOverride(500.f)
+			[
+				SNew(SInfoTipWidget)
+				.TipContent(ShowText)
+			]
+		];
+	}
 }
 
 void SHeroDetailWidget::CloseWidget()
 {
 	if (!TipWidget.IsValid())return;
-	bool bDeleted = DetailOverlay->RemoveSlot(TipWidget.ToSharedRef());
-	TipWidget.Reset();
+	if (OwnerHUD.IsValid())
+	{
+		auto PreMenu = OwnerHUD->MainMenu;
+		PreMenu->GetMenuOverlay()->RemoveSlot(TipWidget.ToSharedRef());
+		TipWidget.Reset();
+	}
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

@@ -35,6 +35,8 @@ public:
 
 	virtual void BackToShow()override;
 
+	FORCEINLINE float GetCurAnimLerp() { return AnimHandle.GetLerp(); }
+
 protected:
 	void SetupAnimation();
 
@@ -64,6 +66,8 @@ private:
 	const struct FButtonStyle* ButtonStyle;
 
 	const struct FButtonStyle* ButtonSelectedStyle;
+
+	const struct FButtonStyle* BackButtonStyle;
 
 	FCurveSequence AnimSequence;
 
