@@ -251,6 +251,11 @@ void AActionGameCharacter::ApplyFreezedParticle(class UParticleSystem* InParticl
 	}
 }
 
+void AActionGameCharacter::ApplyFreezedCameraParticle(class UParticleSystem* InParticle)
+{
+	
+}
+
 bool AActionGameCharacter::HitReact(const FVector& HitPoint)
 {
 	const FVector HitNormal = (HitPoint - GetActorLocation()).GetSafeNormal2D();

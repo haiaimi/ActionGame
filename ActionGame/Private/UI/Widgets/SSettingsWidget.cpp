@@ -24,6 +24,7 @@
 			GConfig->Flush(false, GGameUserSettingsIni);\
 		});
 
+static const int32 MaxSettingCounts = 20;
 #define LOCTEXT_NAMESPACE "ActionGame.UI.Setting"
 
 static const TArray<FText> FullScreenModeText = { LOCTEXT("Fullscreen","全屏"),LOCTEXT("WindowedFullscreen","无边框"),LOCTEXT("Windowed","窗口") };
@@ -58,9 +59,9 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 	BorderBackground = new FSlateBrush();
 	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.f));
 	SettingTagButtons.SetNum(3);
-	SettingButtonHandles.SetNum(15);
-	ButtonTransformParams.SetNum(15);
-	SettingBorders.SetNum(15);
+	SettingButtonHandles.SetNum(MaxSettingCounts);
+	ButtonTransformParams.SetNum(MaxSettingCounts);
+	SettingBorders.SetNum(MaxSettingCounts);
 
 	ChildSlot
 	.HAlign(EHorizontalAlignment::HAlign_Fill)
@@ -275,7 +276,7 @@ void SSettingsWidget::SetupAnimation()
 {
 	AnimSequence = FCurveSequence();
 	AnimHandle = AnimSequence.AddCurve(0.f, 0.5f, ECurveEaseFunction::CubicOut);
-	for (int32 i = 0; i < 15; ++i)
+	for (int32 i = 0; i < MaxSettingCounts; ++i)
 	{
 		SettingButtonHandles[i] = AnimSequence.AddCurve(0.4f + i * 0.05f, 0.04f*i, ECurveEaseFunction::CubicOut);
 
@@ -284,7 +285,7 @@ void SSettingsWidget::SetupAnimation()
 			const float CurLerp = SettingButtonHandles[i].GetLerp();
 			if (SettingBorders[i].IsValid())
 				SettingBorders[i]->SetRenderOpacity(CurLerp);
-			return FSlateRenderTransform(FVector2D(0.f, (-80.f - i * 60.f)*(1 - CurLerp)));
+			return FSlateRenderTransform(FVector2D(0.f, -300.f*(1 - CurLerp)));
 			});
 
 		ButtonTransformParams[i].Bind(TransformGetter);
@@ -632,6 +633,22 @@ void SSettingsWidget::ShowGraphicSettingList()
 			]
 		];
 
+		SettingList->AddSlot()
+		[
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground)
+			.RenderOpacity(0.f)
+			[
+				SNew(SSelectBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(LOCTEXT("Useless","Useless"))
+				.SelectContent(GraphicLevelText)
+				.CurSelection(0)
+			]
+		];
+
+
+		HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(AnimIndex));
 		if (AnimSequence.GetSequenceTime() >= 0.5f)
 			AnimSequence.Play(this->AsShared(), false, 0.5f);
 	}

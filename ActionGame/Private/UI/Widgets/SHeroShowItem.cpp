@@ -7,6 +7,7 @@
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHeroShowItem::Construct(const FArguments& InArgs)
 {
+	OnHovered = InArgs._OnHovered;
 	BorderScale = InArgs._BorderScale;
 	ImageScale = InArgs._ImageScale;
 	HoverScale = InArgs._HoverScale;
@@ -23,6 +24,7 @@ void SHeroShowItem::Construct(const FArguments& InArgs)
 		.ButtonStyle(TagButtonStyle)
 		.OnHovered_Lambda([&]() {
 		ItemBorder->SetRenderTransform(FSlateRenderTransform(FScale2D(BorderScale*HoverScale)));
+		OnHovered.ExecuteIfBound();
 			})
 		.OnUnhovered_Lambda([&]() {
 		ItemBorder->SetRenderTransform(FSlateRenderTransform(FScale2D(BorderScale)));

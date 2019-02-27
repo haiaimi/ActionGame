@@ -9,6 +9,8 @@
 
 #define LOCTEXT_NAMESPACE "ActionGame.UI.StartGame"
 
+static const TArray<FText> HeroNameText = { LOCTEXT("Aurora","奥拉"),LOCTEXT("Countess","伯爵夫人") };
+
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SStartGameWidget::Construct(const FArguments& InArgs)
 {
@@ -54,7 +56,7 @@ void SStartGameWidget::Construct(const FArguments& InArgs)
 					[
 						SNew(SBox)
 						.HeightOverride(70)
-						.WidthOverride(800.f)
+						.WidthOverride(400.f)
 						.HAlign(EHorizontalAlignment::HAlign_Left)
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
@@ -62,6 +64,21 @@ void SStartGameWidget::Construct(const FArguments& InArgs)
 							.Text(LOCTEXT("SelectHero","人物选择"))
 							.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),24))
 							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+						]
+					]
+					+SHorizontalBox::Slot()
+					.AutoWidth()
+					[
+						SNew(SBox)
+						.HeightOverride(70)
+						.WidthOverride(400.f)
+						.HAlign(EHorizontalAlignment::HAlign_Center)
+						.VAlign(EVerticalAlignment::VAlign_Center)
+						[
+							SAssignNew(HeroName, STextBlock)
+							.Text(HeroNameText[0])
+							.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),24))
+							.ColorAndOpacity(FSlateColor(FLinearColor(0.98f,1.f,0.67f,1.f)))
 						]
 					]
 					+SHorizontalBox::Slot()
@@ -216,6 +233,8 @@ void SStartGameWidget::AddHeroHeads()
 							.OnPressed_Lambda([i,j,this]() {
 								if (i * 4 + j < UIStyle->Skins.Num())
 									SkinList->SetSkinImages(&UIStyle->Skins[i * 4 + j].Skins);
+								if (HeroName.IsValid() && i * 4 + j < HeroNameText.Num())
+									HeroName->SetText(HeroNameText[i * 4 + j]);
 								})
 						]
 					];

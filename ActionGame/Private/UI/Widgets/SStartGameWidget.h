@@ -46,6 +46,8 @@ private:
 
 	TSharedPtr<SScrollBox> HeroList;
 
+	TSharedPtr<STextBlock> HeroName;
+
 	TSharedPtr<SSkinsScrollBox> SkinList;
 
 	const struct FUIAssetStyle* UIStyle;

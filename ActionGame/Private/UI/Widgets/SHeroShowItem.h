@@ -25,6 +25,7 @@ public:
 	SLATE_ARGUMENT(float, HoverScale)
 	SLATE_ARGUMENT(const FSlateBrush*, Image)
 	SLATE_EVENT(FSimpleDelegate, OnPressed)
+	SLATE_EVENT(FSimpleDelegate, OnHovered)
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */
@@ -48,4 +49,6 @@ private:
 	const FSlateBrush* Image;
 	
 	const FButtonStyle* TagButtonStyle;
+
+	FSimpleDelegate OnHovered;
 };

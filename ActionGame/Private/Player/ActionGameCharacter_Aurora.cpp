@@ -13,6 +13,7 @@
 #include <Components/BoxComponent.h>
 #include "Common/HAIAIMIHelper.h"
 #include "ActionAIController.h"
+#include "Camera/CameraComponent.h"
 
 
 AActionGameCharacter_Aurora::AActionGameCharacter_Aurora():
@@ -399,6 +400,9 @@ void AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveComponent* OverlappedCom
 				Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 				Enemy->GetMesh()->bNoSkeletonUpdate = true;
 				Enemy->bFreezedStop = true;
+				UGameplayStatics::SpawnEmitterAttached(CamFreezedParticle_Stop, Enemy->GetFollowCamera(), NAME_None, FVector(100.f, 0.f, 0.f),FRotator::ZeroRotator,EAttachLocation::KeepRelativeOffset);
+
+				//HAIAIMIHelper::Debug_ScreenMessage(TEXT("Hit Enemy"),5.f);
 				Enemy->bUseControllerRotationRoll = false;
 				if (AActionAIController* AIControl = Cast<AActionAIController>(Enemy->Controller))
 				{

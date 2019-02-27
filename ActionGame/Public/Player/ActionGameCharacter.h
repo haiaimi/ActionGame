@@ -103,9 +103,12 @@ public:
 
 	virtual void SetMoveDir(EMoveDir::Type InDir) {};
 
+	///Aurora英雄对应的效果
 	/**玩家被冻结，减速*/
 	UFUNCTION(BlueprintCallable)
 	void ApplyFreezedParticle(class UParticleSystem* InParticle);
+
+	void ApplyFreezedCameraParticle(class UParticleSystem* InParticle);
 
 	/**玩家对受到的攻击进行反馈*/
 	virtual bool HitReact(const FVector& HitPoint);
