@@ -2,6 +2,10 @@
 
 #include "SSkinsScrollBox.h"
 #include "SlateOptMacros.h"
+#include "Engine/Engine.h"
+#include "ActionGameInstance.h"
+#include "Kismet/GameplayStatics.h"
+#include "HAIAIMIHelper.h"
 
 using FRenderTransformParam = TAttribute<TOptional<FSlateRenderTransform>>;
 
@@ -9,7 +13,7 @@ BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SSkinsScrollBox::Construct(const FArguments& InArgs)
 {
 	SkinImageBrushs = InArgs._SkinImageBrushs;
-
+	OwnerHUD = InArgs._OwnerHUD;
 	ChildSlot
 	.HAlign(EHorizontalAlignment::HAlign_Fill)
 	.VAlign(EVerticalAlignment::VAlign_Fill)
@@ -68,6 +72,13 @@ void SSkinsScrollBox::SetSkinItems()
 					.RenderTransform_Lambda([i, this]() {
 						const float CurLerp = AnimHandles[i].GetLerp();
 						return FSlateRenderTransform(FVector2D((SkinItems.Num() - i)*310.f*(1.f - CurLerp), 0.f));
+						})
+					.OnPressed_Lambda([i, this]() {
+						if(OwnerHUD.IsValid())
+						{
+							auto MyInstance = OwnerHUD->GetGameInstance<UActionGameInstance>();
+							if (MyInstance)MyInstance->PlayerSkinIndex = i;
+						}
 						})
 				];
 			}

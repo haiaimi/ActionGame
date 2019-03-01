@@ -7,6 +7,7 @@
 #include "SlateExtras.h"
 #include "Widgets/SCompoundWidget.h"
 #include "SHeroShowItem.h"
+#include "MenuHUD.h"
 
 /**
  *  ∆§∑Ù—°‘ÒΩÁ√Ê
@@ -18,6 +19,7 @@ public:
 		_SkinImageBrushs(nullptr)
 	{}
 	SLATE_ARGUMENT(const TArray<struct FSlateBrush>*, SkinImageBrushs)
+	SLATE_ARGUMENT(TWeakObjectPtr<AMenuHUD>, OwnerHUD)
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */
@@ -31,6 +33,7 @@ private:
 	void SetSkinItems();
 
 private:
+
 	TSharedPtr<SScrollBox> SkinContainer;
 
 	TArray<TSharedPtr<SHeroShowItem>> SkinItems;
@@ -40,4 +43,6 @@ private:
 	FCurveSequence AnimSequence;
 
 	TArray<FCurveHandle> AnimHandles;
+
+	TWeakObjectPtr<AMenuHUD> OwnerHUD;
 };

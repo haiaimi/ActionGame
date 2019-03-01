@@ -14,8 +14,10 @@
 #include <Particles/ParticleSystem.h>
 #include <Kismet/GameplayStatics.h>
 #include <Components/SkeletalMeshComponent.h>
+#include "Engine/SkeletalMesh.h"
 #include <Animation/AnimInstance.h>
 #include "AI/ActionAIController.h"
+#include "ActionGameInstance.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AActionGameCharacter
@@ -58,6 +60,20 @@ AActionGameCharacter::AActionGameCharacter():
 
 	SkillCoolingTimes.SetNum(3);
 	SkillCoolingTimers.Init(FTimerHandle(), 3);
+}
+
+void AActionGameCharacter::BeginPlay()
+{
+	if(UActionGameInstance* MyGameInstance = Cast<UActionGameInstance>(GetGameInstance()))
+	{
+		if (MyGameInstance->PlayerSkinIndex < CharacterMeshes.Num())
+		{
+			GetMesh()->SetSkeletalMesh(CharacterMeshes[MyGameInstance->PlayerSkinIndex]);
+			HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(MyGameInstance->PlayerSkinIndex), 10);
+		}
+	}
+	
+	Super::BeginPlay();
 }
 
 //////////////////////////////////////////////////////////////////////////

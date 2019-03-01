@@ -107,6 +107,7 @@ void AActionGameCharacter_Aurora::FreezeEnemyImpl(class AActor* InEnemy)
 		Enemy->bFreezedSlow = true;
 		Enemy->ApplyFreezedParticle(Freezed_Slow);
 		Enemy->GetCharacterMovement()->MaxWalkSpeed = 200.f;
+		UGameplayStatics::SpawnEmitterAttached(CamFrostParticle_Slowed, Enemy->GetFollowCamera(), NAME_None, FVector(90.f, 0.f, 0.f),FRotator::ZeroRotator,EAttachLocation::KeepRelativeOffset);
 
 		FTimerHandle TimerHandle;
 		FTimerDelegate TimerDelegate;
@@ -400,13 +401,16 @@ void AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveComponent* OverlappedCom
 				Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 				Enemy->GetMesh()->bNoSkeletonUpdate = true;
 				Enemy->bFreezedStop = true;
-				UGameplayStatics::SpawnEmitterAttached(CamFreezedParticle_Stop, Enemy->GetFollowCamera(), NAME_None, FVector(100.f, 0.f, 0.f),FRotator::ZeroRotator,EAttachLocation::KeepRelativeOffset);
 
 				//HAIAIMIHelper::Debug_ScreenMessage(TEXT("Hit Enemy"),5.f);
 				Enemy->bUseControllerRotationRoll = false;
 				if (AActionAIController* AIControl = Cast<AActionAIController>(Enemy->Controller))
 				{
 					AIControl->SetAIFreezedValue();
+				}
+				else
+				{
+					UGameplayStatics::SpawnEmitterAttached(CamFrostParticle_Frozen, Enemy->GetFollowCamera(), NAME_None, FVector(90.f, 0.f, 0.f),FRotator::ZeroRotator,EAttachLocation::KeepRelativeOffset);
 				}
 					
 				FTimerHandle TimerHandle;

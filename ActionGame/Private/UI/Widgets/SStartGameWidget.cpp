@@ -5,6 +5,8 @@
 #include "SBackgroundBlur.h"
 #include "../Styles/FActionGameStyle.h"
 #include "SMainMenuWidget.h"
+#include "ActionGameInstance.h"
+#include "Kismet/GameplayStatics.h"
 
 
 #define LOCTEXT_NAMESPACE "ActionGame.UI.StartGame"
@@ -123,6 +125,7 @@ void SStartGameWidget::Construct(const FArguments& InArgs)
 						[
 							SAssignNew(SkinList, SSkinsScrollBox)
 							.SkinImageBrushs(&UIStyle->Skins[0].Skins)
+							.OwnerHUD(OwnerHUD)
 						]
 						+ SVerticalBox::Slot()
 						.AutoHeight()
@@ -165,6 +168,7 @@ void SStartGameWidget::Construct(const FArguments& InArgs)
 							.HAlign(EHorizontalAlignment::HAlign_Center)
 							.VAlign(EVerticalAlignment::VAlign_Center)
 							.ButtonStyle(ButtonStyle)
+							.OnPressed(this, &SStartGameWidget::StartGame)
 							[
 								SNew(STextBlock)
 								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),35))
@@ -235,6 +239,13 @@ void SStartGameWidget::AddHeroHeads()
 									SkinList->SetSkinImages(&UIStyle->Skins[i * 4 + j].Skins);
 								if (HeroName.IsValid() && i * 4 + j < HeroNameText.Num())
 									HeroName->SetText(HeroNameText[i * 4 + j]);
+								if(OwnerHUD.IsValid())
+								{
+									if (UActionGameInstance* MyInstance = OwnerHUD->GetGameInstance<UActionGameInstance>())
+									{
+										MyInstance->PlayerIndex = i * 4 + j;
+									}
+								}
 								})
 						]
 					];
@@ -249,6 +260,12 @@ void SStartGameWidget::AddHeroHeads()
 			];
 		}
 	}
+}
+
+void SStartGameWidget::StartGame()
+{
+	if (OwnerHUD.IsValid())
+		UGameplayStatics::OpenLevel(OwnerHUD.Get(), TEXT("/Game/GameLevels/GameMap"));
 }
 
 void SStartGameWidget::BackToPrevious()

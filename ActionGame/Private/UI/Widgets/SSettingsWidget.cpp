@@ -62,7 +62,7 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 	SettingButtonHandles.SetNum(MaxSettingCounts);
 	ButtonTransformParams.SetNum(MaxSettingCounts);
 	SettingBorders.SetNum(MaxSettingCounts);
-
+	
 	ChildSlot
 	.HAlign(EHorizontalAlignment::HAlign_Fill)
 	.VAlign(EVerticalAlignment::VAlign_Fill)

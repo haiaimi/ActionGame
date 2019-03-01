@@ -126,7 +126,10 @@ protected:
 	class UParticleSystem* ImpactParticle;
 
 	UPROPERTY(EditDefaultsOnly)
-	class UParticleSystem* CamFreezedParticle_Stop;
+	class UParticleSystem* CamFrostParticle_Slowed;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UParticleSystem* CamFrostParticle_Frozen;
 
 	FTransform FreezeTransform;
 

@@ -49,6 +49,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class UAnimMontage*> HitReactAnims;
 
+	UPROPERTY(EditDefaultsOnly)
+	TArray<class USkeletalMesh*> CharacterMeshes;
+
 	/**是否被Aurora减速*/
 	UPROPERTY(BlueprintReadOnly)
 	bool bFreezedSlow;
@@ -57,6 +60,8 @@ public:
 	bool bFreezedStop;
 
 protected:
+	virtual void BeginPlay()override;
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void MoveForward(float Value);
@@ -112,5 +117,6 @@ public:
 
 	/**玩家对受到的攻击进行反馈*/
 	virtual bool HitReact(const FVector& HitPoint);
+
 };
 

@@ -13,6 +13,10 @@ class AActionGameGameMode : public AGameModeBase
 
 public:
 	AActionGameGameMode();
+
+	virtual void RestartPlayer(AController* NewPlayer)override;
+
+	virtual void PostLogin(APlayerController* NewPlayer)override;
 };
 
 

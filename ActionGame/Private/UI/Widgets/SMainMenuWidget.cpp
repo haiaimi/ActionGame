@@ -240,9 +240,6 @@ void SMainMenuWidget::StartGame()
 
 	if (StartGameWidget.IsValid())
 		OwnerController->SetCurWidget(StartGameWidget);
-
-	/*if (OwnerController.IsValid())
-		UGameplayStatics::OpenLevel(OwnerController.Get(), TEXT("/Game/GameLevels/GameMap"));*/
 }
 
 void SMainMenuWidget::HeroDetails()

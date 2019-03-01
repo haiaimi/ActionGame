@@ -37,6 +37,8 @@ private:
 	/**ÃÌº””¢–€Õ∑œÒ*/
 	void AddHeroHeads();
 
+	void StartGame();
+
 private:
 	FCurveSequence AnimSequence;
 
