@@ -14,6 +14,7 @@ void SSkinsScrollBox::Construct(const FArguments& InArgs)
 {
 	SkinImageBrushs = InArgs._SkinImageBrushs;
 	OwnerHUD = InArgs._OwnerHUD;
+	CurSelectIndex = 0;
 	ChildSlot
 	.HAlign(EHorizontalAlignment::HAlign_Fill)
 	.VAlign(EVerticalAlignment::VAlign_Fill)
@@ -79,6 +80,10 @@ void SSkinsScrollBox::SetSkinItems()
 							auto MyInstance = OwnerHUD->GetGameInstance<UActionGameInstance>();
 							if (MyInstance)MyInstance->PlayerSkinIndex = i;
 						}
+						CurSelectIndex = i;
+						})
+					.IsEnabled_Lambda([i, this]() {
+							return CurSelectIndex != i;
 						})
 				];
 			}

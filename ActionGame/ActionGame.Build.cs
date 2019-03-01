@@ -16,5 +16,10 @@ public class ActionGame : ModuleRules
            new string[] {
                 "ActionGame/Private/UI/Widgets"
            });
+
+        PrivateDependencyModuleNames.AddRange(
+            new string[] {
+                "ActionGameLoadingScreen"
+            });
     }
 }

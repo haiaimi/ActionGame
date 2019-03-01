@@ -9,5 +9,6 @@ public class ActionGameEditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
 		ExtraModuleNames.Add("ActionGame");
+		//ExtraModuleNames.Add("ActionGameLoadingScreen");
 	}
 }

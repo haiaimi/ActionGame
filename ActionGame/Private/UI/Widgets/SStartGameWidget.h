@@ -59,4 +59,6 @@ private:
 	const struct FButtonStyle* ButtonStyle;
 
 	TWeakObjectPtr<AMenuHUD> OwnerHUD;
+
+	int32 CurSelectIndex;
 };

@@ -45,4 +45,6 @@ private:
 	TArray<FCurveHandle> AnimHandles;
 
 	TWeakObjectPtr<AMenuHUD> OwnerHUD;
+
+	int32 CurSelectIndex;
 };

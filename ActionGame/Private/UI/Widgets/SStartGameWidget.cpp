@@ -7,6 +7,7 @@
 #include "SMainMenuWidget.h"
 #include "ActionGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "ActionGameLoadingScreen/Public/ActionGameLoadingScreen.h"
 
 
 #define LOCTEXT_NAMESPACE "ActionGame.UI.StartGame"
@@ -17,6 +18,7 @@ BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SStartGameWidget::Construct(const FArguments& InArgs)
 {
 	OwnerHUD = InArgs._OwnerHUD;
+	CurSelectIndex = 0;
 	BackButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("BackButtonStyle"));
 	UIStyle = &FActionGameStyle::Get().GetWidgetStyle<FUIAssetStyle>(TEXT("ActionGameUIAssetStyle"));
 	ButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ActionGameButtonStyle"));
@@ -246,7 +248,12 @@ void SStartGameWidget::AddHeroHeads()
 										MyInstance->PlayerIndex = i * 4 + j;
 									}
 								}
+								CurSelectIndex = i * 4 + j;
 								})
+							.IsEnabled_Lambda([i, j, this]() {
+									return CurSelectIndex != i * 4 + j;
+								})
+
 						]
 					];
 				}
@@ -265,7 +272,15 @@ void SStartGameWidget::AddHeroHeads()
 void SStartGameWidget::StartGame()
 {
 	if (OwnerHUD.IsValid())
+	{
 		UGameplayStatics::OpenLevel(OwnerHUD.Get(), TEXT("/Game/GameLevels/GameMap"));
+		IActionGameLoadingScreenModule* LoadingScreenModule = FModuleManager::LoadModulePtr<IActionGameLoadingScreenModule>("ActionGameLoadingScreen");
+		if( LoadingScreenModule != nullptr )
+		{
+			LoadingScreenModule->StartInGameLoadingScreen();
+		}
+	}
+		
 }
 
 void SStartGameWidget::BackToPrevious()

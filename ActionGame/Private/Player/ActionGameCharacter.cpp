@@ -69,7 +69,6 @@ void AActionGameCharacter::BeginPlay()
 		if (MyGameInstance->PlayerSkinIndex < CharacterMeshes.Num())
 		{
 			GetMesh()->SetSkeletalMesh(CharacterMeshes[MyGameInstance->PlayerSkinIndex]);
-			HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(MyGameInstance->PlayerSkinIndex), 10);
 		}
 	}
 	
