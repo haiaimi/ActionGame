@@ -5,8 +5,6 @@
 #include "MoviePlayer.h"
 #include "SThrobber.h"
 
-// This module must be loaded "PreLoadingScreen" in the .uproject file, otherwise it will not hook in time!
-
 struct FActionGameLoadingScreenBrush : public FSlateDynamicImageBrush, public FGCObject
 {
 	FActionGameLoadingScreenBrush( const FName InTextureName, const FVector2D& InImageSize, class UTexture2D* InTexture)
