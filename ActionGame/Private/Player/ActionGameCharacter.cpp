@@ -64,15 +64,23 @@ AActionGameCharacter::AActionGameCharacter():
 
 void AActionGameCharacter::BeginPlay()
 {
+	Super::BeginPlay();
+
 	if(UActionGameInstance* MyGameInstance = Cast<UActionGameInstance>(GetGameInstance()))
 	{
+		if (AIControllerClass == AActionAIController::StaticClass())
+		{
+			int32 AISkinIndex = FMath::RandRange(0, CharacterMeshes.Num() - 1);
+			if (MyGameInstance->EnemyIndex == MyGameInstance->PlayerIndex && AISkinIndex == MyGameInstance->PlayerSkinIndex)
+				AISkinIndex = (AISkinIndex + 1) % CharacterMeshes.Num();
+			GetMesh()->SetSkeletalMesh(CharacterMeshes[AISkinIndex]);
+			return;
+		}
 		if (MyGameInstance->PlayerSkinIndex < CharacterMeshes.Num())
 		{
 			GetMesh()->SetSkeletalMesh(CharacterMeshes[MyGameInstance->PlayerSkinIndex]);
 		}
 	}
-	
-	Super::BeginPlay();
 }
 
 //////////////////////////////////////////////////////////////////////////

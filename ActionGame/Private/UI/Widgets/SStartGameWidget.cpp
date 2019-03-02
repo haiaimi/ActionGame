@@ -12,7 +12,7 @@
 
 #define LOCTEXT_NAMESPACE "ActionGame.UI.StartGame"
 
-static const TArray<FText> HeroNameText = { LOCTEXT("Aurora","奥拉"),LOCTEXT("Countess","伯爵夫人") };
+static const TArray<FText> HeroNameText = { LOCTEXT("Aurora","奥拉"),LOCTEXT("Countess","康缇斯") };
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SStartGameWidget::Construct(const FArguments& InArgs)

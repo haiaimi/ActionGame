@@ -23,13 +23,22 @@ public:
 
 	TSubclassOf<class AActionGameCharacter> GetToSpawnPlayerClass();
 
+	TSubclassOf<class AActionGameCharacter> GetToSpawnAIClass();
+
 public:
 	int32 PlayerIndex;
 
 	int32 PlayerSkinIndex;
 
+	int32 EnemyIndex;
+
+	int32 EnemySkinIndex;
+
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TArray<TSubclassOf<class AActionGameCharacter>> ToSpawnCharacter;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<TSubclassOf<class AActionGameCharacter>> ToSpawnAICharacter;
 };
  

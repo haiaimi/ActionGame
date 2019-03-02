@@ -5,6 +5,9 @@
 #include "UObject/ConstructorHelpers.h"
 #include "ActionGameInstance.h"
 #include "HAIAIMIHelper.h"
+#include "GameFramework/PlayerStart.h"
+#include "EngineUtils.h"
+#include "Engine/World.h"
 
 AActionGameGameMode::AActionGameGameMode()
 {
@@ -22,9 +25,26 @@ void AActionGameGameMode::RestartPlayer(AController* NewPlayer)
 	if (UActionGameInstance* MyInstance = GetGameInstance<UActionGameInstance>())
 	{
 		DefaultPawnClass = MyInstance->GetToSpawnPlayerClass();
+
+		for (TActorIterator<APlayerStart> It(GetWorld()); It; ++It)
+		{
+			APlayerStart* Start = *It;
+			if (Start && Start->PlayerStartTag == FName(TEXT("Enemy")))
+			{
+				if (MyInstance->GetToSpawnAIClass())
+					GetWorld()->SpawnActor<AActionGameCharacter>(MyInstance->GetToSpawnAIClass(), Start->GetActorTransform());
+				else
+					HAIAIMIHelper::Debug_LogMessage(TEXT("Spawn Enemy Failed"));
+			}
+		}
 	}
 
 	Super::RestartPlayer(NewPlayer);
+}
+
+APlayerController* AActionGameGameMode::Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
+{
+	return Super::Login(NewPlayer, InRemoteRole, TEXT("Player"), Options, UniqueId, ErrorMessage);
 }
 
 void AActionGameGameMode::PostLogin(APlayerController* NewPlayer)

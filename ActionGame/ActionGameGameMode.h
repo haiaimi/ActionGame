@@ -16,6 +16,8 @@ public:
 
 	virtual void RestartPlayer(AController* NewPlayer)override;
 
+	virtual APlayerController* Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal, const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)override;
+
 	virtual void PostLogin(APlayerController* NewPlayer)override;
 };
 

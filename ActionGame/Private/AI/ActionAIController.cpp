@@ -60,7 +60,7 @@ class AActionGameCharacter* AActionAIController::GetEnemy()
 {
 	for (FConstPawnIterator It = GetWorld()->GetPawnIterator(); It; ++It)
 	{
-		if (It->Get() != GetPawn())
+		if (It->Get() != GetPawn() && It->Get()->AIControllerClass != AActionAIController::StaticClass())
 		{
 			BlackboardComp->SetValue<UBlackboardKeyType_Object>(EnemyKeyID, It->Get());
 			return Cast<AActionGameCharacter>(It->Get());
