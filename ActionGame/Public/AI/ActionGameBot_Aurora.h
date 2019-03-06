@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -8,7 +8,7 @@
 #include "ActionGameBot_Aurora.generated.h"
 
 /**
- * AIµĞÈË
+ * AIæ•Œäºº
  */
 UCLASS()
 class ACTIONGAME_API AActionGameBot_Aurora : public AActionGameCharacter_Aurora
@@ -33,11 +33,11 @@ public:
     bool IsMoveBack();
 
 public:
-	/**ĞĞÎªÊ÷*/
+	/**è¡Œä¸ºæ ‘*/
 	UPROPERTY(EditAnywhere, Category=Behavior)
 	class UBehaviorTree* BotBehavior;
 
-	/**AIµÄÒÆ¶¯·½Ïò£¬¾ö¶¨¶¯»­*/
+	/**AIçš„ç§»åŠ¨æ–¹å‘ï¼Œå†³å®šåŠ¨ç”»*/
 	EMoveDir::Type AIMoveDir;
 
 	FRotator TempRot;

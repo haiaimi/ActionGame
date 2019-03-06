@@ -107,7 +107,7 @@ void AActionGameCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 
 void AActionGameCharacter::TurnAtRate(float Rate)
 {
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds()); 
 }
 
 void AActionGameCharacter::LookUpAtRate(float Rate)

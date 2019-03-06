@@ -8,6 +8,7 @@
 #include "GameFramework/PlayerStart.h"
 #include "EngineUtils.h"
 #include "Engine/World.h"
+#include "GameHUD.h"
 
 AActionGameGameMode::AActionGameGameMode()
 {
@@ -17,6 +18,8 @@ AActionGameGameMode::AActionGameGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}*/
+
+	HUDClass = AGameHUD::StaticClass();
 }
 
 void AActionGameGameMode::RestartPlayer(AController* NewPlayer)

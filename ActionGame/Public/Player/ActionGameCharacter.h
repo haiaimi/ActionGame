@@ -1,4 +1,4 @@
-// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
+ï»¿// Copyright 1998-2018 Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -15,18 +15,18 @@ class AActionGameCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-	/**Íæ¼ÒÄ¿Ç°ÒÆ¶¯·½ÏòµÄ×´Ì¬*/
+	/**ç©å®¶ç›®å‰ç§»åŠ¨æ–¹å‘çš„çŠ¶æ€*/
 	uint8 MoveDirStat;
 
-	/**Íæ¼ÒÉúÃüÖµ*/
+	/**ç©å®¶ç”Ÿå‘½å€¼*/
 	UPROPERTY(EditDefaultsOnly)
 	float Health;
 
-	/**¼¼ÄÜµÄÀäÈ´Ê±¼ä*/
+	/**æŠ€èƒ½çš„å†·å´æ—¶é—´*/
 	UPROPERTY(EditDefaultsOnly)
 	TArray<float> SkillCoolingTimes;
 
-	/**¼¼ÄÜÀäÈ´¶¨Ê±Æ÷*/
+	/**æŠ€èƒ½å†·å´å®šæ—¶å™¨*/
 	TArray<FTimerHandle> SkillCoolingTimers;
 	
 public:
@@ -41,22 +41,22 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
 
-	/**ÊÇ·ñÔÚÊÍ·Å¼¼ÄÜ*/
+	/**æ˜¯å¦åœ¨é‡Šæ”¾æŠ€èƒ½*/
 	UPROPERTY(BlueprintReadWrite)
 	bool bInAbility;
 
-	/**ÊÜ¹¥»÷µÄ·´À¡¶¯»­£¬ÎªÇ°¡¢ºó¡¢×ó¡¢ÓÒµÄË³Ğò*/
+	/**å—æ”»å‡»çš„åé¦ˆåŠ¨ç”»ï¼Œä¸ºå‰ã€åã€å·¦ã€å³çš„é¡ºåº*/
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class UAnimMontage*> HitReactAnims;
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class USkeletalMesh*> CharacterMeshes;
 
-	/**ÊÇ·ñ±»Aurora¼õËÙ*/
+	/**æ˜¯å¦è¢«Auroraå‡é€Ÿ*/
 	UPROPERTY(BlueprintReadOnly)
 	bool bFreezedSlow;
 
-	/**ÊÇ·ñ±»¶³×¡*/
+	/**æ˜¯å¦è¢«å†»ä½*/
 	bool bFreezedStop;
 
 protected:
@@ -77,13 +77,13 @@ protected:
 	void SetAbilityReady(int32 Index);
 
 public:
-	/**ÆÕÍ¨¹¥»÷*/
+	/**æ™®é€šæ”»å‡»*/
 	virtual void NormalAttack();
 
-	/**ÖØÖÃÆÕ¹¥*/
+	/**é‡ç½®æ™®æ”»*/
 	virtual void ResetCombo() {};
 	
-	/**ÏÂÃæÊÇÈËÎïÖ÷ÒªµÄÈı¸ö¼¼ÄÜ*/
+	/**ä¸‹é¢æ˜¯äººç‰©ä¸»è¦çš„ä¸‰ä¸ªæŠ€èƒ½*/
 	virtual void Ability_Q();
 
 	virtual void Ability_E();
@@ -108,14 +108,14 @@ public:
 
 	virtual void SetMoveDir(EMoveDir::Type InDir) {};
 
-	///AuroraÓ¢ĞÛ¶ÔÓ¦µÄĞ§¹û
-	/**Íæ¼Ò±»¶³½á£¬¼õËÙ*/
+	///Auroraè‹±é›„å¯¹åº”çš„æ•ˆæœ
+	/**ç©å®¶è¢«å†»ç»“ï¼Œå‡é€Ÿ*/
 	UFUNCTION(BlueprintCallable)
 	void ApplyFreezedParticle(class UParticleSystem* InParticle);
 
 	void ApplyFreezedCameraParticle(class UParticleSystem* InParticle);
 
-	/**Íæ¼Ò¶ÔÊÜµ½µÄ¹¥»÷½øĞĞ·´À¡*/
+	/**ç©å®¶å¯¹å—åˆ°çš„æ”»å‡»è¿›è¡Œåé¦ˆ*/
 	virtual bool HitReact(const FVector& HitPoint);
 
 };

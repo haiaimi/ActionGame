@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "SHUDWidget.h"
 #include "GameHUD.generated.h"
 
 /**
@@ -14,4 +15,9 @@ class ACTIONGAME_API AGameHUD : public AHUD
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void DrawHUD()override;
+
+private:
+	TSharedPtr<class SHUDWidget> HUDWidget;
 };
