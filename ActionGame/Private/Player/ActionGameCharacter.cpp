@@ -107,12 +107,12 @@ void AActionGameCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 
 void AActionGameCharacter::TurnAtRate(float Rate)
 {
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds()); 
+	//AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds()); 
 }
 
 void AActionGameCharacter::LookUpAtRate(float Rate)
 {
-	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	//AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
 void AActionGameCharacter::MakeAbilityCooling(int32 Index)
@@ -257,12 +257,14 @@ void AActionGameCharacter::MoveRight(float Value)
 
 void AActionGameCharacter::AddControllerYawInput(float Val)
 {
+	
 	YawSpeed = Val;
 	Super::AddControllerYawInput(Val);
 }
 
 void AActionGameCharacter::AddControllerPitchInput(float Val)
 {
+	//HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(Val));
 	PitchSpeed = Val;
 	Super::AddControllerPitchInput(Val);
 }

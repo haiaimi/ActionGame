@@ -28,11 +28,13 @@ private:
 	void SetupAnimation();
 
 private:
-	TSharedPtr<SHorizontalBox> AbilityIconsContainer;
+	TSharedPtr<SHorizontalBox> AbilityContainer;
 
 	FCurveSequence AnimSequence;
 
 	FCurveHandle AbilityIconHandle;
 
 	TWeakObjectPtr<AActionGameCharacter> Owner;
+
+	FVector2D AbilityTransform;
 };

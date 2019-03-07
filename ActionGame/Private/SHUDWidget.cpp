@@ -60,7 +60,14 @@ void SHUDWidget::Tick(const FGeometry& AllottedGeometry, const double InCurrentT
 
 	if (Owner.IsValid())
 	{
+		const float CurYawSpeed = Owner->YawSpeed;
+		const float PreYawSpeed = -AbilityTransform.X / 10.f;
+		const float CurPitchSpeed = Owner->PitchSpeed;
+		const float PrePitchSpeed = -AbilityTransform.Y / 10.f;
 
+		AbilityTransform.X += (CurYawSpeed > PreYawSpeed) ? -100.f*InDeltaTime : 100.f*InDeltaTime;
+		AbilityTransform.Y += (CurPitchSpeed > PrePitchSpeed) ? -200.f*InDeltaTime : 200.f*InDeltaTime;
+		AbilityContainer->SetRenderTransform(FSlateRenderTransform(AbilityTransform));
 	}
 }
 
