@@ -59,6 +59,10 @@ public:
 	/**是否被冻住*/
 	bool bFreezedStop;
 
+	float YawSpeed;
+
+	float PitchSpeed;
+
 protected:
 	virtual void BeginPlay()override;
 
@@ -67,6 +71,10 @@ protected:
 	virtual void MoveForward(float Value);
 
 	virtual void MoveRight(float Value);
+
+	virtual void AddControllerYawInput(float Val)override;
+
+	virtual void AddControllerPitchInput(float Val)override;
 
 	void TurnAtRate(float Rate);
 

@@ -20,6 +20,7 @@ void SAbilityIconWidget::Construct(const FArguments& InArgs)
 	[
 		SNew(SVerticalBox)
 		+SVerticalBox::Slot()
+		.AutoHeight()
 		[
 			SNew(SBox)
 			.HeightOverride(100.f)
@@ -42,6 +43,7 @@ void SAbilityIconWidget::Construct(const FArguments& InArgs)
 			]
 		]
 		+ SVerticalBox::Slot()
+			.AutoHeight()
 		[
 			SNew(SBox)
 			.HeightOverride(100.f)

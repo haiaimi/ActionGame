@@ -255,6 +255,18 @@ void AActionGameCharacter::MoveRight(float Value)
 	//}
 }
 
+void AActionGameCharacter::AddControllerYawInput(float Val)
+{
+	YawSpeed = Val;
+	Super::AddControllerYawInput(Val);
+}
+
+void AActionGameCharacter::AddControllerPitchInput(float Val)
+{
+	PitchSpeed = Val;
+	Super::AddControllerPitchInput(Val);
+}
+
 EMoveDir::Type AActionGameCharacter::GetMoveDirection()
 {
 	if (MoveDirStat & 1)return EMoveDir::Forward;
