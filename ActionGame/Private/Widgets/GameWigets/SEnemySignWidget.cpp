@@ -19,7 +19,7 @@ void SEnemySignWidget::Construct(const FArguments& InArgs)
 		.WidthOverride(50.f)
 		.HeightOverride(50.f)
 		[
-			SNew(SImage)
+			SAssignNew(SignImage, SImage)
 			.Image(&UIStyle->EnemySign)
 		]
 	];
@@ -33,18 +33,21 @@ void SEnemySignWidget::Tick(const FGeometry& AllottedGeometry, const double InCu
 
 	if (Owner.IsValid() && AIEnemy.IsValid())
 	{
-		//HAIAIMIHelper::Debug_ScreenMessage(TEXT("See Enemy"));
-		//APlayerController* MyController = Owner->GetController<APlayerController>();
-		////if (!MyController)return;
-		//
-		//FVector2D ScreenPos;
-		//if (MyController->ProjectWorldLocationToScreen(AIEnemy->GetActorLocation() + FVector(0.f, 0.f, 90.f), ScreenPos))
-		//{
-		//	SetVisibility(EVisibility::Hidden);
-		//}
-		//else
-		//	SetVisibility(EVisibility::Visible);
-		
+		while (0)
+			HAIAIMIHelper::Debug_ScreenMessage("xuan xue");
+		APlayerController* MyController = Owner->GetController<APlayerController>();
+		if (!MyController)return;
+		FVector2D ScreenPos;
+		int32 X, Y;
+		MyController->ProjectWorldLocationToScreen(AIEnemy->GetActorLocation() + FVector(0.f, 0.f, 90.f), ScreenPos);
+		MyController->GetViewportSize(X, Y);
+		if (ScreenPos.X > 0.f && ScreenPos.X < X && ScreenPos.Y > 0.f && ScreenPos.Y < Y)
+		{
+			SignImage->SetVisibility(EVisibility::Hidden);
+		}
+		else
+			SignImage->SetVisibility(EVisibility::Visible);
+
 		const FVector ForwardDir = Owner->GetControlRotation().Vector().GetSafeNormal2D();
 		const FVector RightDir = FRotationMatrix(Owner->GetControlRotation()).GetScaledAxis(EAxis::Y);
 		const FVector EnemyToPlayer = (AIEnemy->GetActorLocation() - Owner->GetActorLocation()).GetSafeNormal2D();

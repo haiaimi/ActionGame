@@ -28,6 +28,8 @@ public:
 private:
 	const struct FUIAssetStyle* UIStyle;
 
+	TSharedPtr<SImage> SignImage;
+
 	TWeakObjectPtr<class AActionGameCharacter> Owner;
 
 	TWeakObjectPtr<class AActionGameCharacter> AIEnemy;

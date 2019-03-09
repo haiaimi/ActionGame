@@ -4,20 +4,7 @@
 #include "SlateExtras.h"
 #include "MoviePlayer.h"
 #include "SThrobber.h"
-
-struct FActionGameLoadingScreenBrush : public FSlateDynamicImageBrush, public FGCObject
-{
-	FActionGameLoadingScreenBrush( const FName InTextureName, const FVector2D& InImageSize, class UTexture2D* InTexture)
-		: FSlateDynamicImageBrush( InTexture, InImageSize, InTextureName)
-	{
-	}
-
-	virtual void AddReferencedObjects(FReferenceCollector& Collector)
-	{
-		UObject* Temp = GetResourceObject();
-		Collector.AddReferencedObject(Temp);
-	}
-};
+#include "DeferredCleanupSlateBrush.h"
 
 class SActionGameLoadingScreen : public SCompoundWidget
 {
@@ -30,7 +17,9 @@ public:
 	{
 		static const FName LoadingScreenName(TEXT("/Game/UI/Image/LoadingScreen.LoadingScreen"));
 		UObject* LoadingTexture = LoadObject<UObject>( NULL, *LoadingScreenName.ToString() );
-		LoadingScreenBrush = MakeShareable( new FActionGameLoadingScreenBrush(LoadingScreenName, FVector2D(1920,1080),(UTexture2D*)LoadingTexture) );
+		FSlateBrush* Brush = new FSlateBrush();
+		Brush->SetResourceObject(LoadingTexture);
+		LoadingScreenBrush = FDeferredCleanupSlateBrush::CreateBrush(*Brush);
 
 		ChildSlot
 		[
@@ -40,7 +29,7 @@ public:
 			.VAlign(VAlign_Fill)
 			[
 				SNew(SImage)
-				.Image(LoadingScreenBrush.Get())
+				.Image(LoadingScreenBrush->GetSlateBrush())
 			]
 			+SOverlay::Slot()
 			.HAlign(HAlign_Fill)
@@ -67,7 +56,7 @@ private:
 	}
 	
 	/** loading screen image brush */
-	TSharedPtr<FSlateDynamicImageBrush> LoadingScreenBrush;
+	TSharedPtr<FDeferredCleanupSlateBrush> LoadingScreenBrush;
 };
 
 class FActionGameLoadingScreenModule : public IActionGameLoadingScreenModule
@@ -75,7 +64,6 @@ class FActionGameLoadingScreenModule : public IActionGameLoadingScreenModule
 public:
 	virtual void StartupModule() override
 	{
-		//force load for cooker reference
 		LoadObject<UObject>(NULL, TEXT("/Game/UI/Image/LoadingScreen.LoadingScreen") );
 
 		if (IsMoviePlayerEnabled())
