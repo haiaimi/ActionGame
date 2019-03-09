@@ -3,6 +3,7 @@
 #include "SHUDWidget.h"
 #include "SlateOptMacros.h"
 #include "SAbilityIconWidget.h"
+#include "SHealthBarWidget.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHUDWidget::Construct(const FArguments& InArgs)
@@ -13,39 +14,85 @@ void SHUDWidget::Construct(const FArguments& InArgs)
 		SNew(SOverlay)
 		+SOverlay::Slot()
 		[
-			SNew(SVerticalBox)
-			+SVerticalBox::Slot()
-			.FillHeight(1.f)
-			+SVerticalBox::Slot()
-			.FillHeight(4.f)
-			+SVerticalBox::Slot()
-			.FillHeight(0.8f)
-			.HAlign(EHorizontalAlignment::HAlign_Center)
-			.VAlign(EVerticalAlignment::VAlign_Center)
+			SNew(SHorizontalBox)
+			+SHorizontalBox::Slot()
+			.AutoWidth()
 			[
-				SAssignNew(AbilityContainer, SHorizontalBox)
-				.RenderTransform_Lambda([&]() {
-					const float CurLerp = AbilityIconHandle.GetLerp();
-					return FSlateRenderTransform(FVector2D(0.f, (1 - CurLerp)*500.f));
-				})
-				+SHorizontalBox::Slot()
-				.Padding(FMargin(0.f,0.f,20.f,0.f))
+				SNew(SBox)
+				.WidthOverride(100.f)
+			]
+			+SHorizontalBox::Slot()
+			.FillWidth(1.f)
+			[
+				SAssignNew(HUDContainer, SVerticalBox)
+				+SVerticalBox::Slot()
+				.FillHeight(1.f)
+				.HAlign(EHorizontalAlignment::HAlign_Fill)
 				[
-					SNew(SAbilityIconWidget)
-					.CoolingTime(5.f)
+					SNew(SHorizontalBox)
+					+SHorizontalBox::Slot()
+					.AutoWidth()
+					.HAlign(EHorizontalAlignment::HAlign_Left)
+					.VAlign(EVerticalAlignment::VAlign_Center)
+					[
+						SNew(SHealthBarWidget)
+						.Owner(Owner)
+						.BarPos(EHorizontalAlignment::HAlign_Left)
+						.HeroIndex(0)
+					]
+					+SHorizontalBox::Slot()
+					.FillWidth(1.f)
+					[
+						SNew(SSpacer)
+					]
+					+SHorizontalBox::Slot()
+					.AutoWidth()
+					.HAlign(EHorizontalAlignment::HAlign_Right)
+					.VAlign(EVerticalAlignment::VAlign_Center)
+					[
+						SNew(SHealthBarWidget)
+						.Owner(Owner)
+						.BarPos(EHorizontalAlignment::HAlign_Right)
+						.HeroIndex(1)
+					]
 				]
-				+SHorizontalBox::Slot()
-				.Padding(FMargin(0.f,0.f,20.f,0.f))
+				+SVerticalBox::Slot()
+				.FillHeight(4.f)
+				+SVerticalBox::Slot()
+				.FillHeight(0.8f)
+				.HAlign(EHorizontalAlignment::HAlign_Center)
+				.VAlign(EVerticalAlignment::VAlign_Center)
 				[
-					SNew(SAbilityIconWidget)
-					.RenderTransform(FSlateRenderTransform(FVector2D(0.f, -50.f)))
-					.CoolingTime(6.f)
+					SNew(SHorizontalBox)
+					.RenderTransform_Lambda([&]() {
+						const float CurLerp = AbilityIconHandle.GetLerp();
+						return FSlateRenderTransform(FVector2D(0.f, (1 - CurLerp)*500.f));
+					})
+					+SHorizontalBox::Slot()
+					.Padding(FMargin(0.f,0.f,20.f,0.f))
+					[
+						SNew(SAbilityIconWidget)
+						.CoolingTime(5.f)
+					]
+					+SHorizontalBox::Slot()
+					.Padding(FMargin(0.f,0.f,20.f,0.f))
+					[
+						SNew(SAbilityIconWidget)
+						.RenderTransform(FSlateRenderTransform(FVector2D(0.f, -50.f)))
+						.CoolingTime(6.f)
+					]
+					+SHorizontalBox::Slot()
+					[
+						SNew(SAbilityIconWidget)
+						.CoolingTime(20.f)
+					]
 				]
-				+SHorizontalBox::Slot()
-				[
-					SNew(SAbilityIconWidget)
-					.CoolingTime(20.f)
-				]
+			]
+			+SHorizontalBox::Slot()
+			.AutoWidth()
+			[
+				SNew(SBox)
+				.WidthOverride(100.f)
 			]
 		]
 	];
@@ -65,9 +112,13 @@ void SHUDWidget::Tick(const FGeometry& AllottedGeometry, const double InCurrentT
 		const float CurPitchSpeed = Owner->PitchSpeed;
 		const float PrePitchSpeed = -AbilityTransform.Y / 10.f;
 
-		AbilityTransform.X += (CurYawSpeed > PreYawSpeed) ? -100.f*InDeltaTime : 100.f*InDeltaTime;
+		AbilityTransform.X += (CurYawSpeed > PreYawSpeed) ? -200.f*InDeltaTime : 200.f*InDeltaTime;
 		AbilityTransform.Y += (CurPitchSpeed > PrePitchSpeed) ? -200.f*InDeltaTime : 200.f*InDeltaTime;
-		AbilityContainer->SetRenderTransform(FSlateRenderTransform(AbilityTransform));
+		if (-AbilityTransform.X / 10.f >= CurYawSpeed || -AbilityTransform.X / 10.f <= CurYawSpeed)
+			AbilityTransform.X = -CurYawSpeed * 10.f;
+		if (-AbilityTransform.Y / 10.f >= CurPitchSpeed || -AbilityTransform.Y / 10.f <= CurPitchSpeed)
+			AbilityTransform.Y = -CurPitchSpeed * 10.f;
+		HUDContainer->SetRenderTransform(FSlateRenderTransform(AbilityTransform));
 	}
 }
 

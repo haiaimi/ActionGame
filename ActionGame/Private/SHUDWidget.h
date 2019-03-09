@@ -28,7 +28,7 @@ private:
 	void SetupAnimation();
 
 private:
-	TSharedPtr<SHorizontalBox> AbilityContainer;
+	TSharedPtr<SVerticalBox> HUDContainer;
 
 	FCurveSequence AnimSequence;
 

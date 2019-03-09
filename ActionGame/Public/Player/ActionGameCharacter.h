@@ -30,6 +30,8 @@ class AActionGameCharacter : public ACharacter
 	TArray<FTimerHandle> SkillCoolingTimers;
 	
 public:
+	DECLARE_DELEGATE_OneParam(FOnHealthChanged, float);
+
 	AActionGameCharacter();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -62,6 +64,8 @@ public:
 	float YawSpeed;
 
 	float PitchSpeed;
+
+	FOnHealthChanged OnHealthChanged;
 
 protected:
 	virtual void BeginPlay()override;

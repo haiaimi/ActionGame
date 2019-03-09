@@ -35,6 +35,9 @@ struct FUIAssetStyle : public FSlateWidgetStyle
 	UPROPERTY(EditAnywhere, Category = Appearance)
 	TArray<struct FSkinBrushes> Skins;
 
+	UPROPERTY(EditAnywhere, Category = Appearance)
+	struct FSlateBrush HealthBarImage;
+
 	// FSlateWidgetStyle
 	virtual void GetResources(TArray<const FSlateBrush*>& OutBrushes) const override;
 	static const FName TypeName;
