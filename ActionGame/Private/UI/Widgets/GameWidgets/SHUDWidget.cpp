@@ -4,6 +4,7 @@
 #include "SlateOptMacros.h"
 #include "SAbilityIconWidget.h"
 #include "SHealthBarWidget.h"
+#include "Widgets/GameWigets/SEnemySignWidget.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHUDWidget::Construct(const FArguments& InArgs)
@@ -94,6 +95,13 @@ void SHUDWidget::Construct(const FArguments& InArgs)
 				SNew(SBox)
 				.WidthOverride(100.f)
 			]
+		]
+		+SOverlay::Slot()
+		.HAlign(EHorizontalAlignment::HAlign_Left)
+		.VAlign(EVerticalAlignment::VAlign_Top)
+		[
+			SNew(SEnemySignWidget)
+			.Owner(Owner)
 		]
 	];
 

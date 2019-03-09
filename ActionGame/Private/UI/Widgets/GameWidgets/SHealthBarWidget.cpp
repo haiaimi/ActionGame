@@ -4,6 +4,7 @@
 #include "SlateOptMacros.h"
 #include "../Styles/FActionGameStyle.h"
 #include "Materials/MaterialInterface.h"
+#include "ActionGameType.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHealthBarWidget::Construct(const FArguments& InArgs)
@@ -32,6 +33,16 @@ void SHealthBarWidget::Construct(const FArguments& InArgs)
 			}
 		}
 	}
+	
+#if WITH_EDITOR
+	//防止UI材质被回收
+	if (!GIsEditor)
+	{
+		HealthBarMaterialDInstance->AddToCluster(Owner.Get());   
+		HealthBarMaterialDInstance->AddToRoot();
+	}
+#endif // !Editor
+
 	FSlateBrush* MaterialBrush = new FSlateBrush;
 	MaterialBrush->SetResourceObject(HealthBarMaterialDInstance);
 
@@ -58,6 +69,15 @@ void SHealthBarWidget::Construct(const FArguments& InArgs)
 			.FillHeight(1.f)
 			[
 				SNew(SBox)
+				.HAlign(BarPos)
+				.VAlign(EVerticalAlignment::VAlign_Center)
+				[
+					SNew(STextBlock)
+					.Text(HeroNameText[InArgs._HeroIndex])
+					.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),25))
+					.ColorAndOpacity(FSlateColor(FLinearColor(0.8f,0.8f,0.8f,1.f)))
+					.RenderTransform(FSlateRenderTransform(FVector2D(BarPos == EHorizontalAlignment::HAlign_Left ? 50.f : -50.f, 0.f)))
+				]
 			]
 			+SVerticalBox::Slot()
 			.FillHeight(1.f)

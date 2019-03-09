@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -47,3 +47,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Skins)
 	TArray<struct FSlateBrush> Skins;
 };
+
+#define LOCTEXT_NAMESPACE "ActionGame.UI.HeroName"
+
+static const TArray<FText> HeroNameText = { LOCTEXT("Aurora","奥拉"),LOCTEXT("Countess","康缇斯") };
+
+#undef LOCTEXT_NAMESPACE

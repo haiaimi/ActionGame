@@ -165,6 +165,19 @@ float AActionGameCharacter::GetCoolingRate(int32 Index)
 	return 1 - RemainingTime / DefaultCoolingTime;
 }
 
+AActionGameCharacter* AActionGameCharacter::GetAIEnemy()
+{
+	if (!GetWorld())return nullptr;
+	for (FConstPawnIterator It = GetWorld()->GetPawnIterator(); It; ++It)
+	{
+		if (It->Get() != this && It->Get()->AIControllerClass == AActionAIController::StaticClass())
+		{
+			return Cast<AActionGameCharacter>(It->Get());
+		}	
+	}
+	return nullptr;
+}
+
 void AActionGameCharacter::FaceRotation(FRotator NewRotation, float DeltaTime /*= 0.f*/)
 {
 	FRotator CurrentRotation;

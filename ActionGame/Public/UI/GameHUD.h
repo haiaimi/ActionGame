@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-#include "SHUDWidget.h"
+#include "GameWidgets/SHUDWidget.h"
 #include "GameHUD.generated.h"
 
 /**

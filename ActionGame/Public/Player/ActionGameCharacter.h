@@ -106,6 +106,8 @@ public:
 
 	float GetCoolingRate(int32 Index);
 
+	AActionGameCharacter* GetAIEnemy();
+
 protected:
 	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;
 

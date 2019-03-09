@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "UI/MenuHUD.h"
-#include "Widgets/SMainMenuWidget.h"
+#include "Widgets/MainMenuWidgets/SMainMenuWidget.h"
 #include "Engine/Engine.h"
 #include "Engine/GameViewportClient.h"
 #include "HAIAIMIHelper.h"
 #include "GameActors/HeroDetailPlatform.h"
-#include "UI/Widgets/SInfoTipWidget.h"
+#include "UI/Widgets/MainMenuWidgets/SInfoTipWidget.h"
 
 AMenuHUD::AMenuHUD():
 	MainMenu(nullptr)
