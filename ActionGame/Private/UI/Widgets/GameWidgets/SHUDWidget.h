@@ -24,6 +24,8 @@ public:
 
 	virtual void Tick( const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime )override;
 
+	void ReverseAnim();
+
 private:
 	void SetupAnimation();
 

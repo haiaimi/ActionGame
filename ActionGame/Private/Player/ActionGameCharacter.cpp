@@ -81,6 +81,9 @@ void AActionGameCharacter::BeginPlay()
 			GetMesh()->SetSkeletalMesh(CharacterMeshes[MyGameInstance->PlayerSkinIndex]);
 		}
 	}
+
+	if (Controller)
+		HAIAIMIHelper::Debug_ScreenMessage(Controller->GetName(),5.f);
 }
 
 //////////////////////////////////////////////////////////////////////////

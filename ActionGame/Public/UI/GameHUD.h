@@ -18,6 +18,7 @@ class ACTIONGAME_API AGameHUD : public AHUD
 public:
 	virtual void DrawHUD()override;
 
+	TSharedPtr<class SHUDWidget> GetHUDWidget() { return HUDWidget; }
 
 private:
 	TSharedPtr<class SHUDWidget> HUDWidget;

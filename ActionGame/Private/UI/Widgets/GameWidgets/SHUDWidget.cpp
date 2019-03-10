@@ -5,6 +5,7 @@
 #include "SAbilityIconWidget.h"
 #include "SHealthBarWidget.h"
 #include "Widgets/GameWigets/SEnemySignWidget.h"
+#include "GameFramework/PlayerController.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHUDWidget::Construct(const FArguments& InArgs)
@@ -31,6 +32,10 @@ void SHUDWidget::Construct(const FArguments& InArgs)
 				.HAlign(EHorizontalAlignment::HAlign_Fill)
 				[
 					SNew(SHorizontalBox)
+					.RenderTransform_Lambda([&]() {
+						const float CurLerp = AbilityIconHandle.GetLerp();
+						return FSlateRenderTransform(FVector2D(0.f, (CurLerp-1)*500.f));
+					})
 					+SHorizontalBox::Slot()
 					.AutoWidth()
 					.HAlign(EHorizontalAlignment::HAlign_Left)
@@ -102,6 +107,13 @@ void SHUDWidget::Construct(const FArguments& InArgs)
 		[
 			SNew(SEnemySignWidget)
 			.Owner(Owner)
+			.Visibility_Lambda([&]() {
+				auto MC = Owner->GetController<APlayerController>();
+				if (Owner.IsValid() && MC)
+					return MC->IsPaused() ? EVisibility::Hidden : EVisibility::Visible;
+					
+				return EVisibility::Visible;
+			})
 		]
 	];
 
@@ -128,6 +140,12 @@ void SHUDWidget::Tick(const FGeometry& AllottedGeometry, const double InCurrentT
 			AbilityTransform.Y = -CurPitchSpeed * 10.f;
 		HUDContainer->SetRenderTransform(FSlateRenderTransform(AbilityTransform));
 	}
+}
+
+void SHUDWidget::ReverseAnim()
+{
+	AnimSequence.Reverse();
+
 }
 
 void SHUDWidget::SetupAnimation()

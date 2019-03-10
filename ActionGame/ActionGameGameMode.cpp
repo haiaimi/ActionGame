@@ -9,6 +9,7 @@
 #include "EngineUtils.h"
 #include "Engine/World.h"
 #include "GameHUD.h"
+#include "AGPlayerController.h"
 
 AActionGameGameMode::AActionGameGameMode()
 {
@@ -20,6 +21,7 @@ AActionGameGameMode::AActionGameGameMode()
 	}*/
 
 	HUDClass = AGameHUD::StaticClass();
+	PlayerControllerClass = AAGPlayerController::StaticClass();
 }
 
 void AActionGameGameMode::RestartPlayer(AController* NewPlayer)
