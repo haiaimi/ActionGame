@@ -31,6 +31,10 @@ public:
 
 	void SetHealthBar(float NewHealth);
 
+	~SHealthBarWidget();
+protected:
+	
+
 private:
 	const struct FUIAssetStyle* UIStyle;
 

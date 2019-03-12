@@ -110,13 +110,15 @@ void AActionGameCharacter_Aurora::FreezeEnemyImpl(class AActor* InEnemy)
 		UGameplayStatics::SpawnEmitterAttached(CamFrostParticle_Slowed, Enemy->GetFollowCamera(), NAME_None, FVector(90.f, 0.f, 0.f),FRotator::ZeroRotator,EAttachLocation::KeepRelativeOffset);
 
 		FTimerHandle TimerHandle;
-		FTimerDelegate TimerDelegate;
-		TimerDelegate.BindLambda([Enemy, this]() {
+		/*FTimerDelegate TimerDelegate;
+
+		TimerDelegate.BindWeakLambda<AActionGameCharacter_Aurora>(this, [Enemy, this]() {
 			Enemy->bFreezedSlow = false;
 			Enemy->GetCharacterMovement()->MaxWalkSpeed = 600.f;
-			});
+			return;
+			});*/
 
-		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.f, false);
+		GetWorldTimerManager().SetTimer(TimerHandle, Enemy, &AActionGameCharacter::EndFreezedSlow, 2.f, false);
 	}
 }
 
@@ -414,8 +416,8 @@ void AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveComponent* OverlappedCom
 				}
 					
 				FTimerHandle TimerHandle;
-				FTimerDelegate TimerDelegate;
-				TimerDelegate.BindLambda([Enemy, this]() {
+				/*FTimerDelegate TimerDelegate;
+				TimerDelegate.BindWeakLambda(this, [Enemy, this]() {
 					Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 					Enemy->GetMesh()->bNoSkeletonUpdate = false;
 					Enemy->GetMesh()->GetAnimInstance()->StopAllMontages(1.f);
@@ -424,9 +426,9 @@ void AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveComponent* OverlappedCom
 					Enemy->bInAbility = false;
 					if (AActionAIController* AIControl = Cast<AActionAIController>(Enemy->Controller))
 						AIControl->SetAIFreezedValue();
-					});
+					});*/
 
-				GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, 2.f, false);
+				GetWorldTimerManager().SetTimer(TimerHandle, Enemy, &AActionGameCharacter::EndFreezedStop, 2.f, false);
 			}
 		}
 	}

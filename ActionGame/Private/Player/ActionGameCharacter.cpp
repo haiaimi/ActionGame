@@ -120,14 +120,14 @@ void AActionGameCharacter::LookUpAtRate(float Rate)
 
 void AActionGameCharacter::MakeAbilityCooling(int32 Index)
 {
-	if (Index >= SkillCoolingTimes.Num())return;
+	/*if (Index >= SkillCoolingTimes.Num())return;
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindLambda([Index, this]() {
 		SetAbilityReady(Index);
 		});
 	GetWorldTimerManager().SetTimer(SkillCoolingTimers[Index], TimerDelegate, SkillCoolingTimes[Index], false);
-	SkillCoolingTimes[Index] = 0.f;
-	HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(GetWorldTimerManager().GetTimerRate(SkillCoolingTimers[Index])));
+	SkillCoolingTimes[Index] = 0.f;*/
+	//HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(GetWorldTimerManager().GetTimerRate(SkillCoolingTimers[Index])));
 }
 
 void AActionGameCharacter::SetAbilityReady(int32 Index)
@@ -179,6 +179,16 @@ AActionGameCharacter* AActionGameCharacter::GetAIEnemy()
 		}	
 	}
 	return nullptr;
+}
+
+void AActionGameCharacter::Destroyed()
+{
+	for (int32 i = 0; i < SkillCoolingTimers.Num(); ++i)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(SkillCoolingTimers[i]);
+	}
+
+	Super::Destroyed();
 }
 
 void AActionGameCharacter::FaceRotation(FRotator NewRotation, float DeltaTime /*= 0.f*/)
@@ -307,6 +317,24 @@ void AActionGameCharacter::ApplyFreezedParticle(class UParticleSystem* InParticl
 void AActionGameCharacter::ApplyFreezedCameraParticle(class UParticleSystem* InParticle)
 {
 	
+}
+
+void AActionGameCharacter::EndFreezedSlow()
+{
+	bFreezedSlow = false;
+	GetCharacterMovement()->MaxWalkSpeed = 600.f;
+}
+
+void AActionGameCharacter::EndFreezedStop()
+{
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	GetMesh()->bNoSkeletonUpdate = false;
+	GetMesh()->GetAnimInstance()->StopAllMontages(1.f);
+	bFreezedStop = false;
+	ResetCombo();
+	bInAbility = false;
+	if (AActionAIController* AIControl = Cast<AActionAIController>(GetController()))
+		AIControl->SetAIFreezedValue();
 }
 
 bool AActionGameCharacter::HitReact(const FVector& HitPoint)

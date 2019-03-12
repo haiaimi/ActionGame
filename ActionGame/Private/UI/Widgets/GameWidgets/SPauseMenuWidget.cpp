@@ -9,6 +9,7 @@
 #include "HAIAIMIHelper.h"
 #include <SlateTypes.h>
 #include "../Styles/FActionGameStyle.h"
+#include "Kismet/GameplayStatics.h"
 
 #define LOCTEXT_NAMESPACE "ActionGame.UI.PauseMenu"
 
@@ -68,7 +69,6 @@ void SPauseMenuWidget::Construct(const FArguments& InArgs)
 							SNew(SButton)
 							.HAlign(EHorizontalAlignment::HAlign_Center)
 							.VAlign(EVerticalAlignment::VAlign_Center)
-							//.OnPressed(RestartDelegate)
 							.ButtonStyle(ButtonStyle)
 							[
 								SNew(STextBlock)
@@ -91,8 +91,13 @@ void SPauseMenuWidget::Construct(const FArguments& InArgs)
 								SNew(SButton)
 								.HAlign(EHorizontalAlignment::HAlign_Center)
 								.VAlign(EVerticalAlignment::VAlign_Center)
-								.OnPressed(InArgs._BackDelegate)
 								.ButtonStyle(ButtonStyle)
+								.OnPressed_Lambda([&]() {
+								if (OwnerController.IsValid())
+								{
+									UGameplayStatics::OpenLevel(OwnerController.Get(), TEXT("/Game/GameLevels/MenuLevel"));
+								}
+								})
 								[
 									SNew(STextBlock)
 									.Text(LOCTEXT("BackToMenu","返回菜单"))

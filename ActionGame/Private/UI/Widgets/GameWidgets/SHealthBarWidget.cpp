@@ -34,18 +34,19 @@ void SHealthBarWidget::Construct(const FArguments& InArgs)
 		}
 	}
 	
+	//HealthBarMaterialDInstance->AddToRoot();
 #if WITH_EDITOR
 	//防止UI材质被回收
 	if (!GIsEditor)
 	{
-		HealthBarMaterialDInstance->AddToCluster(Owner.Get());   
-		HealthBarMaterialDInstance->AddToRoot();
+		//HealthBarMaterialDInstance->AddToCluster(Owner.Get());   
+		
 	}
 #endif // !Editor
 
-	FSlateBrush* MaterialBrush = new FSlateBrush;
+	/*FSlateBrush* MaterialBrush = new FSlateBrush;
 	MaterialBrush->SetResourceObject(HealthBarMaterialDInstance);
-
+*/
 	TSharedPtr<SBox> Head = 
 		SNew(SBox)
 		.WidthOverride(110.f)
@@ -83,7 +84,7 @@ void SHealthBarWidget::Construct(const FArguments& InArgs)
 			.FillHeight(1.f)
 			[
 				SAssignNew(HealthBar, SImage)
-				.Image(MaterialBrush)
+				.Image(&UIStyle->HealthBarImage)
 				.RenderTransformPivot(FVector2D(0.5f, 0.5f))
 			]
 		];
@@ -123,6 +124,11 @@ void SHealthBarWidget::SetHealthBar(float NewHealth)
 	{
 		HealthBarMaterialDInstance->SetScalarParameterValue(TEXT("Progress"), BarPos == EHorizontalAlignment::HAlign_Left ? NewHealth : 1 - NewHealth);
 	}
+}
+
+SHealthBarWidget::~SHealthBarWidget()
+{
+	HealthBarMaterialDInstance->RemoveFromRoot();
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

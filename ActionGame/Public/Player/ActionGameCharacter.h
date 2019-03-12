@@ -108,9 +108,10 @@ public:
 
 	AActionGameCharacter* GetAIEnemy();
 
+	virtual void Destroyed() override;
+
 protected:
 	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;
-
 
 public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -128,6 +129,10 @@ public:
 	void ApplyFreezedParticle(class UParticleSystem* InParticle);
 
 	void ApplyFreezedCameraParticle(class UParticleSystem* InParticle);
+
+	void EndFreezedSlow();
+
+	void EndFreezedStop();
 
 	/**玩家对受到的攻击进行反馈*/
 	virtual bool HitReact(const FVector& HitPoint);
