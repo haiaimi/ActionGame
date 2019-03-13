@@ -6,6 +6,7 @@
 #include "SHealthBarWidget.h"
 #include "Widgets/GameWigets/SEnemySignWidget.h"
 #include "GameFramework/PlayerController.h"
+#include "ActionGameType.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHUDWidget::Construct(const FArguments& InArgs)

@@ -11,6 +11,7 @@ void SAbilityIconWidget::Construct(const FArguments& InArgs)
 {
 	Owner = InArgs._Owner;
 	CoolingTime = InArgs._CoolingTime;
+	EAbilityType::Type AbilityType = InArgs._AbilityType;
 	BorderBackground = MakeShareable(new FSlateBrush());
 	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.5f));
 	UIStyle = &FActionGameStyle::Get().GetWidgetStyle<FUIAssetStyle>(TEXT("ActionGameUIAssetStyle"));
@@ -57,9 +58,8 @@ void SAbilityIconWidget::Construct(const FArguments& InArgs)
 					SNew(SBorder)
 					.BorderImage(BorderBackground.Get())
 					.RenderTransformPivot(FVector2D(0.5f, 0.f))
-					.RenderTransform_Lambda([&]() {
-						const float CurLerp = CoolingHandle.GetLerp();
-						const float CoolingRate = Owner->GetCoolingRate(InArgs._AbilityType);
+					.RenderTransform_Lambda([this, AbilityType]() {
+						const float CoolingRate = Owner->GetCoolingRate(AbilityType);
 						if (PercentText.IsValid() && Owner.IsValid())
 						{
 							FString Tmp = FString::Printf(TEXT("%3.f"), CoolingRate*100.f) + TEXT("%");

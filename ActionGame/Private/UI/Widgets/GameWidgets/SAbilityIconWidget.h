@@ -19,7 +19,8 @@ class SAbilityIconWidget : public SCompoundWidget
 {
 public:
 	SLATE_BEGIN_ARGS(SAbilityIconWidget):
-		_CoolingTime(1.f)
+		_CoolingTime(1.f),
+		_AbilityType(EAbilityType::EAbility)
 	{}
 	SLATE_ARGUMENT(TWeakObjectPtr<AActionGameCharacter>, Owner)
 	SLATE_ARGUMENT(float, CoolingTime)

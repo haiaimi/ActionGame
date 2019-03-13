@@ -120,7 +120,7 @@ void AActionGameCharacter::LookUpAtRate(float Rate)
 
 void AActionGameCharacter::MakeAbilityCooling(EAbilityType::Type AbilityType)
 {
-	const int32 Index = (int32)AbilityType;
+	const int32 Index = int32(AbilityType) - 1;
 	if (Index >= SkillCoolingTimes.Num())return;
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindLambda([Index, this]() {
@@ -158,17 +158,18 @@ void AActionGameCharacter::Ability_R()
 
 bool AActionGameCharacter::IsAbilityinCooling(EAbilityType::Type AbilityType)
 {
-	const int32 Index = (int32)AbilityType;
+	const int32 Index = int32(AbilityType) - 1;
 	return SkillCoolingTimes[Index] == 0.f;
 }
 
 float AActionGameCharacter::GetCoolingRate(EAbilityType::Type AbilityType)
 {
-	const int32 Index = (int32)AbilityType;
-	HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(Index), 5.f);
+	const int32 Index = int32(AbilityType) - 1;
+	
 	if (Index >= SkillCoolingTimes.Num())return 1.f;
 	const float DefaultCoolingTime = GetClass()->GetDefaultObject<AActionGameCharacter>()->SkillCoolingTimes[Index];
 	const float RemainingTime = GetWorldTimerManager().GetTimerRemaining(SkillCoolingTimers[Index]);
+	if (RemainingTime == -1)return 1.f;
 	return 1.f - RemainingTime / DefaultCoolingTime;
 }
 
@@ -294,7 +295,6 @@ void AActionGameCharacter::AddControllerYawInput(float Val)
 
 void AActionGameCharacter::AddControllerPitchInput(float Val)
 {
-	//HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(Val));
 	PitchSpeed = Val;
 	Super::AddControllerPitchInput(Val);
 }
