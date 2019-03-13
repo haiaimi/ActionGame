@@ -10,7 +10,7 @@ BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SAbilityIconWidget::Construct(const FArguments& InArgs)
 {
 	CoolingTime = InArgs._CoolingTime;
-	FSlateBrush* BorderBackground = new FSlateBrush();
+	BorderBackground = MakeShareable(new FSlateBrush());
 	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.5f));
 	UIStyle = &FActionGameStyle::Get().GetWidgetStyle<FUIAssetStyle>(TEXT("ActionGameUIAssetStyle"));
 
@@ -54,7 +54,7 @@ void SAbilityIconWidget::Construct(const FArguments& InArgs)
 				.Padding(FMargin(5.f))
 				[
 					SNew(SBorder)
-					.BorderImage(BorderBackground)
+					.BorderImage(BorderBackground.Get())
 					.RenderTransformPivot(FVector2D(0.5f, 0.f))
 					.RenderTransform_Lambda([&]() {
 						const float CurLerp = CoolingHandle.GetLerp();

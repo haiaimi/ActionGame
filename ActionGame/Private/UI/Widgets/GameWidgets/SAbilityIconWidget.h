@@ -31,6 +31,8 @@ private:
 private:
 	const struct FUIAssetStyle* UIStyle;
 
+	TSharedPtr<FSlateBrush> BorderBackground;
+
 	float CoolingTime;
 
 	FCurveSequence AnimSequence;

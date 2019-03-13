@@ -26,5 +26,7 @@ public:
 private:
 	FCurveSequence AnimSequence;
 
+	TSharedPtr<FSlateBrush> BorderBackground;
+
 	FCurveHandle AnimHandle;
 };

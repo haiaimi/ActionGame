@@ -44,7 +44,7 @@ private:
 
 	const struct FButtonStyle* ApplySettingButtonStyle;
 
-	FSlateBrush* BorderBackground;
+	TSharedPtr<FSlateBrush> BorderBackground;
 
 	TArray<TSharedPtr<SButton>> SettingTagButtons;
 

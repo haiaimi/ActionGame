@@ -82,4 +82,6 @@ private:
 	TWeakObjectPtr<AHeroDetailPlatform> DetailPlatform;
 
 	FTimerHandle ResetTimer;
+
+	TSharedPtr<FSlateBrush> BorderBackground;
 };

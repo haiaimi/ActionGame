@@ -56,7 +56,7 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 	BackButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("BackButtonStyle"));
 	TagButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("TagButtonStyle"));
 	ApplySettingButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ApplySettingButtonStyle"));
-	BorderBackground = new FSlateBrush();
+	BorderBackground = MakeShareable(new FSlateBrush());
 	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.f));
 	SettingTagButtons.SetNum(3);
 	SettingButtonHandles.SetNum(MaxSettingCounts);
@@ -368,7 +368,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SDividingLineWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -379,7 +379,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SSelectBoxWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -402,7 +402,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SSelectBoxWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -422,7 +422,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SSelectBoxWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -447,7 +447,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SSelectBoxWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -474,7 +474,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SSelectBoxWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -499,7 +499,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SDividingLineWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -510,7 +510,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SSelectBoxWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -528,7 +528,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SSelectBoxWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -546,7 +546,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SSelectBoxWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -564,7 +564,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SSelectBoxWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -582,7 +582,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SSelectBoxWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -600,7 +600,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SSelectBoxWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -618,7 +618,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SSelectBoxWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -636,7 +636,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			.RenderOpacity(0.f)
 			[
 				SNew(SSelectBoxWidget)
@@ -679,7 +679,7 @@ void SSettingsWidget::ShowCommonSetting()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SDividingLineWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
@@ -691,7 +691,7 @@ void SSettingsWidget::ShowCommonSetting()
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
-			.BorderImage(BorderBackground)
+			.BorderImage(BorderBackground.Get())
 			[
 				SNew(SSelectBoxWidget)
 				.RenderTransform(ButtonTransformParams[AnimIndex++])

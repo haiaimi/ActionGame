@@ -108,7 +108,7 @@ public:
 
 	AActionGameCharacter* GetAIEnemy();
 
-	virtual void Destroyed() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 protected:
 	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;

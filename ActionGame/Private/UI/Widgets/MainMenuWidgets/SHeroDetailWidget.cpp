@@ -27,7 +27,7 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 		CharacterInfos = DetailPlatform->CharInfos;
 	SkinButtonHandles.SetNum(6);
 
-	FSlateBrush* BorderBackground = new FSlateBrush();
+	BorderBackground = MakeShareable(new FSlateBrush());
 	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.1f));
 	ButtonStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ActionGameButtonStyle"));
 	ButtonSelectedStyle = &FActionGameStyle::Get().GetWidgetStyle<FButtonStyle>(TEXT("ActionGameSelectedButtonStyle"));
@@ -106,7 +106,7 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 				.FillWidth(1)
 				[
 					SNew(SBorder)
-					.BorderImage(BorderBackground)
+					.BorderImage(BorderBackground.Get())
 					[
 						SAssignNew(HerosBar, SScrollBox)
 						.ScrollBarAlwaysVisible(true)
@@ -117,7 +117,7 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 				.FillWidth(1)
 				[
 					SNew(SBorder)
-					.BorderImage(BorderBackground)
+					.BorderImage(BorderBackground.Get())
 					[
 						SAssignNew(HeroSkinsBar, SScrollBox)
 						.ScrollBarAlwaysVisible(true)

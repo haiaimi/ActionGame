@@ -8,8 +8,8 @@ using FPaddingParam = TAttribute<FMargin>;
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SInfoTipWidget::Construct(const FArguments& InArgs)
 {
-	FSlateBrush* BorderBrush = new FSlateBrush();
-	BorderBrush->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.5f));
+	BorderBackground = MakeShareable(new FSlateBrush());
+	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.5f));
 
 	FSlateBrush* TextBrush = new FSlateBrush();
 	TextBrush->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.3f));
@@ -34,7 +34,7 @@ void SInfoTipWidget::Construct(const FArguments& InArgs)
 		.FillWidth(0.5f)
 		[
 			SNew(SBorder)
-			.BorderImage(BorderBrush)
+			.BorderImage(BorderBackground.Get())
 		]
 		+SHorizontalBox::Slot()
 		.FillWidth(20.f)
@@ -44,7 +44,7 @@ void SInfoTipWidget::Construct(const FArguments& InArgs)
 			.FillHeight(1.5f)
 			[
 				SNew(SBorder)
-				.BorderImage(BorderBrush)
+				.BorderImage(BorderBackground.Get())
 				.VAlign(EVerticalAlignment::VAlign_Center)
 				[
 					SNew(STextBlock)
@@ -71,14 +71,14 @@ void SInfoTipWidget::Construct(const FArguments& InArgs)
 			.FillHeight(0.5f)
 			[
 				SNew(SBorder)
-				.BorderImage(BorderBrush)
+				.BorderImage(BorderBackground.Get())
 			]
 		]
 		+SHorizontalBox::Slot()
 		.FillWidth(0.5f)
 		[
 			SNew(SBorder)
-			.BorderImage(BorderBrush)
+			.BorderImage(BorderBackground.Get())
 		]
 	];
 

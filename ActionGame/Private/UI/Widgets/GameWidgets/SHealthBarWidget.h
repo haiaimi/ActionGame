@@ -9,6 +9,7 @@
 #include "../Styles/UIAssetWidgetStyle.h"
 #include "ActionGameCharacter.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "DeferredCleanupSlateBrush.h"
 
 /**
  *  人物血条控件
@@ -31,9 +32,8 @@ public:
 
 	void SetHealthBar(float NewHealth);
 
-	~SHealthBarWidget();
 protected:
-	
+	TSharedPtr<FDeferredCleanupSlateBrush> HealthBarBrush;
 
 private:
 	const struct FUIAssetStyle* UIStyle;

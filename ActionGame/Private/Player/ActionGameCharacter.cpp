@@ -120,13 +120,13 @@ void AActionGameCharacter::LookUpAtRate(float Rate)
 
 void AActionGameCharacter::MakeAbilityCooling(int32 Index)
 {
-	/*if (Index >= SkillCoolingTimes.Num())return;
+	if (Index >= SkillCoolingTimes.Num())return;
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindLambda([Index, this]() {
 		SetAbilityReady(Index);
 		});
 	GetWorldTimerManager().SetTimer(SkillCoolingTimers[Index], TimerDelegate, SkillCoolingTimes[Index], false);
-	SkillCoolingTimes[Index] = 0.f;*/
+	SkillCoolingTimes[Index] = 0.f;
 	//HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(GetWorldTimerManager().GetTimerRate(SkillCoolingTimers[Index])));
 }
 
@@ -181,14 +181,14 @@ AActionGameCharacter* AActionGameCharacter::GetAIEnemy()
 	return nullptr;
 }
 
-void AActionGameCharacter::Destroyed()
+void AActionGameCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	for (int32 i = 0; i < SkillCoolingTimers.Num(); ++i)
 	{
 		GetWorld()->GetTimerManager().ClearTimer(SkillCoolingTimers[i]);
 	}
 
-	Super::Destroyed();
+	Super::EndPlay(EndPlayReason);
 }
 
 void AActionGameCharacter::FaceRotation(FRotator NewRotation, float DeltaTime /*= 0.f*/)

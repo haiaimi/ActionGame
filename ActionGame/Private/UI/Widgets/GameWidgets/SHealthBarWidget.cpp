@@ -5,6 +5,7 @@
 #include "../Styles/FActionGameStyle.h"
 #include "Materials/MaterialInterface.h"
 #include "ActionGameType.h"
+#include "HAIAIMIHelper.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHealthBarWidget::Construct(const FArguments& InArgs)
@@ -34,19 +35,18 @@ void SHealthBarWidget::Construct(const FArguments& InArgs)
 		}
 	}
 	
-	//HealthBarMaterialDInstance->AddToRoot();
 #if WITH_EDITOR
 	//防止UI材质被回收
 	if (!GIsEditor)
 	{
 		//HealthBarMaterialDInstance->AddToCluster(Owner.Get());   
-		
 	}
 #endif // !Editor
 
-	/*FSlateBrush* MaterialBrush = new FSlateBrush;
-	MaterialBrush->SetResourceObject(HealthBarMaterialDInstance);
-*/
+	FSlateBrush MaterialBrush = FSlateBrush();
+	MaterialBrush.SetResourceObject(HealthBarMaterialDInstance);
+	HealthBarBrush = FDeferredCleanupSlateBrush::CreateBrush(MaterialBrush);
+
 	TSharedPtr<SBox> Head = 
 		SNew(SBox)
 		.WidthOverride(110.f)
@@ -84,7 +84,7 @@ void SHealthBarWidget::Construct(const FArguments& InArgs)
 			.FillHeight(1.f)
 			[
 				SAssignNew(HealthBar, SImage)
-				.Image(&UIStyle->HealthBarImage)
+				.Image(HealthBarBrush->GetSlateBrush())
 				.RenderTransformPivot(FVector2D(0.5f, 0.5f))
 			]
 		];
@@ -124,11 +124,6 @@ void SHealthBarWidget::SetHealthBar(float NewHealth)
 	{
 		HealthBarMaterialDInstance->SetScalarParameterValue(TEXT("Progress"), BarPos == EHorizontalAlignment::HAlign_Left ? NewHealth : 1 - NewHealth);
 	}
-}
-
-SHealthBarWidget::~SHealthBarWidget()
-{
-	HealthBarMaterialDInstance->RemoveFromRoot();
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION
