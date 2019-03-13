@@ -195,7 +195,7 @@ void AActionGameCharacter_Aurora::NormalAttack()
 
 void AActionGameCharacter_Aurora::Ability_Q()
 {
-	if (GetCharacterMovement()->IsFalling() || bInAbility || bFreezedStop || IsAbilityinCooling(0))return;
+	if (GetCharacterMovement()->IsFalling() || bInAbility || bFreezedStop || IsAbilityinCooling(EAbilityType::QAbility))return;
 	Super::Ability_Q();
 
 	bInAbility = true;
@@ -211,7 +211,7 @@ void AActionGameCharacter_Aurora::Ability_Q()
 
 void AActionGameCharacter_Aurora::Ability_E()
 {
-	if (GetCharacterMovement()->IsFalling() || bInAbility || IsAbilityinCooling(1))return;
+	if (GetCharacterMovement()->IsFalling() || bInAbility || IsAbilityinCooling(EAbilityType::EAbility))return;
 	Super::Ability_E();
 
 	bInAbility = true;
@@ -230,7 +230,7 @@ void AActionGameCharacter_Aurora::Ability_E()
 
 void AActionGameCharacter_Aurora::Ability_R()
 {
-	if (GetCharacterMovement()->IsFalling() || bInAbility || bTurboJumpAccelerate || IsAbilityinCooling(2) || bFreezedSlow || bFreezedStop)return;
+	if (GetCharacterMovement()->IsFalling() || bInAbility || bTurboJumpAccelerate || IsAbilityinCooling(EAbilityType::RAbility) || bFreezedSlow || bFreezedStop)return;
 	Super::Ability_R();
 
 	GetCharacterMovement()->JumpZVelocity = 700.f;
@@ -394,6 +394,7 @@ void AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveComponent* OverlappedCom
 			}
 
 			Enemy->HitReact(NewImpactPoint);
+			Enemy->TakeDamage(10.f, FDamageEvent(), GetController(), this);
 			bCanAttack = false;
 			if (Enemy->bFreezedSlow)
 			{

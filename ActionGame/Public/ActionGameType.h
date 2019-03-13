@@ -12,10 +12,21 @@ namespace EMoveDir
 {
 	enum Type
 	{
-		Forward,      
+		Forward,
 		Backward,
 		Left,
 		Right
+	};
+}
+
+UENUM(BlueprintType)
+namespace EAbilityType
+{
+	enum Type
+	{
+		QAbility = 1,
+		EAbility,
+		RAbility
 	};
 }
 

@@ -118,8 +118,9 @@ void AActionGameCharacter::LookUpAtRate(float Rate)
 	//AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-void AActionGameCharacter::MakeAbilityCooling(int32 Index)
+void AActionGameCharacter::MakeAbilityCooling(EAbilityType::Type AbilityType)
 {
+	const int32 Index = (int32)AbilityType;
 	if (Index >= SkillCoolingTimes.Num())return;
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindLambda([Index, this]() {
@@ -127,7 +128,6 @@ void AActionGameCharacter::MakeAbilityCooling(int32 Index)
 		});
 	GetWorldTimerManager().SetTimer(SkillCoolingTimers[Index], TimerDelegate, SkillCoolingTimes[Index], false);
 	SkillCoolingTimes[Index] = 0.f;
-	//HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(GetWorldTimerManager().GetTimerRate(SkillCoolingTimers[Index])));
 }
 
 void AActionGameCharacter::SetAbilityReady(int32 Index)
@@ -143,29 +143,33 @@ void AActionGameCharacter::NormalAttack()
 
 void AActionGameCharacter::Ability_Q()
 {
-	MakeAbilityCooling(0);
+	MakeAbilityCooling(EAbilityType::QAbility);
 }
 
 void AActionGameCharacter::Ability_E()
 {
-	MakeAbilityCooling(1);
+	MakeAbilityCooling(EAbilityType::EAbility);
 }
 
 void AActionGameCharacter::Ability_R()
 {
-	MakeAbilityCooling(2);
+	MakeAbilityCooling(EAbilityType::RAbility);
 }
 
-bool AActionGameCharacter::IsAbilityinCooling(int32 Index)
+bool AActionGameCharacter::IsAbilityinCooling(EAbilityType::Type AbilityType)
 {
+	const int32 Index = (int32)AbilityType;
 	return SkillCoolingTimes[Index] == 0.f;
 }
 
-float AActionGameCharacter::GetCoolingRate(int32 Index)
+float AActionGameCharacter::GetCoolingRate(EAbilityType::Type AbilityType)
 {
+	const int32 Index = (int32)AbilityType;
+	HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(Index), 5.f);
+	if (Index >= SkillCoolingTimes.Num())return 1.f;
 	const float DefaultCoolingTime = GetClass()->GetDefaultObject<AActionGameCharacter>()->SkillCoolingTimes[Index];
 	const float RemainingTime = GetWorldTimerManager().GetTimerRemaining(SkillCoolingTimers[Index]);
-	return 1 - RemainingTime / DefaultCoolingTime;
+	return 1.f - RemainingTime / DefaultCoolingTime;
 }
 
 AActionGameCharacter* AActionGameCharacter::GetAIEnemy()
@@ -365,4 +369,14 @@ bool AActionGameCharacter::HitReact(const FVector& HitPoint)
 		return true;
 	}
 	return false;
+}
+
+float AActionGameCharacter::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+
+	Health -= Damage;
+	OnHealthChanged.ExecuteIfBound(FMath::Abs(Health / GetClass()->GetDefaultObject<AActionGameCharacter>()->Health));
+	if (Health < 0.f)Health = 0.f;
+	return Health;
 }

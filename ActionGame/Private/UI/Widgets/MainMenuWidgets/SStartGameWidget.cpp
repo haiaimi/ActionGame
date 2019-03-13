@@ -162,7 +162,6 @@ void SStartGameWidget::Construct(const FArguments& InArgs)
 					.AutoWidth()
 					[
 						SNew(SBox)
-						
 						.VAlign(EVerticalAlignment::VAlign_Center)
 						[
 							SNew(SButton)
@@ -170,6 +169,7 @@ void SStartGameWidget::Construct(const FArguments& InArgs)
 							.VAlign(EVerticalAlignment::VAlign_Center)
 							.ButtonStyle(ButtonStyle)
 							.OnPressed(this, &SStartGameWidget::StartGame)
+							.ContentPadding(FMargin(30.f,10.f,30.f,10.f))
 							[
 								SNew(STextBlock)
 								.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),35))

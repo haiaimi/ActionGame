@@ -9,6 +9,7 @@
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SAbilityIconWidget::Construct(const FArguments& InArgs)
 {
+	Owner = InArgs._Owner;
 	CoolingTime = InArgs._CoolingTime;
 	BorderBackground = MakeShareable(new FSlateBrush());
 	BorderBackground->TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.5f));
@@ -43,7 +44,7 @@ void SAbilityIconWidget::Construct(const FArguments& InArgs)
 			]
 		]
 		+ SVerticalBox::Slot()
-			.AutoHeight()
+		.AutoHeight()
 		[
 			SNew(SBox)
 			.HeightOverride(100.f)
@@ -58,14 +59,14 @@ void SAbilityIconWidget::Construct(const FArguments& InArgs)
 					.RenderTransformPivot(FVector2D(0.5f, 0.f))
 					.RenderTransform_Lambda([&]() {
 						const float CurLerp = CoolingHandle.GetLerp();
-						if (PercentText.IsValid())
+						const float CoolingRate = Owner->GetCoolingRate(InArgs._AbilityType);
+						if (PercentText.IsValid() && Owner.IsValid())
 						{
-							FString Tmp = FString::Printf(TEXT("%3.f"), CurLerp*100.f) + TEXT("%");
+							FString Tmp = FString::Printf(TEXT("%3.f"), CoolingRate*100.f) + TEXT("%");
 							PercentText->SetText(FText::FromString(Tmp));
-							
-							PercentText->SetVisibility(CurLerp == 1.f ? EVisibility::Hidden : EVisibility::Visible);
+							PercentText->SetVisibility(CoolingRate == 1.f ? EVisibility::Hidden : EVisibility::Visible);
 						}
-						return FSlateRenderTransform(FScale2D(1.f, 1.f - CurLerp));
+						return FSlateRenderTransform(FScale2D(1.f, 1.f - CoolingRate));
 				})
 				]
 			]

@@ -116,7 +116,7 @@ void SHealthBarWidget::Construct(const FArguments& InArgs)
 		Owner->OnHealthChanged.BindSP(this, &SHealthBarWidget::SetHealthBar);
 	}
 
-	SetHealthBar(0.54f);
+	SetHealthBar(1.f);
 }
 void SHealthBarWidget::SetHealthBar(float NewHealth)
 {

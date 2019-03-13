@@ -11,36 +11,65 @@ UCLASS(config=Game)
 class AActionGameCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
-
-	/**玩家目前移动方向的状态*/
-	uint8 MoveDirStat;
-
-	/**玩家生命值*/
-	UPROPERTY(EditDefaultsOnly)
-	float Health;
-
-	/**技能的冷却时间*/
-	UPROPERTY(EditDefaultsOnly)
-	TArray<float> SkillCoolingTimes;
-
-	/**技能冷却定时器*/
-	TArray<FTimerHandle> SkillCoolingTimers;
 	
 public:
+	AActionGameCharacter();
+
 	DECLARE_DELEGATE_OneParam(FOnHealthChanged, float);
 
-	AActionGameCharacter();
+	/**普通攻击*/
+	virtual void NormalAttack();
+
+	/**重置普攻*/
+	virtual void ResetCombo() {};
+	
+	/**下面是人物主要的三个技能*/
+	virtual void Ability_Q();
+
+	virtual void Ability_E();
+
+	virtual void Ability_R();
+
+	bool IsAbilityinCooling(EAbilityType::Type AbilityType);
+
+	float GetCoolingRate(EAbilityType::Type AbilityType);
+
+	AActionGameCharacter* GetAIEnemy();
+
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
+	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	UFUNCTION(BlueprintCallable)
+	virtual EMoveDir::Type GetMoveDirection();
+
+	virtual void SetMoveDir(EMoveDir::Type InDir) {};
+
+	///Aurora英雄对应的效果
+	/**玩家被冻结，减速*/
+	UFUNCTION(BlueprintCallable)
+	void ApplyFreezedParticle(class UParticleSystem* InParticle);
+
+	void ApplyFreezedCameraParticle(class UParticleSystem* InParticle);
+
+	void EndFreezedSlow();
+
+	void EndFreezedStop();
+
+	/**玩家对受到的攻击进行反馈*/
+	virtual bool HitReact(const FVector& HitPoint);
+
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)override;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseTurnRate;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseLookUpRate;
 
 	/**是否在释放技能*/
@@ -80,62 +109,32 @@ protected:
 
 	virtual void AddControllerPitchInput(float Val)override;
 
+	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;
+
 	void TurnAtRate(float Rate);
 
 	void LookUpAtRate(float Rate);
 
-	void MakeAbilityCooling(int32 Index);
+	void MakeAbilityCooling(EAbilityType::Type AbilityType);
 
 	void SetAbilityReady(int32 Index);
 
-public:
-	/**普通攻击*/
-	virtual void NormalAttack();
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* FollowCamera;
 
-	/**重置普攻*/
-	virtual void ResetCombo() {};
-	
-	/**下面是人物主要的三个技能*/
-	virtual void Ability_Q();
+	/**玩家目前移动方向的状态*/
+	uint8 MoveDirStat;
 
-	virtual void Ability_E();
+	/**玩家生命值*/
+	UPROPERTY(EditDefaultsOnly)
+	float Health;
 
-	virtual void Ability_R();
+	/**技能的冷却时间*/
+	UPROPERTY(EditDefaultsOnly)
+	TArray<float> SkillCoolingTimes;
 
-	bool IsAbilityinCooling(int32 Index);
-
-	float GetCoolingRate(int32 Index);
-
-	AActionGameCharacter* GetAIEnemy();
-
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
-protected:
-	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;
-
-public:
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
-	UFUNCTION(BlueprintCallable)
-	virtual EMoveDir::Type GetMoveDirection();
-
-	virtual void SetMoveDir(EMoveDir::Type InDir) {};
-
-	///Aurora英雄对应的效果
-	/**玩家被冻结，减速*/
-	UFUNCTION(BlueprintCallable)
-	void ApplyFreezedParticle(class UParticleSystem* InParticle);
-
-	void ApplyFreezedCameraParticle(class UParticleSystem* InParticle);
-
-	void EndFreezedSlow();
-
-	void EndFreezedStop();
-
-	/**玩家对受到的攻击进行反馈*/
-	virtual bool HitReact(const FVector& HitPoint);
-
+	/**技能冷却定时器*/
+	TArray<FTimerHandle> SkillCoolingTimers;
 };
 

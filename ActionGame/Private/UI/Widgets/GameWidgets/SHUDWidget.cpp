@@ -57,7 +57,7 @@ void SHUDWidget::Construct(const FArguments& InArgs)
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					[
 						SNew(SHealthBarWidget)
-						.Owner(Owner)
+						.Owner(Owner->GetAIEnemy())
 						.BarPos(EHorizontalAlignment::HAlign_Right)
 						.HeroIndex(1)
 					]
@@ -79,6 +79,8 @@ void SHUDWidget::Construct(const FArguments& InArgs)
 					[
 						SNew(SAbilityIconWidget)
 						.CoolingTime(5.f)
+						.Owner(Owner)
+						.AbilityType(EAbilityType::QAbility)
 					]
 					+SHorizontalBox::Slot()
 					.Padding(FMargin(0.f,0.f,20.f,0.f))
@@ -86,11 +88,15 @@ void SHUDWidget::Construct(const FArguments& InArgs)
 						SNew(SAbilityIconWidget)
 						.RenderTransform(FSlateRenderTransform(FVector2D(0.f, -50.f)))
 						.CoolingTime(6.f)
+						.Owner(Owner)
+						.AbilityType(EAbilityType::EAbility)
 					]
 					+SHorizontalBox::Slot()
 					[
 						SNew(SAbilityIconWidget)
 						.CoolingTime(20.f)
+						.Owner(Owner)
+						.AbilityType(EAbilityType::RAbility)
 					]
 				]
 			]

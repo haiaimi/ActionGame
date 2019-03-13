@@ -20,7 +20,7 @@ EBTNodeResult::Type UBTTask_CastSkillQ::ExecuteTask(UBehaviorTreeComponent& Owne
 	{
 		if ((Enemy->GetActorLocation() - MyBot->GetActorLocation()).Size2D() > 500.f)
 		{
-			if (MyBot->GetCharacterMovement()->IsFalling() || MyBot->bInAbility || MyBot->bFreezedStop || MyBot->IsAbilityinCooling(0))return EBTNodeResult::Failed;
+			if (MyBot->GetCharacterMovement()->IsFalling() || MyBot->bInAbility || MyBot->bFreezedStop || MyBot->IsAbilityinCooling(EAbilityType::QAbility))return EBTNodeResult::Failed;
 			MyBot->SetActorRotation((Enemy->GetActorLocation() - MyBot->GetActorLocation()).GetSafeNormal().ToOrientationRotator());
 			MyBot->Ability_Q();
 			return EBTNodeResult::Succeeded;

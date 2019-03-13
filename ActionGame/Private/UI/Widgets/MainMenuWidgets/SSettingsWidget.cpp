@@ -270,6 +270,8 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 
 	SetupAnimation();
 	ShowGraphicSettingList();
+
+	HAIAIMIHelper::Debug_ScreenMessage(HAIAIMIHelper::GetLocalization(), 5.f);
 }
 
 void SSettingsWidget::SetupAnimation()
@@ -660,8 +662,6 @@ void SSettingsWidget::ShowOperationSettingList()
 	{
 		SetTagButtonHighlight(2);
 		ClearScrollBox();
-
-		
 	}
 }
 
@@ -697,7 +697,7 @@ void SSettingsWidget::ShowCommonSetting()
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
 				.SelectName(LOCTEXT("Language","语言"))
 				.SelectContent(LanguageText)
-				.CurSelection(HAIAIMIHelper::GetLocalization() == "zh" ? 0 : 1)
+				.CurSelection(HAIAIMIHelper::GetLocalization() == "zh-CN" ? 0 : 1)
 				.ExecuteSelection_Lambda([&](float level) {
 					HAIAIMIHelper::ChangeLocalization(level == 0.f ? "zh" : "en");
 					})

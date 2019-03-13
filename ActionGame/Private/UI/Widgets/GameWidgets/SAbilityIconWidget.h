@@ -7,6 +7,8 @@
 #include "SlateExtras.h"
 #include "Widgets/SCompoundWidget.h"
 #include "../Styles/UIAssetWidgetStyle.h"
+#include "ActionGameType.h"
+#include "ActionGameCharacter.h"
 
 /**
  * 
@@ -19,7 +21,9 @@ public:
 	SLATE_BEGIN_ARGS(SAbilityIconWidget):
 		_CoolingTime(1.f)
 	{}
+	SLATE_ARGUMENT(TWeakObjectPtr<AActionGameCharacter>, Owner)
 	SLATE_ARGUMENT(float, CoolingTime)
+	SLATE_ARGUMENT(EAbilityType::Type, AbilityType)
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */
@@ -28,7 +32,6 @@ public:
 private:
 	void SetupAnimation();
 
-private:
 	const struct FUIAssetStyle* UIStyle;
 
 	TSharedPtr<FSlateBrush> BorderBackground;
@@ -40,4 +43,6 @@ private:
 	FCurveHandle CoolingHandle;
 
 	TSharedPtr<STextBlock> PercentText;
+
+	TWeakObjectPtr<AActionGameCharacter> Owner;
 };
