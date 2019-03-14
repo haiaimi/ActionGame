@@ -17,13 +17,24 @@ class ACTIONGAME_API AAGPlayerController : public APlayerController
 public:
 	AAGPlayerController();
 
+	virtual void BeginPlay()override;
+
 	virtual void SetupInputComponent()override;
 
 	virtual bool SetPause(bool bPause, FCanUnpause CanUnpauseDelegate = FCanUnpause())override;
 
 private:
 	void PauseGame();
+
+	UFUNCTION()
+	void ToPlayerCamSmooth();
+
+	UFUNCTION()
+	void CameraOnDestroyed(AActor* DestroyedActor);
 	
 private:
 	TSharedPtr<class SPauseMenuWidget> PauseWidget;
+
+	UPROPERTY()
+	ACameraActor* TempCameraActor;
 };

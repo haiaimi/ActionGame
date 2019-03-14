@@ -6,10 +6,34 @@
 #include "Engine/Engine.h"
 #include "HAIAIMIHelper.h"
 #include "GameHUD.h"
+#include "UObjectIterator.h"
+#include "EngineUtils.h"
+#include "LevelSequence/Public/LevelSequenceActor.h"
+#include "LevelSequence/Public/LevelSequencePlayer.h"
+#include "CinematicCamera/Public/CineCameraActor.h"
 
 AAGPlayerController::AAGPlayerController()
 {
+	
+}
 
+void AAGPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	for (TActorIterator<ALevelSequenceActor> It(GetWorld()); It; ++It)
+	{
+		if ((*It)->SequencePlayer)
+		{
+			(*It)->SequencePlayer->OnFinished.AddDynamic(this, &AAGPlayerController::ToPlayerCamSmooth);
+			return;
+		}
+		for (TActorIterator<ACineCameraActor> It(GetWorld()); It; ++It)
+		{
+			(*It)->OnDestroyed.AddDynamic(this, &AAGPlayerController::CameraOnDestroyed);
+			return;
+		}
+	}
 }
 
 void AAGPlayerController::SetupInputComponent()
@@ -58,4 +82,15 @@ bool AAGPlayerController::SetPause(bool bPause, FCanUnpause CanUnpauseDelegate)
 void AAGPlayerController::PauseGame()
 {
 	SetPause(true);
+}
+
+void AAGPlayerController::ToPlayerCamSmooth()
+{
+	this->SetViewTargetWithBlend(TempCameraActor, 0.f, EViewTargetBlendFunction::VTBlend_Cubic);
+	this->SetViewTargetWithBlend(GetPawn(), 1.f, EViewTargetBlendFunction::VTBlend_Cubic);
+}
+
+void AAGPlayerController::CameraOnDestroyed(AActor* DestroyedActor)
+{
+	TempCameraActor = GetWorld()->SpawnActor<ACameraActor>(DestroyedActor->GetActorLocation(), DestroyedActor->GetActorRotation());
 }
