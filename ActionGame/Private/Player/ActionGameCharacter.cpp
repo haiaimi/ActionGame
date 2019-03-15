@@ -66,6 +66,7 @@ void AActionGameCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	DisableInput(GetController<APlayerController>());
 	if(UActionGameInstance* MyGameInstance = Cast<UActionGameInstance>(GetGameInstance()))
 	{
 		if (AIControllerClass == AActionAIController::StaticClass())

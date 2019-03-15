@@ -25,14 +25,15 @@ void AAGPlayerController::BeginPlay()
 	{
 		if ((*It)->SequencePlayer)
 		{
-			(*It)->SequencePlayer->OnFinished.AddDynamic(this, &AAGPlayerController::ToPlayerCamSmooth);
-			return;
+			(*It)->SequencePlayer->OnStop.AddDynamic(this, &AAGPlayerController::ToPlayerCamSmooth);
+			break;
 		}
-		for (TActorIterator<ACineCameraActor> It(GetWorld()); It; ++It)
-		{
-			(*It)->OnDestroyed.AddDynamic(this, &AAGPlayerController::CameraOnDestroyed);
-			return;
-		}
+	}
+
+	for (TActorIterator<ACineCameraActor> It(GetWorld()); It; ++It)
+	{
+		(*It)->OnDestroyed.AddDynamic(this, &AAGPlayerController::CameraOnDestroyed);
+		break;
 	}
 }
 

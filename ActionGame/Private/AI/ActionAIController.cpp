@@ -11,6 +11,8 @@
 #include <BehaviorTree/Blackboard/BlackboardKeyType_Object.h>
 #include <BehaviorTree/Blackboard/BlackboardKeyType_Bool.h>
 #include "GameFramework/CharacterMovementComponent.h"
+#include "TimerManager.h"
+#include "GameFramework/PlayerController.h"
 
 AActionAIController::AActionAIController()
 {
@@ -23,25 +25,16 @@ AActionAIController::AActionAIController()
 void AActionAIController::GameHasEnded(class AActor* EndGameFocus /*= NULL*/, bool bIsWinner /*= false*/)
 {
 	Super::GameHasEnded();
+
+	//BehaviorComp->
 }
 
 void AActionAIController::Possess(class APawn* InPawn)
 {
 	Super::Possess(InPawn);
 
-	class AActionGameBot_Aurora* Bot = Cast<AActionGameBot_Aurora>(InPawn);
-	if(Bot && Bot->BotBehavior)
-	{
-		if(Bot->BotBehavior->BlackboardAsset)
-		{
-			BlackboardComp->InitializeBlackboard(*Bot->BotBehavior->BlackboardAsset);
-		}
-		EnemyKeyID = BlackboardComp->GetKeyID(TEXT("Enemy"));
-		FreezedKeyID = BlackboardComp->GetKeyID(TEXT("bFreezed"));
-		MoveBackKeyID = BlackboardComp->GetKeyID(TEXT("bMoveBack"));
-	}
-
-	BehaviorComp->StartTree(*(Bot->BotBehavior));
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AActionAIController::StartAIPlayer, 4.f);
 }
 
 void AActionAIController::UnPossess()
@@ -99,4 +92,27 @@ bool AActionAIController::ShouldMoveBack()
 bool AActionAIController::IsMovingBack()
 {
 	return BlackboardComp->GetValue<UBlackboardKeyType_Bool>(MoveBackKeyID);
+}
+
+void AActionAIController::StartAIPlayer()
+{
+	class AActionGameBot_Aurora* Bot = Cast<AActionGameBot_Aurora>(GetPawn());
+	if (Bot && Bot->BotBehavior)
+	{
+		if (Bot->BotBehavior->BlackboardAsset)
+		{
+			BlackboardComp->InitializeBlackboard(*Bot->BotBehavior->BlackboardAsset);
+		}
+		EnemyKeyID = BlackboardComp->GetKeyID(TEXT("Enemy"));
+		FreezedKeyID = BlackboardComp->GetKeyID(TEXT("bFreezed"));
+		MoveBackKeyID = BlackboardComp->GetKeyID(TEXT("bMoveBack"));
+	}
+
+	BehaviorComp->StartTree(*(Bot->BotBehavior));
+
+	if (AActionGameCharacter* Enemy = GetEnemy())
+	{
+		APlayerController* MC = Enemy->GetController<APlayerController>();
+		Enemy->EnableInput(MC);
+	}
 }

@@ -41,6 +41,8 @@ public:
 	bool IsMovingBack();
 
 private:
+	void StartAIPlayer();
+	
 	int32 EnemyKeyID;
 
 	int32 FreezedKeyID;
