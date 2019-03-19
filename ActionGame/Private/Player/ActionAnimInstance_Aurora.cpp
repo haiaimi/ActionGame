@@ -5,6 +5,7 @@
 #include <Kismet/GameplayStatics.h>
 #include "GameFramework/CharacterMovementComponent.h"
 #include <Particles/ParticleSystem.h>
+#include "HAIAIMIHelper.h"
 
 UActionAnimInstance_Aurora::UActionAnimInstance_Aurora()
 {
@@ -83,5 +84,16 @@ void UActionAnimInstance_Aurora::AnimNotify_EndRAbility(UAnimNotify* Notify)
 	{
 		CurOwner->GetCharacterMovement()->JumpZVelocity = 600.f;    //恢复人物跳跃高度
 		CurOwner->bInAbility = false;
+	}
+}
+
+void UActionAnimInstance_Aurora::AnimNotify_ToDeath(UAnimNotify* Notify)
+{
+	APawn* Owner = TryGetPawnOwner();
+	if (AActionGameCharacter_Aurora* CurOwner = Cast<AActionGameCharacter_Aurora>(Owner))
+	{
+		CurOwner->GetMesh()->SetSimulatePhysics(true);
+		CurOwner->GetMesh()->bPauseAnims = true;
+		//HAIAIMIHelper::Debug_ScreenMessage(TEXT("Rigdoll"));
 	}
 }

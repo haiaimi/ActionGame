@@ -40,4 +40,7 @@ public:
 
 	UFUNCTION()
 	void AnimNotify_EndRAbility(UAnimNotify* Notify);
+
+	UFUNCTION()
+	void AnimNotify_ToDeath(UAnimNotify* Notify);
 };

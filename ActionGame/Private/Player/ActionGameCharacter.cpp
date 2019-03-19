@@ -26,7 +26,8 @@ AActionGameCharacter::AActionGameCharacter():
 	MoveDirStat(0),
 	bInAbility(false),
 	bFreezedSlow(false),
-	bFreezedStop(false)
+	bFreezedStop(false),
+	bDead(false)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -344,6 +345,7 @@ void AActionGameCharacter::EndFreezedStop()
 
 bool AActionGameCharacter::HitReact(const FVector& HitPoint)
 {
+	if (bDead)return false;
 	const FVector HitNormal = (HitPoint - GetActorLocation()).GetSafeNormal2D();
 	const FVector PlayerDir = GetActorRotation().Vector();  //玩家方向
 	const FVector PlayerRightDir = FRotationMatrix(GetActorRotation()).GetScaledAxis(EAxis::Y);  //玩家右边的方向
@@ -378,6 +380,20 @@ float AActionGameCharacter::TakeDamage(float Damage, struct FDamageEvent const& 
 
 	Health -= Damage;
 	OnHealthChanged.ExecuteIfBound(FMath::Abs(Health / GetClass()->GetDefaultObject<AActionGameCharacter>()->Health));
-	if (Health < 0.f)Health = 0.f;
+
+	HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(Health));
+	if (Health <= 0.f)
+	{
+		bDead = true;
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		if (AnimInstance && DeathAnim)
+			AnimInstance->Montage_Play(DeathAnim);
+		/*DisableInput(GetController<APlayerController>());
+		if (GetController())GetController()->UnPossess();
+		auto Enemy = GetAIEnemy();
+		if (Enemy && Enemy->GetController())
+			Enemy->GetController()->UnPossess();*/
+		Health = 0.f;
+	}
 	return Health;
 }

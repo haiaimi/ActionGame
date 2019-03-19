@@ -25,8 +25,6 @@ AActionAIController::AActionAIController()
 void AActionAIController::GameHasEnded(class AActor* EndGameFocus /*= NULL*/, bool bIsWinner /*= false*/)
 {
 	Super::GameHasEnded();
-
-	//BehaviorComp->
 }
 
 void AActionAIController::Possess(class APawn* InPawn)

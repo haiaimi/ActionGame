@@ -349,7 +349,6 @@ void AActionGameCharacter_Aurora::DetectIceRoad()
 
 	IceMoveSpline->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	IcePlatformOffset = IceMoveSpline->GetComponentLocation().Z;
-	//HAIAIMIHelper::Debug_ScreenMessage(IceMoveSpline->K2_GetComponentRotation().ToString());
 	IceMoveSpline->SetWorldRotation(FRotator(0.f, IceMoveSpline->K2_GetComponentRotation().Yaw, IceMoveSpline->K2_GetComponentRotation().Roll));
 }
 
@@ -382,7 +381,7 @@ void AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveComponent* OverlappedCom
 {
 	if (AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(OtherActor))
 	{
-		if (Enemy != this)
+		if (Enemy != this && !Enemy->IsDead())
 		{
 			UGameplayStatics::SpawnEmitterAttached(ImpactParticle, Enemy->GetMesh(), TEXT("Impact"));
 
@@ -393,8 +392,8 @@ void AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveComponent* OverlappedCom
 				BodySetup->GetClosestPointAndNormal(GetMesh()->GetSocketLocation(TEXT("Sword_Mid")), OverlappedComponent->GetComponentTransform(), NewImpactPoint, NewImpactNormal);
 			}
 
-			Enemy->HitReact(NewImpactPoint);
 			Enemy->TakeDamage(10.f, FDamageEvent(), GetController(), this);
+			Enemy->HitReact(NewImpactPoint);
 			bCanAttack = false;
 			if (Enemy->bFreezedSlow)
 			{
@@ -405,7 +404,6 @@ void AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveComponent* OverlappedCom
 				Enemy->GetMesh()->bNoSkeletonUpdate = true;
 				Enemy->bFreezedStop = true;
 
-				//HAIAIMIHelper::Debug_ScreenMessage(TEXT("Hit Enemy"),5.f);
 				Enemy->bUseControllerRotationRoll = false;
 				if (AActionAIController* AIControl = Cast<AActionAIController>(Enemy->Controller))
 				{
@@ -432,5 +430,6 @@ void AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveComponent* OverlappedCom
 				GetWorldTimerManager().SetTimer(TimerHandle, Enemy, &AActionGameCharacter::EndFreezedStop, 2.f, false);
 			}
 		}
+		//Enemy->GetMesh(
 	}
 }

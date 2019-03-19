@@ -63,6 +63,8 @@ public:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	bool IsDead() { return bDead; }
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
@@ -79,6 +81,9 @@ public:
 	/**受攻击的反馈动画，为前、后、左、右的顺序*/
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class UAnimMontage*> HitReactAnims;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UAnimMontage* DeathAnim;
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class USkeletalMesh*> CharacterMeshes;
@@ -136,5 +141,8 @@ private:
 
 	/**技能冷却定时器*/
 	TArray<FTimerHandle> SkillCoolingTimers;
+
+	/**玩家是否已经死亡*/
+	bool bDead;
 };
 

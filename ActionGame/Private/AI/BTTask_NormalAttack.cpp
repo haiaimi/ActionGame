@@ -15,7 +15,7 @@ EBTNodeResult::Type UBTTask_NormalAttack::ExecuteTask(UBehaviorTreeComponent& Ow
 	AActionGameCharacter* MyBot = Cast<AActionGameCharacter>(MyController->GetPawn());
 	AActionGameCharacter* Enemy = MyController->GetEnemy();
 
-	if(Enemy && MyBot)
+	if(Enemy && MyBot && !Enemy->IsDead())
 	{
 		if ((Enemy->GetActorLocation() - MyBot->GetActorLocation()).Size2D() < 250.f)
 		{
