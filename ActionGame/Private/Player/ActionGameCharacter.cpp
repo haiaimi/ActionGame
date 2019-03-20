@@ -18,6 +18,7 @@
 #include <Animation/AnimInstance.h>
 #include "AI/ActionAIController.h"
 #include "ActionGameInstance.h"
+#include "AGPlayerController.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AActionGameCharacter
@@ -379,21 +380,34 @@ float AActionGameCharacter::TakeDamage(float Damage, struct FDamageEvent const& 
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
 	Health -= Damage;
-	OnHealthChanged.ExecuteIfBound(FMath::Abs(Health / GetClass()->GetDefaultObject<AActionGameCharacter>()->Health));
-
-	HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(Health));
+	
 	if (Health <= 0.f)
 	{
 		bDead = true;
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		if (AnimInstance && DeathAnim)
 			AnimInstance->Montage_Play(DeathAnim);
-		/*DisableInput(GetController<APlayerController>());
-		if (GetController())GetController()->UnPossess();
-		auto Enemy = GetAIEnemy();
-		if (Enemy && Enemy->GetController())
-			Enemy->GetController()->UnPossess();*/
+		//当前人物是AI
+		if (auto AIController = Cast<AAIController>(GetController()))
+		{
+			AIController->UnPossess();
+			if (auto Controller = Cast<AAGPlayerController>(EventInstigator))
+			{
+				this->DisableInput(Controller);
+				Controller->ConvertToDeathView();
+			}
+		}
+		else
+		{
+			EventInstigator->UnPossess();
+			if (auto Controller = Cast<AAGPlayerController>(GetController()))
+			{
+				this->DisableInput(Controller);
+				Controller->ConvertToDeathView();
+			}
+		}
 		Health = 0.f;
 	}
+	OnHealthChanged.ExecuteIfBound(FMath::Abs(Health / GetClass()->GetDefaultObject<AActionGameCharacter>()->Health));
 	return Health;
 }

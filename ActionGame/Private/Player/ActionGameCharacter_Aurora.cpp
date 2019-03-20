@@ -392,7 +392,16 @@ void AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveComponent* OverlappedCom
 				BodySetup->GetClosestPointAndNormal(GetMesh()->GetSocketLocation(TEXT("Sword_Mid")), OverlappedComponent->GetComponentTransform(), NewImpactPoint, NewImpactNormal);
 			}
 
-			Enemy->TakeDamage(10.f, FDamageEvent(), GetController(), this);
+			const float EnemyHealth = Enemy->TakeDamage(60.f, FDamageEvent(), GetController(), this);
+			if (EnemyHealth == 0.f)
+			{
+				if(Enemy->bFreezedStop&& ExplodeParticle_Frozen)
+					UGameplayStatics::SpawnEmitterAtLocation(this, ExplodeParticle_Frozen, Enemy->GetActorLocation(),FRotator::ZeroRotator);
+				if (Enemy->bFreezedSlow && ExplodeParticle_Slow)
+					UGameplayStatics::SpawnEmitterAtLocation(this, ExplodeParticle_Slow, Enemy->GetActorLocation(), FRotator::ZeroRotator);
+				if (Enemy->bFreezedStop || Enemy->bFreezedSlow)Enemy->SetActorHiddenInGame(true);
+				return;
+			}
 			Enemy->HitReact(NewImpactPoint);
 			bCanAttack = false;
 			if (Enemy->bFreezedSlow)
@@ -430,6 +439,5 @@ void AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveComponent* OverlappedCom
 				GetWorldTimerManager().SetTimer(TimerHandle, Enemy, &AActionGameCharacter::EndFreezedStop, 2.f, false);
 			}
 		}
-		//Enemy->GetMesh(
 	}
 }

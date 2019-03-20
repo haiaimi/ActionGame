@@ -23,6 +23,9 @@ public:
 
 	virtual bool SetPause(bool bPause, FCanUnpause CanUnpauseDelegate = FCanUnpause())override;
 
+	/**ËÀÍöÊÓ½Ç*/
+	void ConvertToDeathView();
+
 private:
 	void PauseGame();
 

@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include <Particles/ParticleSystem.h>
 #include "HAIAIMIHelper.h"
+#include "TimerManager.h"
 
 UActionAnimInstance_Aurora::UActionAnimInstance_Aurora()
 {
@@ -92,8 +93,12 @@ void UActionAnimInstance_Aurora::AnimNotify_ToDeath(UAnimNotify* Notify)
 	APawn* Owner = TryGetPawnOwner();
 	if (AActionGameCharacter_Aurora* CurOwner = Cast<AActionGameCharacter_Aurora>(Owner))
 	{
-		CurOwner->GetMesh()->SetSimulatePhysics(true);
 		CurOwner->GetMesh()->bPauseAnims = true;
-		//HAIAIMIHelper::Debug_ScreenMessage(TEXT("Rigdoll"));
+		FTimerHandle TimerHandle;
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([this, CurOwner]() {
+			CurOwner->GetMesh()->SetSimulatePhysics(true);
+		});
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, GetWorld()->DeltaTimeSeconds*1.5f, false);
 	}
 }

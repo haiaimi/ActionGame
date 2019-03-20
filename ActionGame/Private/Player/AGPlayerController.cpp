@@ -80,6 +80,16 @@ bool AAGPlayerController::SetPause(bool bPause, FCanUnpause CanUnpauseDelegate)
 	return Super::SetPause(bPause, CanUnpauseDelegate);
 }
 
+void AAGPlayerController::ConvertToDeathView()
+{
+	if (GetPawn() && TempCameraActor)
+	{
+		TempCameraActor->SetActorLocation(GetPawn()->GetActorLocation() + FVector(0.f, 0.f, 600.f));
+		TempCameraActor->SetActorRotation(FRotator(-90.f, GetPawn()->GetActorRotation().Yaw, 0.f));
+		this->SetViewTargetWithBlend(TempCameraActor, 1.f, EViewTargetBlendFunction::VTBlend_Cubic);
+	}
+}
+
 void AAGPlayerController::PauseGame()
 {
 	SetPause(true);

@@ -115,22 +115,29 @@ protected:
 	/**R技能的粒子*/
 	UPROPERTY(EditDefaultsOnly)
 	class UParticleSystem* RAbilityParticle;
-
-	UPROPERTY(EditDefaultsOnly)
+	
+	/**对敌人的特效*/
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyEffect")
 	class UParticleSystem* Freezed_Slow;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyEffect")
 	class UParticleSystem* Freezed_Stop;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyEffect")
 	class UParticleSystem* ImpactParticle;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyEffect")
 	class UParticleSystem* CamFrostParticle_Slowed;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyEffect")
 	class UParticleSystem* CamFrostParticle_Frozen;
 
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyEffect")
+	class UParticleSystem* ExplodeParticle_Frozen;
+
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyEffect")
+	class UParticleSystem* ExplodeParticle_Slow;
+		
 	FTransform FreezeTransform;
 
 	UPROPERTY(EditDefaultsOnly)
