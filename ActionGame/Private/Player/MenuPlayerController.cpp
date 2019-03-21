@@ -31,22 +31,6 @@ void AMenuPlayerController::BeginPlay()
 	FString Ref;
 	GConfig->GetString(TEXT("haiaimi"), TEXT("Language"), Ref, GGameIni);
 	HAIAIMIHelper::ChangeLocalization(Ref);
-	/*UGameUserSettings::GetGameUserSettings()->SetAntiAliasingQuality(3);
-	UGameUserSettings::GetGameUserSettings()->SetFullscreenMode(EWindowMode::Windowed);
-	UGameUserSettings::GetGameUserSettings()->ApplySettings(false);*/
-	//HAIAIMIHelper::Debug_ScreenMessage(*GGameUserSettingsIni, 10.f);
-
-	/*const TCHAR* Section = TEXT("ScalabilityGroups");
-
-	if(GConfig)
-	{
-		HAIAIMIHelper::Debug_ScreenMessage(TEXT("GConfig"), 10.f);
-		GConfig->SetInt(Section, TEXT("sg.AntiAliasingQuality"), 0, GGameUserSettingsIni);
-		GConfig->Flush(false, GGameUserSettingsIni);
-
-		GConfig->SetInt(TEXT("haiaimi"), TEXT("one"), 0, GGameIni);
-		GConfig->Flush(false, GGameIni);
-	}*/
 }
 
 void AMenuPlayerController::SetupInputComponent()
