@@ -94,6 +94,7 @@ bool AActionAIController::IsMovingBack()
 
 void AActionAIController::StartAIPlayer()
 {
+	if (BehaviorComp->IsRunning())return;
 	class AActionGameBot_Aurora* Bot = Cast<AActionGameBot_Aurora>(GetPawn());
 	if (Bot && Bot->BotBehavior)
 	{

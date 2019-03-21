@@ -27,8 +27,10 @@ void AMenuPlayerController::BeginPlay()
 	GetPawn()->SetActorHiddenInGame(true);
 
 	UGameUserSettings::GetGameUserSettings()->SetFullscreenMode(UGameUserSettings::GetGameUserSettings()->GetFullscreenMode());
-	//UGameUserSettings::GetGameUserSettings()->SetResolutionScaleValueEx(20.f);
 	UGameUserSettings::GetGameUserSettings()->ApplySettings(false);
+	FString Ref;
+	GConfig->GetString(TEXT("haiaimi"), TEXT("Language"), Ref, GGameIni);
+	HAIAIMIHelper::ChangeLocalization(Ref);
 	/*UGameUserSettings::GetGameUserSettings()->SetAntiAliasingQuality(3);
 	UGameUserSettings::GetGameUserSettings()->SetFullscreenMode(EWindowMode::Windowed);
 	UGameUserSettings::GetGameUserSettings()->ApplySettings(false);*/

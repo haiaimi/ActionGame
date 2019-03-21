@@ -40,8 +40,8 @@ public:
 
 	bool IsMovingBack();
 
-private:
 	void StartAIPlayer();
+private:
 	
 	int32 EnemyKeyID;
 

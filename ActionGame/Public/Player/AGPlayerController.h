@@ -34,10 +34,15 @@ private:
 
 	UFUNCTION()
 	void CameraOnDestroyed(AActor* DestroyedActor);
+
+	/**跳过过程动画*/
+	void SkipLevelSequence();
 	
 private:
 	TSharedPtr<class SPauseMenuWidget> PauseWidget;
 
 	UPROPERTY()
 	ACameraActor* TempCameraActor;
+
+	class ALevelSequenceActor* LevelSequence;
 };

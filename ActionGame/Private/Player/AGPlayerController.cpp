@@ -11,8 +11,10 @@
 #include "LevelSequence/Public/LevelSequenceActor.h"
 #include "LevelSequence/Public/LevelSequencePlayer.h"
 #include "CinematicCamera/Public/CineCameraActor.h"
+#include "ActionAIController.h"
 
-AAGPlayerController::AAGPlayerController()
+AAGPlayerController::AAGPlayerController():
+	LevelSequence(nullptr)
 {
 	
 }
@@ -26,6 +28,7 @@ void AAGPlayerController::BeginPlay()
 		if ((*It)->SequencePlayer)
 		{
 			(*It)->SequencePlayer->OnStop.AddDynamic(this, &AAGPlayerController::ToPlayerCamSmooth);
+			LevelSequence = (*It);
 			break;
 		}
 	}
@@ -44,6 +47,7 @@ void AAGPlayerController::SetupInputComponent()
 	if (InputComponent)
 	{
 		InputComponent->BindAction(TEXT("Pause"), EInputEvent::IE_Pressed, this, &AAGPlayerController::PauseGame);
+		InputComponent->BindAction(TEXT("SkipSequence"), EInputEvent::IE_Pressed, this, &AAGPlayerController::SkipLevelSequence);
 	}
 }
 
@@ -104,4 +108,13 @@ void AAGPlayerController::ToPlayerCamSmooth()
 void AAGPlayerController::CameraOnDestroyed(AActor* DestroyedActor)
 {
 	TempCameraActor = GetWorld()->SpawnActor<ACameraActor>(DestroyedActor->GetActorLocation(), DestroyedActor->GetActorRotation());
+}
+
+void AAGPlayerController::SkipLevelSequence()
+{
+	if (LevelSequence && LevelSequence->SequencePlayer->IsPlaying())
+	{
+		LevelSequence->SequencePlayer->GoToEndAndStop();
+		Cast<AActionGameCharacter>(GetPawn())->GetAIEnemy()->GetController<AActionAIController>()->StartAIPlayer();
+	}
 }

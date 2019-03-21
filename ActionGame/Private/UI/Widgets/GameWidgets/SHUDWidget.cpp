@@ -4,7 +4,7 @@
 #include "SlateOptMacros.h"
 #include "SAbilityIconWidget.h"
 #include "SHealthBarWidget.h"
-#include "Widgets/GameWigets/SEnemySignWidget.h"
+#include "SEnemySignWidget.h"
 #include "GameFramework/PlayerController.h"
 #include "ActionGameType.h"
 

@@ -487,7 +487,7 @@ void SSettingsWidget::ShowGraphicSettingList()
 					GConfig->SetBool(TEXT("haiaimi"), TEXT("MotionBlur"), level == 1.f, GGameIni);
 					GConfig->Flush(false, GGameIni);
 					int32 MotionBlurLevel = level == 1.f ? 2 : 0;
-	
+					
 					if (OwnerController.IsValid())
 						OwnerController->ConsoleCommand(FString::Printf(TEXT("r.MotionBlurQuality %d"), MotionBlurLevel));
 				})
@@ -650,7 +650,6 @@ void SSettingsWidget::ShowGraphicSettingList()
 		];
 
 
-		HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(AnimIndex));
 		if (AnimSequence.GetSequenceTime() >= 0.5f)
 			AnimSequence.Play(this->AsShared(), false, 0.5f);
 	}
@@ -687,7 +686,9 @@ void SSettingsWidget::ShowCommonSetting()
 			]
 		];
 
-		//HAIAIMIHelper
+		FString Ref;
+		GConfig->GetString(TEXT("haiaimi"), TEXT("Language"), Ref, GGameIni);
+		HAIAIMIHelper::ChangeLocalization(Ref);
 		SettingList->AddSlot()
 		[
 			SAssignNew(SettingBorders[AnimIndex], SBorder)
@@ -697,9 +698,10 @@ void SSettingsWidget::ShowCommonSetting()
 				.RenderTransform(ButtonTransformParams[AnimIndex++])
 				.SelectName(LOCTEXT("Language","语言"))
 				.SelectContent(LanguageText)
-				.CurSelection(HAIAIMIHelper::GetLocalization() == "zh-CN" ? 0 : 1)
+				.CurSelection(Ref == "zh" ? 0 : 1)
 				.ExecuteSelection_Lambda([&](float level) {
 					HAIAIMIHelper::ChangeLocalization(level == 0.f ? "zh" : "en");
+					GConfig->SetString(TEXT("haiaimi"), TEXT("Language"), level == 0.f ? TEXT("zh") : TEXT("en"), GGameIni);
 					})
 				.SelectionOnHovered_Lambda([&]() {
 					SettingTitle->SetText(LOCTEXT("LanguageTip","语言"));

@@ -392,10 +392,7 @@ float AActionGameCharacter::TakeDamage(float Damage, struct FDamageEvent const& 
 		{
 			AIController->UnPossess();
 			if (auto Controller = Cast<AAGPlayerController>(EventInstigator))
-			{
-				this->DisableInput(Controller);
-				Controller->ConvertToDeathView();
-			}
+				DamageCauser->DisableInput(Controller);
 		}
 		else
 		{
