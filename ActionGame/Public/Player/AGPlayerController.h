@@ -26,6 +26,13 @@ public:
 	/**ËÀÍöÊÓ½Ç*/
 	void ConvertToDeathView();
 
+	/**½áÊøÓÎÏ·*/
+	void EndGame();
+
+	bool bIsGameEnd;
+
+	bool bIsWon;
+
 private:
 	void PauseGame();
 

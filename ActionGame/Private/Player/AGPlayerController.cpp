@@ -14,7 +14,9 @@
 #include "ActionAIController.h"
 
 AAGPlayerController::AAGPlayerController():
-	LevelSequence(nullptr)
+	LevelSequence(nullptr),
+	bIsGameEnd(false),
+	bIsWon(false)
 {
 	
 }
@@ -92,6 +94,13 @@ void AAGPlayerController::ConvertToDeathView()
 		TempCameraActor->SetActorRotation(FRotator(-90.f, GetPawn()->GetActorRotation().Yaw, 0.f));
 		this->SetViewTargetWithBlend(TempCameraActor, 1.f, EViewTargetBlendFunction::VTBlend_Cubic);
 	}
+}
+
+void AAGPlayerController::EndGame()
+{
+	bIsGameEnd = true;
+	if (GetPawn())GetPawn()->DisableInput(this);
+	PauseGame();
 }
 
 void AAGPlayerController::PauseGame()

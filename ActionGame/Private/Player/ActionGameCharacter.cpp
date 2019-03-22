@@ -387,22 +387,27 @@ float AActionGameCharacter::TakeDamage(float Damage, struct FDamageEvent const& 
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		if (AnimInstance && DeathAnim)
 			AnimInstance->Montage_Play(DeathAnim);
+		AAGPlayerController* PlayerController = nullptr;
 		//当前人物是AI
 		if (auto AIController = Cast<AAIController>(GetController()))
 		{
 			AIController->UnPossess();
-			if (auto Controller = Cast<AAGPlayerController>(EventInstigator))
-				DamageCauser->DisableInput(Controller);
+			PlayerController = Cast<AAGPlayerController>(EventInstigator);
+			if(PlayerController)PlayerController->bIsWon = true;
 		}
 		else
 		{
 			EventInstigator->UnPossess();
-			if (auto Controller = Cast<AAGPlayerController>(GetController()))
+			PlayerController = Cast<AAGPlayerController>(GetController());
+			if (PlayerController)
 			{
-				this->DisableInput(Controller);
-				Controller->ConvertToDeathView();
+				PlayerController->bIsWon = false;
+				PlayerController->ConvertToDeathView();
 			}
 		}
+
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(TimerHandle, PlayerController, &AAGPlayerController::EndGame, 1.5f);
 		Health = 0.f;
 	}
 	OnHealthChanged.ExecuteIfBound(FMath::Abs(Health / GetClass()->GetDefaultObject<AActionGameCharacter>()->Health));
