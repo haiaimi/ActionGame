@@ -58,78 +58,79 @@ void SPauseMenuWidget::Construct(const FArguments& InArgs)
 				]
 			]
 			+SVerticalBox::Slot()
+			[
+				SNew(SBorder)
+				.BorderImage(&UIStyle->HeroItemBorder)
 				[
-					SNew(SBorder)
-					.BorderImage(&UIStyle->HeroItemBorder)
+					SNew(SBox)
+					.HeightOverride(80.f)
+					.WidthOverride(320.f)
 					[
-						SNew(SBox)
-						.HeightOverride(80.f)
-						.WidthOverride(320.f)
+						SNew(SButton)
+						.HAlign(EHorizontalAlignment::HAlign_Center)
+						.VAlign(EVerticalAlignment::VAlign_Center)
+						.ButtonStyle(ButtonStyle)
 						[
-							SNew(SButton)
-							.HAlign(EHorizontalAlignment::HAlign_Center)
-							.VAlign(EVerticalAlignment::VAlign_Center)
-							.ButtonStyle(ButtonStyle)
-							[
-								SNew(STextBlock)
-								.Text(LOCTEXT("Restart","重新开始"))
-								.Font(FontInfo)
-								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-							]
+							SNew(STextBlock)
+							.Text(LOCTEXT("Restart","重新开始"))
+							.Font(FontInfo)
+							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 						]
 					]
 				]
-				+SVerticalBox::Slot()
-					[
-						SNew(SBorder)
-						.BorderImage(&UIStyle->HeroItemBorder)
-						[
-							SNew(SBox)
-							.HeightOverride(80.f)
-							.WidthOverride(320.f)	
-							[
-								SNew(SButton)
-								.HAlign(EHorizontalAlignment::HAlign_Center)
-								.VAlign(EVerticalAlignment::VAlign_Center)
-								.ButtonStyle(ButtonStyle)
-								.OnPressed_Lambda([&]() {
-								if (OwnerController.IsValid())
-								{
-									UGameplayStatics::OpenLevel(OwnerController.Get(), TEXT("/Game/GameLevels/MenuLevel"));
-								}
-								})
-								[
-									SNew(STextBlock)
-									.Text(LOCTEXT("BackToMenu","返回菜单"))
-									.Font(FontInfo)
-									.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-								]
-							]
-						]
-					]
-				+SVerticalBox::Slot()
+			]
+			+SVerticalBox::Slot()
+			[
+				SNew(SBorder)
+				.BorderImage(&UIStyle->HeroItemBorder)
 				[
-					SNew(SBorder)
-					.BorderImage(&UIStyle->HeroItemBorder)
+					SNew(SBox)
+					.HeightOverride(80.f)
+					.WidthOverride(320.f)	
 					[
-						SNew(SBox)
-						.HeightOverride(80.f)
-						.WidthOverride(320.f)
+						SNew(SButton)
+						.HAlign(EHorizontalAlignment::HAlign_Center)
+						.HAlign(EHorizontalAlignment::HAlign_Center)
+						.VAlign(EVerticalAlignment::VAlign_Center)
+						.ButtonStyle(ButtonStyle)
+						.OnPressed_Lambda([&]() {
+						if (OwnerController.IsValid())
+						{
+							UGameplayStatics::OpenLevel(OwnerController.Get(), TEXT("/Game/GameLevels/MenuLevel"));
+						}
+						})
 						[
-							SNew(SButton)
-							.HAlign(EHorizontalAlignment::HAlign_Center)
-							.VAlign(EVerticalAlignment::VAlign_Center)
-							.OnPressed(this, &SPauseMenuWidget::QuitGame)
-							.ButtonStyle(ButtonStyle)
-							[
-								SNew(STextBlock)
-								.Text(LOCTEXT("Quit","退出游戏"))
-								.Font(FontInfo)
-								.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-							]
+							SNew(STextBlock)
+							.Text(LOCTEXT("BackToMenu","返回菜单"))
+							.Font(FontInfo)
+							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
 						]
 					]
 				]
+			]
+			+SVerticalBox::Slot()
+			[
+				SNew(SBorder)
+				.BorderImage(&UIStyle->HeroItemBorder)
+				[
+					SNew(SBox)
+					.HeightOverride(80.f)
+					.WidthOverride(320.f)
+					[
+						SNew(SButton)
+						.HAlign(EHorizontalAlignment::HAlign_Center)
+						.VAlign(EVerticalAlignment::VAlign_Center)
+						.OnPressed(this, &SPauseMenuWidget::QuitGame)
+						.ButtonStyle(ButtonStyle)
+						[
+							SNew(STextBlock)
+							.Text(LOCTEXT("Quit","退出游戏"))
+							.Font(FontInfo)
+							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+						]
+					]
+				]
+			]
 		]
 	];
 	
@@ -150,7 +151,6 @@ void SPauseMenuWidget::QuitGame()
 {
 	if (OwnerController.IsValid())
 	{
-		//HAIAIMIHelper::SaveScore(OwnerController->GetPlayerScore());
 		OwnerController->ConsoleCommand("quit");
 	}
 }

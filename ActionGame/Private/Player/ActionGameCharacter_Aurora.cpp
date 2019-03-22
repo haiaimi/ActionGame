@@ -24,7 +24,8 @@ AActionGameCharacter_Aurora::AActionGameCharacter_Aurora():
 	PreIcePlatform(nullptr),
 	IcePlatformOffset(0.f),
 	bCanAttack(false),
-	MoveTime(0.f)
+	MoveTime(0.f),
+	QFirstAttackTime(-5.f)
 {
 	NormalAttackAnims.SetNum(4);
 	AbilityAnims.SetNum(3);
@@ -360,10 +361,13 @@ void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* Overl
 
 void AActionGameCharacter_Aurora::OnQAbilityBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
+	if (OtherActor == this)return;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (Cast<AActionGameCharacter>(OtherActor) && AnimInstance->Montage_IsPlaying(AbilityAnims[0]) && bInAbility)
+	if (Cast<AActionGameCharacter>(OtherActor) && AnimInstance->Montage_IsPlaying(AbilityAnims[0]) && bInAbility && GetWorld()->TimeSeconds - QFirstAttackTime >= 1.5f)
 	{
+		HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(GetWorld()->TimeSeconds));
 		AttackEnemy(OverlappedComponent, OtherActor);
+		QFirstAttackTime = GetWorld()->TimeSeconds;
 	}
 }
 

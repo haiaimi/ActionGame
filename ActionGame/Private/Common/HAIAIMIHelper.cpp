@@ -45,7 +45,7 @@ float HAIAIMIHelper::AdaptAngle(const float InAngle)
 FVector2D HAIAIMIHelper::ConvertToNormalCoord(FVector2D Pos)
 {
 	FVector2D Res = Pos;
-	if (GEngine&&GEngine->GameViewport)
+	if (GEngine && GEngine->GameViewport)
 	{
 		FVector2D Size;
 		GEngine->GameViewport->GetViewportSize(Size);
@@ -56,6 +56,18 @@ FVector2D HAIAIMIHelper::ConvertToNormalCoord(FVector2D Pos)
 	}
 	
 	return Res;
+}
+
+float HAIAIMIHelper::GetMaxWidth()
+{
+	float  MaxWidth = 1920.f;
+	FVector2D Res;
+	if (GEngine && GEngine->GameViewport)
+	{
+		GEngine->GameViewport->GetViewportSize(Res);
+		MaxWidth = (Res.X / Res.Y)*1920.f;
+	}
+	return MaxWidth;
 }
 
 FString HAIAIMIHelper::GetLocalization()

@@ -29,6 +29,10 @@ public:
 
 	void FreezeEnemyImpl(class AActor* Enemy);
 
+public:
+	UPROPERTY(BlueprintReadWrite)
+	bool bTurboJumpAccelerate;
+
 protected:
 	virtual void BeginPlay()override;
 
@@ -153,7 +157,6 @@ protected:
 
 	float MoveTime;
 
-public:
-	UPROPERTY(BlueprintReadWrite)
-	bool bTurboJumpAccelerate;
+	/**Q技能第一次攻击时间*/
+	float QFirstAttackTime;
 };

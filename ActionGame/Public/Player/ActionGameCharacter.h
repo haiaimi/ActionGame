@@ -124,6 +124,9 @@ protected:
 
 	void SetAbilityReady(int32 Index);
 
+	/**技能的冷却时间*/
+	UPROPERTY(EditDefaultsOnly)
+	TArray<float> SkillCoolingTimes;
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
@@ -134,10 +137,6 @@ private:
 	/**玩家生命值*/
 	UPROPERTY(EditDefaultsOnly)
 	float Health;
-
-	/**技能的冷却时间*/
-	UPROPERTY(EditDefaultsOnly)
-	TArray<float> SkillCoolingTimes;
 
 	/**技能冷却定时器*/
 	TArray<FTimerHandle> SkillCoolingTimers;

@@ -11,6 +11,7 @@
 #include "SSelectBoxWidget.h"
 #include "SSettingsWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine/GameViewportClient.h"
 
 using FPaddingParam = TAttribute<FMargin>;
 
@@ -218,22 +219,18 @@ void SMainMenuWidget::StartGame()
 	if (!StartGameWidget.IsValid())
 	{
 		MenuOverlay->AddSlot()
-			.HAlign(EHorizontalAlignment::HAlign_Left)
-			.VAlign(EVerticalAlignment::VAlign_Top)
-			[
-				SNew(SBox)
-				.HeightOverride(1080)
-				.WidthOverride(1920)
-				.RenderTransform_Lambda([&]() {
+		.HAlign(EHorizontalAlignment::HAlign_Left)
+		.VAlign(EVerticalAlignment::VAlign_Top)
+		[
+			SAssignNew(StartGameWidget, SStartGameWidget)
+			.OwnerHUD(OwnerHUD)
+			.RenderTransform_Lambda([&]() {
 				if (!StartGameWidget.IsValid())return FSlateRenderTransform(FVector2D::ZeroVector);
 				const float CurLerp = StartGameWidget->GetCurAnimLerp();
-				return FSlateRenderTransform(FVector2D(1920.f*(1.f - CurLerp), 0.f));
-					})
-				[
-					SAssignNew(StartGameWidget, SStartGameWidget)
-					.OwnerHUD(OwnerHUD)
-				]
-			];
+				float  MaxWidth = HAIAIMIHelper::GetMaxWidth();
+				return FSlateRenderTransform(FVector2D(MaxWidth*(1.f - CurLerp), 0.f));
+			})
+		];
 	}
 	else
 		StartGameWidget->BackToShow();
@@ -267,20 +264,16 @@ void SMainMenuWidget::HeroDetails()
 				.HAlign(EHorizontalAlignment::HAlign_Left)
 				.VAlign(EVerticalAlignment::VAlign_Top)
 				[
-					SNew(SBox)
-					.HeightOverride(1080)
-					.WidthOverride(1920)
-					.RenderTransform_Lambda([&]() {
-					if (!HeroDetail.IsValid())return FSlateRenderTransform(FVector2D::ZeroVector);
-					const float CurLerp = HeroDetail->GetCurAnimLerp();
-					return FSlateRenderTransform(FVector2D(1920.f*(1.f - CurLerp), 0.f));
-						})
-					[
 					SAssignNew(HeroDetail, SHeroDetailWidget)
 					.OwnerHUD(OwnerHUD)
 					//.PreWidget(TSharedPtr<SMainMenuWidget>(this))   //这样会造成智能指针循环引用
 					.DetailPlatform(DetailPlatform)
-					]
+					.RenderTransform_Lambda([&]() {
+						if (!HeroDetail.IsValid())return FSlateRenderTransform(FVector2D::ZeroVector);
+						const float CurLerp = HeroDetail->GetCurAnimLerp();
+						float  MaxWidth = HAIAIMIHelper::GetMaxWidth();
+						return FSlateRenderTransform(FVector2D(MaxWidth*(1.f - CurLerp), 0.f));
+				    })
 				];
 			}
 			else
@@ -297,30 +290,19 @@ void SMainMenuWidget::GameSetting()
 
 	if (!SettingWidget.IsValid())
 	{
-		FPaddingParam ::FGetter TransformGetter;
-		TransformGetter.BindLambda([&]() {
-			if (!SettingWidget.IsValid())return FMargin();
-			const float CurLerp = SettingWidget->GetCurAnimLerp();
-			SettingWidget->SetRenderOpacity(CurLerp);
-			float Bottom = 400.f - 400.f*CurLerp;
-			return FMargin(1980.f - 1980.f*CurLerp, 0.f, -1980.f + 1980.f*CurLerp, 0.f);
-			});
-		FPaddingParam  TransformParam;
-		TransformParam.Bind(TransformGetter);
-
 		MenuOverlay->AddSlot()
 		.HAlign(EHorizontalAlignment::HAlign_Left)
 		.VAlign(EVerticalAlignment::VAlign_Top)
 		[
-			SAssignNew(SettingsBox, SBox)
-			.HeightOverride(1080)
-			.WidthOverride(1920)
-			.Padding(TransformParam)
-			[
-				SAssignNew(SettingWidget, SSettingsWidget)
-				.OwnerHUD(OwnerHUD.IsValid() ? OwnerHUD : nullptr)
-				.OwnerController(OwnerController.IsValid() ? OwnerController : nullptr)
-			]
+			SAssignNew(SettingWidget, SSettingsWidget)
+			.OwnerHUD(OwnerHUD.IsValid() ? OwnerHUD : nullptr)
+			.OwnerController(OwnerController.IsValid() ? OwnerController : nullptr)
+			.RenderTransform_Lambda([&]() {
+				if (!SettingWidget.IsValid())return FSlateRenderTransform(FVector2D::ZeroVector);
+				const float CurLerp = SettingWidget->GetCurAnimLerp();
+				float  MaxWidth = HAIAIMIHelper::GetMaxWidth();
+				return FSlateRenderTransform(FVector2D(MaxWidth*(1.f - CurLerp), 0.f));
+			})
 		];
 	}
 	else

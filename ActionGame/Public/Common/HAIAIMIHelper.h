@@ -21,6 +21,8 @@ public:
 
 	static FVector2D ConvertToNormalCoord(FVector2D Pos);
 
+	static float GetMaxWidth();
+
 	static FString GetLocalization();
 
 	static void ChangeLocalization(FString target);

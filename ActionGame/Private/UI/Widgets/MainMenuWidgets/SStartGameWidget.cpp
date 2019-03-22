@@ -35,6 +35,7 @@ void SStartGameWidget::Construct(const FArguments& InArgs)
 			[
 				SNew(SBox)
 				.WidthOverride(100.f)
+				.HeightOverride(1080.f)
 			]
 			+SHorizontalBox::Slot()
 			.FillWidth(1.f)
@@ -153,16 +154,14 @@ void SStartGameWidget::Construct(const FArguments& InArgs)
 						]
 					]
 					+SHorizontalBox::Slot()
-					.AutoWidth()
-					[
-						SNew(SBox)
-						.WidthOverride(1400.f)
-					]
+					.FillWidth(1)
 					+SHorizontalBox::Slot()
 					.AutoWidth()
+					.HAlign(EHorizontalAlignment::HAlign_Right)
 					[
 						SNew(SBox)
 						.VAlign(EVerticalAlignment::VAlign_Center)
+						.Padding(FMargin(0.f,0.f,50.f,0.f))
 						[
 							SNew(SButton)
 							.HAlign(EHorizontalAlignment::HAlign_Center)

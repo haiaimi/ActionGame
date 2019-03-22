@@ -50,20 +50,27 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 		[
 			SNew(SBox)
 			.WidthOverride(100.f)
+			.HeightOverride(1080.f)
 		]
 		+SHorizontalBox::Slot()
-		.FillWidth(1.f)
+		.FillWidth(1)
 		[
 			SNew(SVerticalBox)
 			+SVerticalBox::Slot()
-			.FillHeight(0.8)
+			.FillHeight(0.8f)
 			.HAlign(EHorizontalAlignment::HAlign_Left)
 			.VAlign(EVerticalAlignment::VAlign_Center)
 			[
-				SNew(STextBlock)
-				.Text(LOCTEXT("HeroDetails","人物细节"))
-				.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),40))
-				.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+				SNew(SBox)
+				.WidthOverride_Lambda([&]() {
+					return HAIAIMIHelper::GetMaxWidth();
+				})
+				[
+					SNew(STextBlock)
+					.Text(LOCTEXT("HeroDetails", "人物细节"))
+					.Font(FSlateFontInfo(FPaths::ProjectContentDir() / TEXT("UI/Fonts/NanumGothic.ttf"), 40))
+					.ColorAndOpacity(FSlateColor(FLinearColor(1.f, 1.f, 1.f, 1.f)))
+				]	
 			]
 			+SVerticalBox::Slot()
 			.FillHeight(0.3f)
@@ -103,28 +110,35 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 			[
 				SNew(SHorizontalBox)
 				+SHorizontalBox::Slot()
-				.FillWidth(1)
+				.AutoWidth()
 				[
-					SNew(SBorder)
-					.BorderImage(BorderBackground.Get())
+					SNew(SBox)
+					.WidthOverride(300.f)
 					[
-						SAssignNew(HerosBar, SScrollBox)
-						.ScrollBarAlwaysVisible(true)
-					]
-					
-				]
-				+SHorizontalBox::Slot()
-				.FillWidth(1)
-				[
-					SNew(SBorder)
-					.BorderImage(BorderBackground.Get())
-					[
-						SAssignNew(HeroSkinsBar, SScrollBox)
-						.ScrollBarAlwaysVisible(true)
+						SNew(SBorder)
+						.BorderImage(BorderBackground.Get())
+						[
+							SAssignNew(HerosBar, SScrollBox)
+							.ScrollBarAlwaysVisible(true)
+						]
 					]
 				]
 				+SHorizontalBox::Slot()
-				.FillWidth(4)
+				.AutoWidth()
+				[
+					SNew(SBox)
+					.WidthOverride(300.f)
+					[
+						SNew(SBorder)
+						.BorderImage(BorderBackground.Get())
+						[
+							SAssignNew(HeroSkinsBar, SScrollBox)
+							.ScrollBarAlwaysVisible(true)
+						]
+					]
+				]
+				+SHorizontalBox::Slot()
+				.FillWidth(1)
 				[
 					SNew(SVerticalBox)
 					+SVerticalBox::Slot()

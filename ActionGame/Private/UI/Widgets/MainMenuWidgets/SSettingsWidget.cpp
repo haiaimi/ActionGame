@@ -76,6 +76,7 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 			[
 				SNew(SBox)
 				.WidthOverride(100.f)
+				.HeightOverride(1080.f)
 			]
 			+SHorizontalBox::Slot()
 			.FillWidth(1.f)
@@ -86,10 +87,16 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 				.HAlign(EHorizontalAlignment::HAlign_Left)
 				.VAlign(EVerticalAlignment::VAlign_Center)
 				[
-					SNew(STextBlock)
-					.Text(LOCTEXT("Setting","设置"))
-					.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),40))
-					.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+					SNew(SBox)
+					.WidthOverride_Lambda([&]() {
+						return HAIAIMIHelper::GetMaxWidth();
+					})
+					[
+						SNew(STextBlock)
+						.Text(LOCTEXT("Setting", "设置"))
+						.Font(FSlateFontInfo(FPaths::ProjectContentDir() / TEXT("UI/Fonts/NanumGothic.ttf"), 40))
+						.ColorAndOpacity(FSlateColor(FLinearColor(1.f, 1.f, 1.f, 1.f)))
+					]
 				]
 				+SVerticalBox::Slot()
 				.AutoHeight()
@@ -170,11 +177,14 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 				[
 					SNew(SHorizontalBox)
 					+SHorizontalBox::Slot()
-					.FillWidth(1.f)
+					.AutoWidth()
 					[
-						SAssignNew(SettingList, SScrollBox)
-						.ScrollBarAlwaysVisible(true)
-
+						SNew(SBox)
+						.WidthOverride(900.f)
+						[
+							SAssignNew(SettingList, SScrollBox)
+							.ScrollBarAlwaysVisible(true)
+						]
 					]
 					+ SHorizontalBox::Slot()
 					.FillWidth(1.f)
