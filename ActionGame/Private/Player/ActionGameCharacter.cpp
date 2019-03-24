@@ -383,6 +383,7 @@ float AActionGameCharacter::TakeDamage(float Damage, struct FDamageEvent const& 
 	
 	if (Health <= 0.f)
 	{
+		HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(Health), 2.f);
 		bDead = true;
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		if (AnimInstance && DeathAnim)
@@ -403,6 +404,7 @@ float AActionGameCharacter::TakeDamage(float Damage, struct FDamageEvent const& 
 			{
 				PlayerController->bIsWon = false;
 				PlayerController->ConvertToDeathView();
+				PlayerController->ApplyGrayScreen();
 			}
 		}
 

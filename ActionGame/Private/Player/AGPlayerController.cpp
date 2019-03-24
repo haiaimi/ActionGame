@@ -12,6 +12,8 @@
 #include "LevelSequence/Public/LevelSequencePlayer.h"
 #include "CinematicCamera/Public/CineCameraActor.h"
 #include "ActionAIController.h"
+#include "Camera/CameraComponent.h"
+#include "Camera/CameraActor.h"
 
 AAGPlayerController::AAGPlayerController():
 	LevelSequence(nullptr),
@@ -103,6 +105,13 @@ void AAGPlayerController::EndGame()
 	PauseGame();
 }
 
+void AAGPlayerController::ApplyGrayScreen()
+{
+	UMaterialInterface* ScreenGray = LoadObject<UMaterialInterface>(this, TEXT("/Game/CustomEffect/ScreenGray"));
+	if (ScreenGray && TempCameraActor)
+		TempCameraActor->GetCameraComponent()->PostProcessSettings.AddBlendable(ScreenGray, 1.f);
+}
+
 void AAGPlayerController::PauseGame()
 {
 	SetPause(true);
@@ -126,4 +135,8 @@ void AAGPlayerController::SkipLevelSequence()
 		LevelSequence->SequencePlayer->GoToEndAndStop();
 		Cast<AActionGameCharacter>(GetPawn())->GetAIEnemy()->GetController<AActionAIController>()->StartAIPlayer();
 	}
+
+	const TArray<FPostProcessSettings>* PostProcess;
+	const TArray<float>* Blends;
+	this->PlayerCameraManager->GetCachedPostProcessBlends(PostProcess, Blends);
 }

@@ -29,6 +29,9 @@ public:
 	/**结束游戏*/
 	void EndGame();
 
+	/**玩家死亡后灰屏效果*/
+	void ApplyGrayScreen();
+
 	bool bIsGameEnd;
 
 	bool bIsWon;
