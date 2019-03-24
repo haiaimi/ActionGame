@@ -17,13 +17,8 @@
 
 
 AActionGameCharacter_Aurora::AActionGameCharacter_Aurora():
-	SaveAttack(false),
-	IsAttacking(false),
-	AttackCount(0),
-	bTurboJumpAccelerate(false),
 	PreIcePlatform(nullptr),
 	IcePlatformOffset(0.f),
-	bCanAttack(false),
 	MoveTime(0.f),
 	QFirstAttackTime(-5.f)
 {
@@ -55,30 +50,6 @@ AActionGameCharacter_Aurora::AActionGameCharacter_Aurora():
 		QAbilityCollision->SetRelativeLocation(FVector(70.f, 0.f, 60.f));
 	}
 }
-
-void AActionGameCharacter_Aurora::ComboAttackSave()
-{
-	if(SaveAttack)
-	{
-		SaveAttack = false;
-		if (AttackCount < NormalAttackAnims.Num()-1)
-		{
-			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-			AnimInstance->Montage_Play(NormalAttackAnims[AttackCount++], 1.f);
-		}
-	}
-}
-
-void AActionGameCharacter_Aurora::ResetCombo()
-{
-	SaveAttack = false;
-	IsAttacking = false;
-	AttackCount = 0;
-	bCanAttack = false;
-
-	Super::ResetCombo();
-}
-
 
 void AActionGameCharacter_Aurora::FreezeEnemy()
 {
@@ -172,26 +143,6 @@ void AActionGameCharacter_Aurora::MoveRight(float Value)
 	if (bInAbility)return;
 	if (JumpCurrentCount != 2)
 		Super::MoveRight(Value);
-}
-
-void AActionGameCharacter_Aurora::NormalAttack()
-{
-	if (bInAbility || bTurboJumpAccelerate)return;   //在释放技能的时候不进行平A
-
-	if (IsAttacking)
-		SaveAttack = true;
-	else
-	{
-		IsAttacking = true;
-		if (AttackCount < NormalAttackAnims.Num()-1)
-		{
-			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-			if (GetCharacterMovement()->IsFalling())
-				AnimInstance->Montage_Play(NormalAttackAnims.Last(), 1.f);
-			else
-				AnimInstance->Montage_Play(NormalAttackAnims[AttackCount++], 1.f);
-		}
-	}
 }
 
 void AActionGameCharacter_Aurora::Ability_Q()

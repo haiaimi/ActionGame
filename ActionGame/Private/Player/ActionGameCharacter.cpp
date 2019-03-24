@@ -25,10 +25,16 @@
 
 AActionGameCharacter::AActionGameCharacter():
 	MoveDirStat(0),
+	SaveAttack(false),
+	IsAttacking(false),
+	AttackCount(0),
+	bCanAttack(false),
 	bInAbility(false),
+	bTurboJumpAccelerate(false),
 	bFreezedSlow(false),
 	bFreezedStop(false),
-	bDead(false)
+	bDead(false),
+	bCheatMode(false)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -68,7 +74,8 @@ void AActionGameCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	DisableInput(GetController<APlayerController>());
+	if (!bCheatMode)
+		DisableInput(GetController<APlayerController>());
 	if(UActionGameInstance* MyGameInstance = Cast<UActionGameInstance>(GetGameInstance()))
 	{
 		if (AIControllerClass == AActionAIController::StaticClass())
@@ -141,7 +148,43 @@ void AActionGameCharacter::SetAbilityReady(int32 Index)
 
 void AActionGameCharacter::NormalAttack()
 {
-	
+	if (bInAbility || bTurboJumpAccelerate)return;   //在释放技能的时候不进行平A
+
+	if (IsAttacking)
+		SaveAttack = true;
+	else
+	{
+		IsAttacking = true;
+		if (AttackCount < NormalAttackAnims.Num()-1)
+		{
+			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+			if (GetCharacterMovement()->IsFalling())
+				AnimInstance->Montage_Play(NormalAttackAnims.Last(), 1.f);     //播放空中普攻的动画
+			else
+				AnimInstance->Montage_Play(NormalAttackAnims[AttackCount++], 1.f);
+		}
+	}
+}
+
+void AActionGameCharacter::ComboAttackSave()
+{
+	if(SaveAttack)
+	{
+		SaveAttack = false;
+		if (AttackCount < NormalAttackAnims.Num()-1)
+		{
+			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+			AnimInstance->Montage_Play(NormalAttackAnims[AttackCount++], 1.f);
+		}
+	}
+}
+
+void AActionGameCharacter::ResetCombo()
+{
+	SaveAttack = false;
+	IsAttacking = false;
+	AttackCount = 0;
+	bCanAttack = false;
 }
 
 void AActionGameCharacter::Ability_Q()

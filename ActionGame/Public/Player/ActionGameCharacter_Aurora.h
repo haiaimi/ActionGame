@@ -17,12 +17,6 @@ class ACTIONGAME_API AActionGameCharacter_Aurora : public AActionGameCharacter
 public:
 	AActionGameCharacter_Aurora();
 
-	UFUNCTION(BlueprintCallable)
-	void ComboAttackSave();
-
-	UFUNCTION(BlueprintCallable)
-	virtual void ResetCombo()override;
-
 	/**冻结敌人*/
 	UFUNCTION(BlueprintCallable)
 	void FreezeEnemy();
@@ -30,8 +24,6 @@ public:
 	void FreezeEnemyImpl(class AActor* Enemy);
 
 public:
-	UPROPERTY(BlueprintReadWrite)
-	bool bTurboJumpAccelerate;
 
 protected:
 	virtual void BeginPlay()override;
@@ -47,8 +39,6 @@ public:
 	virtual void MoveForward(float Value)override;
 
 	virtual void MoveRight(float Value)override;
-
-	virtual void NormalAttack()override;
 	
 	virtual void Ability_Q()override;
 
@@ -88,30 +78,6 @@ protected:
 	class UBoxComponent* QAbilityCollision;
 
 	class USplineComponent* IceMoveSpline;
-
-	UPROPERTY(VisibleAnywhere)
-	bool SaveAttack;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	bool IsAttacking;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bCanAttack;
-
-	UPROPERTY(VisibleAnywhere)
-	int32 AttackCount;
-
-	/**普通攻击的动画*/
-	UPROPERTY(EditDefaultsOnly)
-	TArray<class UAnimMontage*> NormalAttackAnims;
-
-	/**技能动画*/
-	UPROPERTY(EditDefaultsOnly)
-	TArray<class UAnimMontage*> AbilityAnims;
-
-	/**加强版跳跃动画*/
-	UPROPERTY(EditDefaultsOnly)
-	class UAnimMontage* TurboJumpAnim;
 
 	UPROPERTY(EditDefaultsOnly)
 	class UParticleSystem* FreezeSegment;

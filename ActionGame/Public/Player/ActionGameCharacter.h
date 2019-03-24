@@ -20,8 +20,10 @@ public:
 	/**普通攻击*/
 	virtual void NormalAttack();
 
+	void ComboAttackSave();
+
 	/**重置普攻*/
-	virtual void ResetCombo() {};
+	virtual void ResetCombo();
 	
 	/**下面是人物主要的三个技能*/
 	virtual void Ability_Q();
@@ -65,6 +67,9 @@ public:
 
 	bool IsDead() { return bDead; }
 
+	UPROPERTY(EditAnywhere)
+	bool bCheatMode;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
@@ -75,8 +80,9 @@ public:
 	float BaseLookUpRate;
 
 	/**是否在释放技能*/
-	UPROPERTY(BlueprintReadWrite)
 	bool bInAbility;
+
+	bool bTurboJumpAccelerate;
 
 	/**受攻击的反馈动画，为前、后、左、右的顺序*/
 	UPROPERTY(EditDefaultsOnly)
@@ -124,9 +130,30 @@ protected:
 
 	void SetAbilityReady(int32 Index);
 
+	bool SaveAttack;
+
+	bool IsAttacking;
+
+	bool bCanAttack;
+
+	int32 AttackCount;
+
+	/**普通攻击的动画*/
+	UPROPERTY(EditDefaultsOnly)
+	TArray<class UAnimMontage*> NormalAttackAnims;
+
+	/**技能动画*/
+	UPROPERTY(EditDefaultsOnly)
+	TArray<class UAnimMontage*> AbilityAnims;
+
+	/**加强版跳跃动画*/
+	UPROPERTY(EditDefaultsOnly)
+	class UAnimMontage* TurboJumpAnim;
+
 	/**技能的冷却时间*/
 	UPROPERTY(EditDefaultsOnly)
 	TArray<float> SkillCoolingTimes;
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
