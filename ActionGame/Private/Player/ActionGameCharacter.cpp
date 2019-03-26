@@ -189,16 +189,22 @@ void AActionGameCharacter::ResetCombo()
 
 void AActionGameCharacter::Ability_Q()
 {
+	if (IsAttacking)
+		ResetCombo();
 	MakeAbilityCooling(EAbilityType::QAbility);
 }
 
 void AActionGameCharacter::Ability_E()
 {
+	if (IsAttacking)
+		ResetCombo();
 	MakeAbilityCooling(EAbilityType::EAbility);
 }
 
 void AActionGameCharacter::Ability_R()
 {
+	if (IsAttacking)
+		ResetCombo();
 	MakeAbilityCooling(EAbilityType::RAbility);
 }
 

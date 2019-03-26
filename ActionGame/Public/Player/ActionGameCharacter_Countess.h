@@ -24,6 +24,23 @@ public:
 
 	virtual void Ability_R()override;
 
+	/**释放E技能的粒子*/
+	void SpawnRollingDarkSegemnts();
+
+	/**穿刺敌人*/
+	void StabEnemy();
+
+	bool bFaceToEnemy;
+
+	class AActionGameCharacter* Enemy;
+
+protected:
+	virtual void MoveForward(float Value)override;
+
+	virtual void MoveRight(float Value)override;
+
+	virtual void Tick(float DeltaTime)override;
+
 private:
 	UFUNCTION()
 	void OnCountDownFinshed(FName EventName, float EmitterTime, int32 ParticleTime, FVector Location, FVector Velocity, FVector Direction);
@@ -31,6 +48,10 @@ private:
 	/**Slip技能返回*/
 	void SlipReturn();
 
+	/**清除R技能特效*/
+	void ClearUltFX();
+
+	///Q技能
 	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")
 	class UParticleSystem* BeginTeleportEffect;
 
@@ -55,4 +76,24 @@ private:
 	class UParticleSystemComponent* CountDown;
 
 	class UParticleSystemComponent* ShadowClone;
+
+	///E技能
+	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")
+	class UParticleSystem* RollingDarkSegment;
+
+	///R技能
+	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")
+	class UParticleSystem* UltEyeFX;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")
+	class UParticleSystem* UltEyeFX_Burst;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")
+	class UParticleSystem* UltAimingFX;
+
+	class UParticleSystemComponent* UltEye_Right;
+
+	class UParticleSystemComponent* UltEye_Left;
+
+	class UParticleSystemComponent* UltAiming;
 };

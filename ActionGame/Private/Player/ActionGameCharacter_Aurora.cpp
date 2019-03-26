@@ -150,7 +150,6 @@ void AActionGameCharacter_Aurora::Ability_Q()
 	if (GetCharacterMovement()->IsFalling() || bInAbility || bFreezedStop || IsAbilityinCooling(EAbilityType::QAbility))return;
 	Super::Ability_Q();
 
-	bInAbility = true;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(AbilityAnims[0], 1.f);
 	ResetCombo();   //ÖØÖÃ¹¥»÷¶¯»­×´Ì¬
@@ -166,7 +165,6 @@ void AActionGameCharacter_Aurora::Ability_E()
 	if (GetCharacterMovement()->IsFalling() || bInAbility || IsAbilityinCooling(EAbilityType::EAbility))return;
 	Super::Ability_E();
 
-	bInAbility = true;
 	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(AbilityAnims[1], 1.f);
@@ -187,7 +185,6 @@ void AActionGameCharacter_Aurora::Ability_R()
 
 	GetCharacterMovement()->JumpZVelocity = 700.f;
 	Jump();
-	bInAbility = true;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(AbilityAnims[2], 1.f);
 	ResetCombo();   

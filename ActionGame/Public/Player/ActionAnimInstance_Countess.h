@@ -19,4 +19,25 @@ class ACTIONGAME_API UActionAnimInstance_Countess : public UAnimInstance
 
 	UFUNCTION()
 	void AnimNotify_ResetCombo(UAnimNotify* Notify);
+
+	UFUNCTION()
+	void AnimNotify_RollingDarkSegment(UAnimNotify* Notify);
+
+	UFUNCTION()
+	void AnimNotify_AbilityFinished_Q(UAnimNotify* Notify);
+
+	UFUNCTION()
+	void AnimNotify_AbilityFinished_E(UAnimNotify* Notify);
+
+	UFUNCTION()
+	void AnimNotify_AbilityFinished_R(UAnimNotify* Notify);
+
+	UFUNCTION()
+	void AnimNotify_StartJump(UAnimNotify* Notify);
+
+	UFUNCTION()
+	void AnimNotify_CatchEnemy(UAnimNotify* Notify);
+
+	UFUNCTION()
+	void AnimNotify_LeaveEnemy(UAnimNotify* Notify);
 };
