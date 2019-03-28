@@ -44,6 +44,13 @@ AActionGameCharacter_Countess::AActionGameCharacter_Countess():
 	}
 }
 
+void AActionGameCharacter_Countess::BeginPlay()
+{
+	Super::BeginPlay();
+	if (SwordCollision_L)SwordCollision_L->OnComponentBeginOverlap.AddDynamic(this, &AActionGameCharacter_Countess::OnSwordBeginOverlap);
+	if (SwordCollision_R)SwordCollision_R->OnComponentBeginOverlap.AddDynamic(this, &AActionGameCharacter_Countess::OnSwordBeginOverlap);
+}
+
 void AActionGameCharacter_Countess::Tick(float DeltaTime)
 {
 	if (bFaceToEnemy && GetEnemy())
@@ -76,30 +83,10 @@ void AActionGameCharacter_Countess::Ability_Q()
 		CountDown->OnParticleDeath.AddDynamic(this, &AActionGameCharacter_Countess::OnCountDownFinshed);
 	}
 	DisableInput(GetController<APlayerController>());
-	auto Enemy = GetEnemy();
-	const float SubDegree = HAIAIMIHelper::GetDegreesBetweenActors(Enemy, this);
-	FVector AimPos = GetActorLocation() + 1000.f * GetActorRotation().Vector();
-	if (SubDegree < 45.f)
-	{
-		const FVector Dir = (GetEnemy()->GetActorLocation() - GetActorLocation()).GetSafeNormal();
-		const float Distance = (GetEnemy()->GetActorLocation() - GetActorLocation()).Size();
-		AimPos = GetActorLocation() + Dir * FMath::Clamp(Distance - 100.f, 0.f, 1000.f);
-	}
-
-	FTimerHandle TimerHandle;
-	FTimerDelegate Delegate;
-	FTransform CurTransform = GetActorTransform();
 	SetActorHiddenInGame(true);
-	Delegate.BindLambda([AimPos, this]() {
-		EnableInput(GetController<APlayerController>());
-		SetActorHiddenInGame(false);
-		TeleportTo(AimPos, GetActorRotation());
-		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-		AnimInstance->Montage_Play(AbilityAnims[0], 1.f);
-		if (TeleportCamEffect)
-			UGameplayStatics::SpawnEmitterAttached(TeleportCamEffect, GetFollowCamera(), NAME_None, FVector(150.f, 0.f, 0.f), FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset);
-	});
-	GetWorldTimerManager().SetTimer(TimerHandle, Delegate, 0.5f, false);
+	
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AActionGameCharacter_Countess::TeleportArrive, 0.5f, false);
 }
 
 void AActionGameCharacter_Countess::Ability_E()
@@ -201,6 +188,46 @@ void AActionGameCharacter_Countess::MoveRight(float Value)
 	Super::MoveRight(Value);
 }
 
+AActionGameCharacter* AActionGameCharacter_Countess::AttackEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, FName SwordSocket /*= NAME_None*/)
+{
+	HAIAIMIHelper::Debug_ScreenMessage(TEXT("Attack Enemy"));
+
+	return Super::AttackEnemy(OverlappedComponent, OtherActor, SwordSocket);
+}
+
+void AActionGameCharacter_Countess::OnSwordBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	if (!bCanAttack)return;
+	AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(OtherActor);
+	if (!Enemy || Enemy == this)return;
+
+	HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(AttackCount));
+	if (AttackCount == NormalAttackAnims.Num())AttackCount = 3;
+	switch (AttackCount)
+	{
+		case 1:
+		{
+			if (OverlappedComponent == SwordCollision_R)
+				AttackEnemy(OtherComp, OtherActor, TEXT("weapon_mid_r"));
+			break;
+		}
+		case 2:
+		{
+			if (OverlappedComponent == SwordCollision_L)
+				AttackEnemy(OtherComp, OtherActor, TEXT("weapon_mid_l"));
+			break;
+		}
+		case 3:
+		{
+			bool IsRight = OverlappedComponent == SwordCollision_R;
+			AttackEnemy(OtherComp, OtherActor, IsRight ? TEXT("weapon_mid_r") : TEXT("weapon_mid_l"));
+			break;
+		}
+	default:
+		break;
+	}
+}
+
 void AActionGameCharacter_Countess::OnCountDownFinshed(FName EventName, float EmitterTime, int32 ParticleTime, FVector Location, FVector Velocity, FVector Direction)
 {
 	if (ShadowClone)
@@ -211,6 +238,27 @@ void AActionGameCharacter_Countess::OnCountDownFinshed(FName EventName, float Em
 		ShadowClone = nullptr;
 		CountDown = nullptr;
 	}
+}
+
+void AActionGameCharacter_Countess::TeleportArrive()
+{
+	auto Enemy = GetEnemy();
+	const float SubDegree = HAIAIMIHelper::GetDegreesBetweenActors(Enemy, this);
+	FVector AimPos = GetActorLocation() + 1000.f * GetActorRotation().Vector();
+	if (SubDegree < 45.f)
+	{
+		const FVector Dir = (GetEnemy()->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+		const float Distance = (GetEnemy()->GetActorLocation() - GetActorLocation()).Size();
+		AimPos = GetActorLocation() + Dir * FMath::Clamp(Distance - 100.f, 0.f, 1000.f);
+	}
+
+	EnableInput(GetController<APlayerController>());
+	SetActorHiddenInGame(false);
+	TeleportTo(AimPos, GetActorRotation());
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(AbilityAnims[0], 1.f);
+	if (TeleportCamEffect)
+		UGameplayStatics::SpawnEmitterAttached(TeleportCamEffect, GetFollowCamera(), NAME_None, FVector(150.f, 0.f, 0.f), FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset);
 }
 
 void AActionGameCharacter_Countess::SlipReturn()

@@ -40,15 +40,24 @@ public:
 	bool bFaceToEnemy;
 
 protected:
+	virtual void BeginPlay()override;
+
 	virtual void Tick(float DeltaTime)override;
 
 	virtual void MoveForward(float Value)override;
 
 	virtual void MoveRight(float Value)override;
 
+	virtual AActionGameCharacter* AttackEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, FName SwordSocket = NAME_None)override;
+
 private:
 	UFUNCTION()
+	void OnSwordBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+	UFUNCTION()
 	void OnCountDownFinshed(FName EventName, float EmitterTime, int32 ParticleTime, FVector Location, FVector Velocity, FVector Direction);
+
+	void TeleportArrive();
 
 	/**Slip¼¼ÄÜ·µ»Ø*/
 	void SlipReturn();

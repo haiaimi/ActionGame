@@ -178,13 +178,17 @@ void AActionGameCharacter::NormalAttack()
 	else
 	{
 		IsAttacking = true;
-		if (AttackCount < NormalAttackAnims.Num()-1)
+		if (AttackCount < NormalAttackAnims.Num() - 1)
 		{
 			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 			if (GetCharacterMovement()->IsFalling())
+			{
 				AnimInstance->Montage_Play(NormalAttackAnims.Last(), 1.f);     //播放空中普攻的动画
+				AttackCount = NormalAttackAnims.Num();
+			}
 			else
 				AnimInstance->Montage_Play(NormalAttackAnims[AttackCount++], 1.f);
+			bCanAttack = true;
 		}
 	}
 }
@@ -194,10 +198,11 @@ void AActionGameCharacter::ComboAttackSave()
 	if(SaveAttack)
 	{
 		SaveAttack = false;
-		if (AttackCount < NormalAttackAnims.Num()-1)
+		if (AttackCount < NormalAttackAnims.Num() - 1)
 		{
 			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 			AnimInstance->Montage_Play(NormalAttackAnims[AttackCount++], 1.f);
+			bCanAttack = true;
 		}
 	}
 }

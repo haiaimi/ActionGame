@@ -307,7 +307,7 @@ void AActionGameCharacter_Aurora::DetectIceRoad()
 void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	if (!bCanAttack)return;
-	AttackEnemy(OverlappedComponent, OtherActor, TEXT("Sword_Mid"));
+	AttackEnemy(OtherComp, OtherActor, TEXT("Sword_Mid"));
 }
 
 void AActionGameCharacter_Aurora::OnQAbilityBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
