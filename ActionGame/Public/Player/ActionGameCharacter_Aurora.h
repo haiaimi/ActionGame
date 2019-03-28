@@ -30,7 +30,7 @@ protected:
 
 	virtual void Tick(float DeltaTime)override;
 
-	void AttackEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor);
+	AActionGameCharacter* AttackEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, FName SwordSocket = NAME_None)override;
 
 public:
 	/**ÌøÔ¾¶¯×÷*/
@@ -65,6 +65,8 @@ public:
 	UFUNCTION()
 	void OnQAbilityBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
+	void DisableQDetection();
+
 	void PlayerCanAttack() { bCanAttack = true; }
 
 	UFUNCTION(BlueprintCallable)
@@ -92,9 +94,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyEffect")
 	class UParticleSystem* Freezed_Stop;
-
-	UPROPERTY(EditDefaultsOnly, Category = "EnemyEffect")
-	class UParticleSystem* ImpactParticle;
 
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyEffect")
 	class UParticleSystem* CamFrostParticle_Slowed;

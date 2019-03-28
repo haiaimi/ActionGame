@@ -126,6 +126,8 @@ protected:
 
 	void LookUpAtRate(float Rate);
 
+	virtual AActionGameCharacter* AttackEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, FName SwordSocket = NAME_None);
+
 	void MakeAbilityCooling(EAbilityType::Type AbilityType);
 
 	void SetAbilityReady(int32 Index);
@@ -153,6 +155,9 @@ protected:
 	/**技能的冷却时间*/
 	UPROPERTY(EditDefaultsOnly)
 	TArray<float> SkillCoolingTimes;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UParticleSystem* ImpactParticle;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

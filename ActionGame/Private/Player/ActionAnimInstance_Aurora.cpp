@@ -66,6 +66,7 @@ void UActionAnimInstance_Aurora::AnimNotify_EndQAbility(UAnimNotify* Notify)
 	{
 		CurOwner->bTurboJumpAccelerate = false;
 		CurOwner->bInAbility = false;
+		CurOwner->DisableQDetection();   //停止Q技能檢測盒的碰撞檢測，節省性能
 	}
 }
 

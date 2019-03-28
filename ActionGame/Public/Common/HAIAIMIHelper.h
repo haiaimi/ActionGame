@@ -19,6 +19,14 @@ public:
 
 	static float AdaptAngle(const float InAngle);
 
+	/**
+	 * Method:    GetDegreesBetweenActors   获取两个Actor之间的角度，以第二个Actor的向前方向为准
+	 * Param:     AActor * Aim              比较的目标Actor
+	 * Param:     AActor * Self             被比较的Actor
+	 * Returns:   float                     返回角度
+	 */
+	static float GetDegreesBetweenActors(AActor* Aim, AActor* Self);
+
 	static FVector2D ConvertToNormalCoord(FVector2D Pos);
 
 	static float GetMaxWidth();

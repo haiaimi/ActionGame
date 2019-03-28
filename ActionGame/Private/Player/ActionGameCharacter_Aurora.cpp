@@ -154,6 +154,7 @@ void AActionGameCharacter_Aurora::Ability_Q()
 	AnimInstance->Montage_Play(AbilityAnims[0], 1.f);
 	ResetCombo();   //重置攻击动画状态
 	
+	QAbilityCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	bUseControllerRotationYaw = false;
 	DetectIceRoad();
 	FTimerHandle TimerHandle;
@@ -183,8 +184,8 @@ void AActionGameCharacter_Aurora::Ability_R()
 	if (GetCharacterMovement()->IsFalling() || bInAbility || bTurboJumpAccelerate || IsAbilityinCooling(EAbilityType::RAbility) || bFreezedSlow || bFreezedStop)return;
 	Super::Ability_R();
 
-	GetCharacterMovement()->JumpZVelocity = 700.f;
-	Jump();
+	GetCharacterMovement()->JumpZVelocity = 800.f;
+	Super::Jump();
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(AbilityAnims[2], 1.f);
 	ResetCombo();   
@@ -209,7 +210,9 @@ bool AActionGameCharacter_Aurora::HitReact(const FVector& HitPoint)
 		{
 			bInAbility = false;
 			GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+			GetCharacterMovement()->JumpZVelocity = 600.f;
 			bTurboJumpAccelerate = false;
+			QAbilityCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 		return true;
 	}
@@ -304,7 +307,7 @@ void AActionGameCharacter_Aurora::DetectIceRoad()
 void AActionGameCharacter_Aurora::OnSwordBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	if (!bCanAttack)return;
-	AttackEnemy(OverlappedComponent, OtherActor);
+	AttackEnemy(OverlappedComponent, OtherActor, TEXT("Sword_Mid"));
 }
 
 void AActionGameCharacter_Aurora::OnQAbilityBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -314,9 +317,14 @@ void AActionGameCharacter_Aurora::OnQAbilityBeginOverlap(UPrimitiveComponent* Ov
 	if (Cast<AActionGameCharacter>(OtherActor) && AnimInstance->Montage_IsPlaying(AbilityAnims[0]) && bInAbility && GetWorld()->TimeSeconds - QFirstAttackTime >= 1.5f)
 	{
 		HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(GetWorld()->TimeSeconds));
-		AttackEnemy(OverlappedComponent, OtherActor);
+		AttackEnemy(OverlappedComponent, OtherActor, TEXT("Sword_Mid"));
 		QFirstAttackTime = GetWorld()->TimeSeconds;
 	}
+}
+
+void AActionGameCharacter_Aurora::DisableQDetection()
+{
+	QAbilityCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void AActionGameCharacter_Aurora::EffectOfAbilityE(class AActor* InEnemy)
@@ -329,67 +337,55 @@ void AActionGameCharacter_Aurora::EffectOfAbilityE(class AActor* InEnemy)
 	}
 }
 
-void AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor)
+AActionGameCharacter* AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, FName SwordSocket)
 {
-	if (AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(OtherActor))
+	if (AActionGameCharacter* Enemy = Super::AttackEnemy(OverlappedComponent, OtherActor, SwordSocket))
 	{
-		if (Enemy != this && !Enemy->IsDead())
+		if (Enemy->IsDead())
 		{
-			UGameplayStatics::SpawnEmitterAttached(ImpactParticle, Enemy->GetMesh(), TEXT("Impact"));
+			if(Enemy->bFreezedStop && ExplodeParticle_Frozen)
+				UGameplayStatics::SpawnEmitterAtLocation(this, ExplodeParticle_Frozen, Enemy->GetActorLocation(),FRotator::ZeroRotator);
+			if (Enemy->bFreezedSlow && ExplodeParticle_Slow)
+				UGameplayStatics::SpawnEmitterAtLocation(this, ExplodeParticle_Slow, Enemy->GetActorLocation(), FRotator::ZeroRotator);
+			Enemy->SetActorHiddenInGame(Enemy->bFreezedStop || Enemy->bFreezedSlow);
+			return Enemy;
+		}
 
-			//获取最适合的打击点
-			FVector NewImpactPoint, NewImpactNormal;
-			if (UBodySetup* BodySetup = OverlappedComponent->GetBodySetup())
+		if (Enemy->bFreezedSlow)
+		{
+			Enemy->ApplyFreezedParticle(Freezed_Stop);
+			Enemy->bFreezedSlow = false;
+			//停止玩家移动及相关动画
+			Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
+			Enemy->GetMesh()->bNoSkeletonUpdate = true;
+			Enemy->bFreezedStop = true;
+
+			Enemy->bUseControllerRotationRoll = false;
+			if (AActionAIController* AIControl = Cast<AActionAIController>(Enemy->Controller))
 			{
-				BodySetup->GetClosestPointAndNormal(GetMesh()->GetSocketLocation(TEXT("Sword_Mid")), OverlappedComponent->GetComponentTransform(), NewImpactPoint, NewImpactNormal);
+				AIControl->SetAIFreezedValue();
 			}
-
-			const float EnemyHealth = Enemy->TakeDamage(60.f, FDamageEvent(), GetController(), this);
-			if (EnemyHealth == 0.f)
+			else
 			{
-				if(Enemy->bFreezedStop && ExplodeParticle_Frozen)
-					UGameplayStatics::SpawnEmitterAtLocation(this, ExplodeParticle_Frozen, Enemy->GetActorLocation(),FRotator::ZeroRotator);
-				if (Enemy->bFreezedSlow && ExplodeParticle_Slow)
-					UGameplayStatics::SpawnEmitterAtLocation(this, ExplodeParticle_Slow, Enemy->GetActorLocation(), FRotator::ZeroRotator);
-				if (Enemy->bFreezedStop || Enemy->bFreezedSlow)Enemy->SetActorHiddenInGame(true);
-				return;
+				UGameplayStatics::SpawnEmitterAttached(CamFrostParticle_Frozen, Enemy->GetFollowCamera(), NAME_None, FVector(90.f, 0.f, 0.f),FRotator::ZeroRotator,EAttachLocation::KeepRelativeOffset);
 			}
-			Enemy->HitReact(NewImpactPoint);
-			bCanAttack = false;
-			if (Enemy->bFreezedSlow)
-			{
-				Enemy->ApplyFreezedParticle(Freezed_Stop);
-				Enemy->bFreezedSlow = false;
-				//停止玩家移动及相关动画
-				Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
-				Enemy->GetMesh()->bNoSkeletonUpdate = true;
-				Enemy->bFreezedStop = true;
-
-				Enemy->bUseControllerRotationRoll = false;
-				if (AActionAIController* AIControl = Cast<AActionAIController>(Enemy->Controller))
-				{
-					AIControl->SetAIFreezedValue();
-				}
-				else
-				{
-					UGameplayStatics::SpawnEmitterAttached(CamFrostParticle_Frozen, Enemy->GetFollowCamera(), NAME_None, FVector(90.f, 0.f, 0.f),FRotator::ZeroRotator,EAttachLocation::KeepRelativeOffset);
-				}
 					
-				FTimerHandle TimerHandle;
-				/*FTimerDelegate TimerDelegate;
-				TimerDelegate.BindWeakLambda(this, [Enemy, this]() {
-					Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
-					Enemy->GetMesh()->bNoSkeletonUpdate = false;
-					Enemy->GetMesh()->GetAnimInstance()->StopAllMontages(1.f);
-					Enemy->bFreezedStop = false;
-					Enemy->ResetCombo();
-					Enemy->bInAbility = false;
-					if (AActionAIController* AIControl = Cast<AActionAIController>(Enemy->Controller))
-						AIControl->SetAIFreezedValue();
-					});*/
+			FTimerHandle TimerHandle;
+			/*FTimerDelegate TimerDelegate;
+			TimerDelegate.BindWeakLambda(this, [Enemy, this]() {
+				Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+				Enemy->GetMesh()->bNoSkeletonUpdate = false;
+				Enemy->GetMesh()->GetAnimInstance()->StopAllMontages(1.f);
+				Enemy->bFreezedStop = false;
+				Enemy->ResetCombo();
+				Enemy->bInAbility = false;
+				if (AActionAIController* AIControl = Cast<AActionAIController>(Enemy->Controller))
+					AIControl->SetAIFreezedValue();
+				});*/
 
-				GetWorldTimerManager().SetTimer(TimerHandle, Enemy, &AActionGameCharacter::EndFreezedStop, 2.f, false);
-			}
+			GetWorldTimerManager().SetTimer(TimerHandle, Enemy, &AActionGameCharacter::EndFreezedStop, 2.f, false);
 		}
 	}
+
+	return nullptr;
 }

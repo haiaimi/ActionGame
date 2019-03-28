@@ -42,6 +42,13 @@ float HAIAIMIHelper::AdaptAngle(const float InAngle)
 	else return InAngle;
 }
 
+float HAIAIMIHelper::GetDegreesBetweenActors(AActor* Aim, AActor* Self)
+{
+	const FVector ToAimDir = (Aim->GetActorLocation() - Self->GetActorLocation()).GetSafeNormal2D();
+	const FVector ForwardDir = Self->GetActorRotation().Vector();
+	return FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(ToAimDir, ForwardDir)));
+}
+
 FVector2D HAIAIMIHelper::ConvertToNormalCoord(FVector2D Pos)
 {
 	FVector2D Res = Pos;

@@ -9,6 +9,8 @@
 #include "HAIAIMIHelper.h"
 #include "Camera/CameraComponent.h"
 #include "TimerManager.h"
+#include "EngineUtils.h"
+#include "Components/BoxComponent.h"
 
 #define CLEAR_EFFECT(Effect)\
 if (Effect)\
@@ -18,11 +20,39 @@ if (Effect)\
 }
 
 AActionGameCharacter_Countess::AActionGameCharacter_Countess():
-	Enemy(nullptr),
 	ShadowClone(nullptr),
-	bFaceToEnemy(false)
+	bFaceToEnemy(false),
+	SwordCollision_L(nullptr),
+	SwordCollision_R(nullptr)
 {
+#if WITH_EDITOR
+	GetEnemy(true);
+#endif
 
+	SwordCollision_L = CreateDefaultSubobject<UBoxComponent>(TEXT("SwordCollision_L"));
+	SwordCollision_R = CreateDefaultSubobject<UBoxComponent>(TEXT("SwordCollision_R"));
+	if (SwordCollision_L)
+	{
+		SwordCollision_L->SetupAttachment(GetMesh(), TEXT("weapon_mid_l"));
+		SwordCollision_L->SetBoxExtent(FVector(3.1762f, 32.4572f, 3.1681f));
+	}
+		
+	if (SwordCollision_R)
+	{
+		SwordCollision_R->SetupAttachment(GetMesh(), TEXT("weapon_mid_r"));
+		SwordCollision_R->SetBoxExtent(FVector(3.1762f, 32.4572f, 3.1681f));
+	}
+}
+
+void AActionGameCharacter_Countess::Tick(float DeltaTime)
+{
+	if (bFaceToEnemy && GetEnemy())
+	{
+		//自动调整角度
+		const FVector ToEnemyDir = (GetEnemy()->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
+		const FRotator NewRotator = FMath::RInterpConstantTo(GetActorRotation(), ToEnemyDir.Rotation(), DeltaTime, 180.f);
+		SetActorRotation(NewRotator);
+	}
 }
 
 void AActionGameCharacter_Countess::Ability_Q()
@@ -45,14 +75,25 @@ void AActionGameCharacter_Countess::Ability_Q()
 		CountDown = UGameplayStatics::SpawnEmitterAttached(SlipTimerCountDown, GetFollowCamera(), NAME_None, FVector(120.f, 0.f, 0.f),FRotator::ZeroRotator,EAttachLocation::KeepRelativeOffset);
 		CountDown->OnParticleDeath.AddDynamic(this, &AActionGameCharacter_Countess::OnCountDownFinshed);
 	}
+	DisableInput(GetController<APlayerController>());
+	auto Enemy = GetEnemy();
+	const float SubDegree = HAIAIMIHelper::GetDegreesBetweenActors(Enemy, this);
+	FVector AimPos = GetActorLocation() + 1000.f * GetActorRotation().Vector();
+	if (SubDegree < 45.f)
+	{
+		const FVector Dir = (GetEnemy()->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+		const float Distance = (GetEnemy()->GetActorLocation() - GetActorLocation()).Size();
+		AimPos = GetActorLocation() + Dir * FMath::Clamp(Distance - 100.f, 0.f, 1000.f);
+	}
 
 	FTimerHandle TimerHandle;
 	FTimerDelegate Delegate;
 	FTransform CurTransform = GetActorTransform();
 	SetActorHiddenInGame(true);
-	Delegate.BindLambda([CurTransform,this]() {
+	Delegate.BindLambda([AimPos, this]() {
+		EnableInput(GetController<APlayerController>());
 		SetActorHiddenInGame(false);
-		TeleportTo(CurTransform.GetLocation() + 500.f* CurTransform.GetRotation().Vector(), CurTransform.GetRotation().Rotator());
+		TeleportTo(AimPos, GetActorRotation());
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		AnimInstance->Montage_Play(AbilityAnims[0], 1.f);
 		if (TeleportCamEffect)
@@ -94,7 +135,9 @@ void AActionGameCharacter_Countess::Ability_R()
 
 void AActionGameCharacter_Countess::SpawnRollingDarkSegemnts()
 {
-	static const TArray<FVector> SegmentReltivePos = { FVector(300.f,0.f,0.f),FVector(150.f,100.f,0.f),FVector(150.f,-100.f,0.f),FVector(450.f,0.f,0.f),FVector(300.f,100.f,0.f),FVector(300.f,-100.f,0.f) };
+	static const TArray<FVector> SegmentReltivePos = { FVector(300.f,0.f,0.f),FVector(150.f,100.f,0.f),FVector(150.f,-100.f,0.f),
+												       FVector(450.f,0.f,0.f),FVector(300.f,100.f,0.f),FVector(300.f,-100.f,0.f),
+													   FVector(600.f,0.f,0.f),FVector(450.f,100.f,0.f),FVector(450.f,-100.f,0.f) };
 	if (RollingDarkSegment)
 	{
 		const FVector LeftDir = FRotationMatrix(GetActorRotation()).GetUnitAxis(EAxis::Y);
@@ -130,6 +173,24 @@ void AActionGameCharacter_Countess::StabEnemy()
 	}
 }
 
+class AActionGameCharacter* AActionGameCharacter_Countess::GetEnemy(bool ClearPre)
+{
+	static AActionGameCharacter* Enemy = nullptr;
+	if (ClearPre)
+	{
+		Enemy = nullptr;
+		return nullptr;
+	}
+	if (Enemy && Enemy != this)return Enemy;
+
+	for (TActorIterator<AActionGameCharacter> Iter(GetWorld()); Iter; ++Iter)
+	{
+		if (*Iter == this)continue;
+		Enemy = *Iter;
+	}
+	return Enemy;
+}
+
 void AActionGameCharacter_Countess::MoveForward(float Value)
 {
 	Super::MoveForward(Value);
@@ -138,18 +199,6 @@ void AActionGameCharacter_Countess::MoveForward(float Value)
 void AActionGameCharacter_Countess::MoveRight(float Value)
 {
 	Super::MoveRight(Value);
-}
-
-void AActionGameCharacter_Countess::Tick(float DeltaTime)
-{
-	if (bFaceToEnemy && Enemy)
-	{
-		//自动调整角度
-		const FVector ToEnemyDir = (Enemy->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
-		float SubAngle = HAIAIMIHelper::AdaptSubAngle(GetActorRotation().Yaw, ToEnemyDir.Rotation().Yaw);
-		const FRotator NewRotator = FMath::RInterpConstantTo(GetActorRotation(), ToEnemyDir.Rotation(), DeltaTime, 180.f);
-		SetActorRotation(NewRotator);
-	}
 }
 
 void AActionGameCharacter_Countess::OnCountDownFinshed(FName EventName, float EmitterTime, int32 ParticleTime, FVector Location, FVector Velocity, FVector Direction)

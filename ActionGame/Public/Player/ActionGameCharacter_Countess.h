@@ -30,16 +30,21 @@ public:
 	/**穿刺敌人*/
 	void StabEnemy();
 
+	/**
+	 * Method:    GetEnemy 
+	 * Param:     bool ClearPre       是否需要清除静态区指针的内容，在编辑器下有用
+	 * Returns:   class AActionGameCharacter*
+	 */
+	class AActionGameCharacter* GetEnemy(bool ClearPre = false);
+
 	bool bFaceToEnemy;
 
-	class AActionGameCharacter* Enemy;
-
 protected:
+	virtual void Tick(float DeltaTime)override;
+
 	virtual void MoveForward(float Value)override;
 
 	virtual void MoveRight(float Value)override;
-
-	virtual void Tick(float DeltaTime)override;
 
 private:
 	UFUNCTION()
@@ -50,6 +55,12 @@ private:
 
 	/**清除R技能特效*/
 	void ClearUltFX();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* SwordCollision_L;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* SwordCollision_R;
 
 	///Q技能
 	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")

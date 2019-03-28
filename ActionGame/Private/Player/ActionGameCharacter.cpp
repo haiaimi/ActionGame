@@ -128,10 +128,33 @@ void AActionGameCharacter::LookUpAtRate(float Rate)
 	//AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
+AActionGameCharacter* AActionGameCharacter::AttackEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, FName SwordSocket /*= NAME_None*/)
+{
+	if (AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(OtherActor))
+	{
+		if (Enemy != this && !Enemy->IsDead())
+		{
+			UGameplayStatics::SpawnEmitterAttached(ImpactParticle, Enemy->GetMesh(), TEXT("Impact"));
+			const float EnemyHealth = Enemy->TakeDamage(60.f, FDamageEvent(), GetController(), this);
+			//获取最适合的打击点
+			FVector NewImpactPoint, NewImpactNormal;
+			if (UBodySetup* BodySetup = OverlappedComponent->GetBodySetup())
+			{
+				BodySetup->GetClosestPointAndNormal(GetMesh()->GetSocketLocation(SwordSocket), OverlappedComponent->GetComponentTransform(), NewImpactPoint, NewImpactNormal);
+			}
+			Enemy->HitReact(NewImpactPoint);
+			bCanAttack = false;
+		}
+		return Enemy;
+	}
+	return nullptr;
+}
+
 void AActionGameCharacter::MakeAbilityCooling(EAbilityType::Type AbilityType)
 {
 	const int32 Index = int32(AbilityType) - 1;
 	if (Index >= SkillCoolingTimes.Num())return;
+	bInAbility = true;
 	FTimerDelegate TimerDelegate;
 	TimerDelegate.BindLambda([Index, this]() {
 		SetAbilityReady(Index);

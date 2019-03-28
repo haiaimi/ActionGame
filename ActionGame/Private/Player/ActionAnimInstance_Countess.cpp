@@ -67,18 +67,10 @@ void UActionAnimInstance_Countess::AnimNotify_StartJump(UAnimNotify* Notify)
 	if (AActionGameCharacter_Countess* CurOwner = Cast<AActionGameCharacter_Countess>(Owner))
 	{
 		//¹¥»÷½Ç¶ÈÎ¢µ÷
-		for (TActorIterator<AActionGameCharacter> Iter(GetWorld()); Iter; ++Iter)
+		if (AActionGameCharacter* Enemy = CurOwner->GetEnemy())
 		{
-			if (*Iter == CurOwner)continue;
-			const FVector ToEnemyDir = ((*Iter)->GetActorLocation() - CurOwner->GetActorLocation()).GetSafeNormal2D();
-			const FVector ForwardDir = CurOwner->GetActorRotation().Vector();
-			const float SubDegree = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(ToEnemyDir, ForwardDir)));
-
-			if (SubDegree < 45.f)
-			{
+			if (HAIAIMIHelper::GetDegreesBetweenActors(Enemy, CurOwner) < 45.f)
 				CurOwner->bFaceToEnemy = true;
-				CurOwner->Enemy = *Iter;
-			}
 		}
 	}
 }
