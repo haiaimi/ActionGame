@@ -101,6 +101,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")
 	class UParticleSystem* RollingDarkSegment;
 
+	/**受到E技能攻击的特效*/
+	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")
+	class UParticleSystem* RollingDarkImpact;
+
 	///R技能
 	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")
 	class UParticleSystem* UltEyeFX;
@@ -110,6 +114,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")
 	class UParticleSystem* UltAimingFX;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")
+	class UParticleSystem* UltImpactFX;
 
 	class UParticleSystemComponent* UltEye_Right;
 

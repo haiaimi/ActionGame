@@ -67,6 +67,8 @@ public:
 
 	bool IsDead() { return bDead; }
 
+	void EnableAttack(bool IsEnable) { bCanAttack = IsEnable; }
+
 	UPROPERTY(EditAnywhere)
 	bool bCheatMode;
 

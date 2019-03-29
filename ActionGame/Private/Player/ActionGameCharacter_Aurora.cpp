@@ -82,13 +82,6 @@ void AActionGameCharacter_Aurora::FreezeEnemyImpl(class AActor* InEnemy)
 		UGameplayStatics::SpawnEmitterAttached(CamFrostParticle_Slowed, Enemy->GetFollowCamera(), NAME_None, FVector(90.f, 0.f, 0.f),FRotator::ZeroRotator,EAttachLocation::KeepRelativeOffset);
 
 		FTimerHandle TimerHandle;
-		/*FTimerDelegate TimerDelegate;
-
-		TimerDelegate.BindWeakLambda<AActionGameCharacter_Aurora>(this, [Enemy, this]() {
-			Enemy->bFreezedSlow = false;
-			Enemy->GetCharacterMovement()->MaxWalkSpeed = 600.f;
-			return;
-			});*/
 
 		GetWorldTimerManager().SetTimer(TimerHandle, Enemy, &AActionGameCharacter::EndFreezedSlow, 2.f, false);
 	}
@@ -359,6 +352,7 @@ AActionGameCharacter* AActionGameCharacter_Aurora::AttackEnemy(UPrimitiveCompone
 			Enemy->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_None);
 			Enemy->GetMesh()->bNoSkeletonUpdate = true;
 			Enemy->bFreezedStop = true;
+			Enemy->EnableAttack(false);
 
 			Enemy->bUseControllerRotationRoll = false;
 			if (AActionAIController* AIControl = Cast<AActionAIController>(Enemy->Controller))

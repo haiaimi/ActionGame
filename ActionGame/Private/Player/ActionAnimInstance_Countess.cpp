@@ -93,5 +93,6 @@ void UActionAnimInstance_Countess::AnimNotify_LeaveEnemy(UAnimNotify* Notify)
 		CurOwner->GetCharacterMovement()->JumpZVelocity = 600.f;
 		CurOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
 		CurOwner->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		CurOwner->SetActorRotation(FRotator(0.f, CurOwner->GetActorRotation().Yaw, 0.f));
 	}
 }

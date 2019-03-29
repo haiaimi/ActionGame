@@ -144,8 +144,8 @@ AActionGameCharacter* AActionGameCharacter::AttackEnemy(UPrimitiveComponent* Ove
 			}
 			Enemy->HitReact(NewImpactPoint);
 			bCanAttack = false;
+			return Enemy;    //本次攻击导致死亡也会返回
 		}
-		return Enemy;
 	}
 	return nullptr;
 }

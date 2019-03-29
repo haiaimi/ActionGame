@@ -133,6 +133,26 @@ void AActionGameCharacter_Countess::SpawnRollingDarkSegemnts()
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RollingDarkSegment, GetActorLocation() + GetActorRotation().Vector()*RelPos.X - FVector(0.f, 0.f, 100.f) + LeftDir * RelPos.Y, GetActorRotation() + FRotator(0.f, -90.f, 0.f));
 		}
 	}
+
+	//对敌人施加伤害
+	TArray<FHitResult> Results;
+	const FVector Dir = GetActorRotation().Vector();
+	const FVector StartPos = GetActorLocation() + 100.f * Dir - FVector(0.f, 0.f, 90.f);
+	GetWorld()->SweepMultiByObjectType(Results, StartPos,
+		StartPos + Dir * 500.f,
+		FQuat(GetActorRotation()),
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_Pawn),
+		FCollisionShape::MakeBox(FVector(10.f, 50.f, 50.f)));
+
+	for (auto Iter : Results)
+	{
+		if (Iter.GetActor() && Iter.GetActor() != this)
+		{
+			auto Enemy = Cast<AActionGameCharacter>(Iter.GetActor());
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RollingDarkImpact, Enemy->GetActorLocation() - FVector(0.f, 0.f, 100.f), Enemy->GetActorRotation());
+			AttackEnemy(Enemy->GetMesh(), Enemy);
+		}
+	}
 }
 
 void AActionGameCharacter_Countess::StabEnemy()
@@ -151,9 +171,9 @@ void AActionGameCharacter_Countess::StabEnemy()
 		{
 			if (AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(Iter->GetActor()))
 			{
-				this->AttachToComponent(Enemy->GetMesh(), FAttachmentTransformRules::KeepWorldTransform, TEXT("Status"));
-				this->GetCharacterMovement()->DisableMovement();
-				HAIAIMIHelper::Debug_ScreenMessage(TEXT("Hit"));
+				AttachToComponent(Enemy->GetMesh(), FAttachmentTransformRules::KeepWorldTransform, TEXT("Status"));
+				GetCharacterMovement()->DisableMovement();
+				AttackEnemy(Enemy->GetMesh(), Enemy);
 			}
 			break;
 		}
@@ -190,9 +210,12 @@ void AActionGameCharacter_Countess::MoveRight(float Value)
 
 AActionGameCharacter* AActionGameCharacter_Countess::AttackEnemy(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, FName SwordSocket /*= NAME_None*/)
 {
-	HAIAIMIHelper::Debug_ScreenMessage(TEXT("Attack Enemy"));
-
-	return Super::AttackEnemy(OverlappedComponent, OtherActor, SwordSocket);
+	auto Enemy = Super::AttackEnemy(OverlappedComponent, OtherActor, SwordSocket);
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	
+	if (Enemy && AnimInstance && AnimInstance->Montage_IsPlaying(AbilityAnims[2]))
+		UGameplayStatics::SpawnEmitterAttached(UltImpactFX, Enemy->GetMesh(), TEXT("Impact"));
+	return Enemy;
 }
 
 void AActionGameCharacter_Countess::OnSwordBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)

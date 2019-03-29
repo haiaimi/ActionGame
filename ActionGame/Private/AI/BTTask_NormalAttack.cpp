@@ -5,6 +5,7 @@
 #include <NavigationSystem.h>
 #include "ActionGameCharacter.h"
 #include "Common/HAIAIMIHelper.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 EBTNodeResult::Type UBTTask_NormalAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
@@ -15,11 +16,15 @@ EBTNodeResult::Type UBTTask_NormalAttack::ExecuteTask(UBehaviorTreeComponent& Ow
 	AActionGameCharacter* MyBot = Cast<AActionGameCharacter>(MyController->GetPawn());
 	AActionGameCharacter* Enemy = MyController->GetEnemy();
 
+	//HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(MyBot->GetCharacterMovement()->Velocity.Size()));
+	HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(MyBot->GetCharacterMovement()->MaxWalkSpeed));
+	if (!MyBot->bFreezedSlow && !MyBot->bFreezedStop)
+		MyBot->GetCharacterMovement()->MaxWalkSpeed = 600.f;
+
 	if(Enemy && MyBot && !Enemy->IsDead())
 	{
 		if ((Enemy->GetActorLocation() - MyBot->GetActorLocation()).Size2D() < 250.f)
 		{
-			//HAIAIMIHelper::Debug_ScreenMessage(TEXT("Normal Attack"));
 			MyBot->NormalAttack();
 			return EBTNodeResult::Succeeded;
 		}
