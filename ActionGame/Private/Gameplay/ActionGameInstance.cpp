@@ -20,7 +20,7 @@ void UActionGameInstance::StartGameInstance()
 TSubclassOf<class AActionGameCharacter> UActionGameInstance::GetToSpawnPlayerClass()
 {
 	if (ToSpawnCharacter.Num() < 1)return nullptr;
-	PlayerIndex = FMath::Clamp(PlayerSkinIndex, 0, ToSpawnCharacter.Num() - 1);
+	PlayerIndex = FMath::Clamp(PlayerIndex, 0, ToSpawnCharacter.Num() - 1);
 	return ToSpawnCharacter[PlayerIndex];
 }
 

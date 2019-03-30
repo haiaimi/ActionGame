@@ -44,4 +44,7 @@ class ACTIONGAME_API UActionAnimInstance_Countess : public UAnimInstance
 
 	UFUNCTION()
 	void AnimNotify_LeaveEnemy(UAnimNotify* Notify);
+
+	UFUNCTION()
+	void AnimNotify_ToDeath(UAnimNotify* Notify);
 };

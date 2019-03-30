@@ -144,6 +144,16 @@ void AActionGameCharacter_Countess::Ability_F()
 	}
 }
 
+bool AActionGameCharacter_Countess::HitReact(const FVector& HitPoint)
+{
+	if (Super::HitReact(HitPoint))
+	{
+		ResetCombo();
+		return true;
+	}
+	return false;
+}
+
 void AActionGameCharacter_Countess::SpawnRollingDarkSegemnts()
 {
 	static const TArray<FVector> SegmentReltivePos = { FVector(300.f,0.f,0.f),FVector(150.f,100.f,0.f),FVector(150.f,-100.f,0.f),

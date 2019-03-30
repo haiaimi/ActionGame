@@ -51,13 +51,13 @@ struct FCharacterInfo
 
 
 USTRUCT(BlueprintType)
-struct FSkinBrushes
+struct FBrushesContainer
 {
 	GENERATED_USTRUCT_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Skins)
-	TArray<struct FSlateBrush> Skins;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Images)
+	TArray<struct FSlateBrush> Images;
 };
 
 #define LOCTEXT_NAMESPACE "ActionGame.UI.HeroName"

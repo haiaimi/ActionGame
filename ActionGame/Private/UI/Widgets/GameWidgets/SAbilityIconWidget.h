@@ -25,6 +25,7 @@ public:
 	SLATE_ARGUMENT(TWeakObjectPtr<AActionGameCharacter>, Owner)
 	SLATE_ARGUMENT(float, CoolingTime)
 	SLATE_ARGUMENT(EAbilityType::Type, AbilityType)
+	SLATE_ARGUMENT(int32, PlayerIndex)
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */

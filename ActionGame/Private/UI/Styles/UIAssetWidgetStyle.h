@@ -27,13 +27,13 @@ struct FUIAssetStyle : public FSlateWidgetStyle
 	struct FSlateBrush HeroItemBorder;
 
 	UPROPERTY(EditAnywhere, Category = Appearance)
-	TArray<struct FSlateBrush> HeroSkinImages;
-
-	UPROPERTY(EditAnywhere, Category = Appearance)
 	TArray<struct FSlateBrush> HeroHeadImages;
 
 	UPROPERTY(EditAnywhere, Category = Appearance)
-	TArray<struct FSkinBrushes> Skins;
+	TArray<struct FBrushesContainer> Skins;
+
+	UPROPERTY(EditAnywhere, Category = Appearance)
+	TArray<struct FBrushesContainer> AbilityIcons;
 
 	UPROPERTY(EditAnywhere, Category = Appearance)
 	struct FSlateBrush HealthBarImage;

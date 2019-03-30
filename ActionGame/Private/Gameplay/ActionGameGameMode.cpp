@@ -37,7 +37,11 @@ void AActionGameGameMode::RestartPlayer(AController* NewPlayer)
 			if (Start && Start->PlayerStartTag == FName(TEXT("Enemy")))
 			{
 				if (MyInstance->GetToSpawnAIClass())
+				{
 					GetWorld()->SpawnActor<AActionGameCharacter>(MyInstance->GetToSpawnAIClass(), Start->GetActorTransform());
+					HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(MyInstance->PlayerIndex), 10.f);
+				}
+					
 				else
 					HAIAIMIHelper::Debug_LogMessage(TEXT("Spawn Enemy Failed"));
 			}

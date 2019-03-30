@@ -26,6 +26,8 @@ public:
 
 	virtual void Ability_F()override;
 
+	virtual bool HitReact(const FVector& HitPoint)override;
+
 	/**释放E技能的粒子*/
 	void SpawnRollingDarkSegemnts();
 

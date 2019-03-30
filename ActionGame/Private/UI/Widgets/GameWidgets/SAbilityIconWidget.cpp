@@ -3,6 +3,7 @@
 #include "SAbilityIconWidget.h"
 #include "SlateOptMacros.h"
 #include "../Styles/FActionGameStyle.h"
+#include "SBackgroundBlur.h"
 
 #define LOCTEXT_NAMESPACE "ActionGame.UI.AbilityIcon"
 
@@ -32,30 +33,6 @@ void SAbilityIconWidget::Construct(const FArguments& InArgs)
 				.Padding(FMargin(5.f))
 				[
 					SNew(SBorder)
-					.HAlign(EHorizontalAlignment::HAlign_Center)
-					.VAlign(EVerticalAlignment::VAlign_Center)
-					.BorderImage(&UIStyle->HeroHeadImages[0])
-					[
-						SAssignNew(PercentText, STextBlock)
-						.Text(LOCTEXT("Percent","100%"))
-						.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),23))
-						.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
-					]
-				]
-			]
-		]
-		+ SVerticalBox::Slot()
-		.AutoHeight()
-		[
-			SNew(SBox)
-			.HeightOverride(100.f)
-			.WidthOverride(100.f)
-			.RenderTransform(FSlateRenderTransform(FVector2D(0.f,-100.f)))
-			[
-				SNew(SBorder)
-				.Padding(FMargin(5.f))
-				[
-					SNew(SBorder)
 					.BorderImage(BorderBackground.Get())
 					.RenderTransformPivot(FVector2D(0.5f, 0.f))
 					.RenderTransform_Lambda([this, AbilityType]() {
@@ -67,7 +44,36 @@ void SAbilityIconWidget::Construct(const FArguments& InArgs)
 							PercentText->SetVisibility(CoolingRate == 1.f ? EVisibility::Hidden : EVisibility::Visible);
 						}
 						return FSlateRenderTransform(FScale2D(1.f, 1.f - CoolingRate));
-				})
+					})
+				]
+			]
+		]
+		+SVerticalBox::Slot()
+		.AutoHeight()
+		[
+			SNew(SBox)
+			.HeightOverride(100.f)
+			.WidthOverride(100.f)
+			.RenderTransform(FSlateRenderTransform(FVector2D(0.f,-100.f)))
+			[
+				SNew(SBorder)
+				.Padding(FMargin(5.f))
+				[
+					SNew(SBackgroundBlur)
+					.BlurStrength(7.f)
+					[
+						SNew(SBorder)
+						.HAlign(EHorizontalAlignment::HAlign_Left)
+						.VAlign(EVerticalAlignment::VAlign_Bottom)
+						.BorderImage(&UIStyle->AbilityIcons[InArgs._PlayerIndex].Images[(int32)AbilityType - 1])
+						[
+							SAssignNew(PercentText, STextBlock)
+							.Text(LOCTEXT("Percent","100%"))
+							.Font(FSlateFontInfo(FPaths::ProjectContentDir()/TEXT("UI/Fonts/NanumGothic.ttf"),15))
+							.ColorAndOpacity(FSlateColor(FLinearColor(1.f,1.f,1.f,1.f)))
+							.RenderTransform(FSlateRenderTransform(FVector2D(-5.f, 5.f)))
+						]
+					]
 				]
 			]
 		]

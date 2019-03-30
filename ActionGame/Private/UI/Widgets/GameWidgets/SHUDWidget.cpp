@@ -7,11 +7,20 @@
 #include "SEnemySignWidget.h"
 #include "GameFramework/PlayerController.h"
 #include "ActionGameType.h"
+#include "ActionGameInstance.h"
+#include "../Styles/UIAssetWidgetStyle.h"
+#include "../Styles/FActionGameStyle.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHUDWidget::Construct(const FArguments& InArgs)
 {
 	Owner = InArgs._Owner;
+	int32 PlayerIndex = 0;
+	if (Owner.IsValid())
+	{
+		PlayerIndex = Owner->GetGameInstance<UActionGameInstance>()->PlayerIndex;
+	}
+
 	ChildSlot
 	[
 		SNew(SOverlay)
@@ -79,25 +88,33 @@ void SHUDWidget::Construct(const FArguments& InArgs)
 					.Padding(FMargin(0.f,0.f,20.f,0.f))
 					[
 						SNew(SAbilityIconWidget)
-						.CoolingTime(5.f)
 						.Owner(Owner)
 						.AbilityType(EAbilityType::QAbility)
+						.PlayerIndex(PlayerIndex)
+					]
+					+SHorizontalBox::Slot()
+					.Padding(FMargin(0.f,0.f,20.f,0.f))
+					[
+						SNew(SAbilityIconWidget)
+						.Owner(Owner)
+						.AbilityType(EAbilityType::EAbility)
+						.PlayerIndex(PlayerIndex)
 					]
 					+SHorizontalBox::Slot()
 					.Padding(FMargin(0.f,0.f,20.f,0.f))
 					[
 						SNew(SAbilityIconWidget)
 						.RenderTransform(FSlateRenderTransform(FVector2D(0.f, -50.f)))
-						.CoolingTime(6.f)
 						.Owner(Owner)
-						.AbilityType(EAbilityType::EAbility)
+						.AbilityType(EAbilityType::RAbility)
+						.PlayerIndex(PlayerIndex)
 					]
 					+SHorizontalBox::Slot()
 					[
 						SNew(SAbilityIconWidget)
-						.CoolingTime(20.f)
 						.Owner(Owner)
-						.AbilityType(EAbilityType::RAbility)
+						.AbilityType(EAbilityType::FAbility)
+						.PlayerIndex(PlayerIndex)
 					]
 				]
 			]

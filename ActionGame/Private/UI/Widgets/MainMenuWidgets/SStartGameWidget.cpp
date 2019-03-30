@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "ActionGameLoadingScreen/Public/ActionGameLoadingScreen.h"
 #include "ActionGameType.h"
+#include "HAIAIMIHelper.h"
 
 
 #define LOCTEXT_NAMESPACE "ActionGame.UI.StartGame"
@@ -126,7 +127,7 @@ void SStartGameWidget::Construct(const FArguments& InArgs)
 						.FillHeight(1.f)
 						[
 							SAssignNew(SkinList, SSkinsScrollBox)
-							.SkinImageBrushs(&UIStyle->Skins[0].Skins)
+							.SkinImageBrushs(&UIStyle->Skins[0].Images)
 							.OwnerHUD(OwnerHUD)
 						]
 						+ SVerticalBox::Slot()
@@ -232,11 +233,11 @@ void SStartGameWidget::AddHeroHeads()
 						.HeightOverride(200.f)
 						[
 							SNew(SHeroShowItem)
-							.Image(&UIStyle->HeroHeadImages[i*4+j])
+							.Image(&UIStyle->HeroHeadImages[i * 4 + j])
 							.HoverScale(1.1f)
 							.OnPressed_Lambda([i,j,this]() {
 								if (i * 4 + j < UIStyle->Skins.Num())
-									SkinList->SetSkinImages(&UIStyle->Skins[i * 4 + j].Skins);
+									SkinList->SetSkinImages(&UIStyle->Skins[i * 4 + j].Images);
 								if (HeroName.IsValid() && i * 4 + j < HeroNameText.Num())
 									HeroName->SetText(HeroNameText[i * 4 + j]);
 								if(OwnerHUD.IsValid())
@@ -244,6 +245,7 @@ void SStartGameWidget::AddHeroHeads()
 									if (UActionGameInstance* MyInstance = OwnerHUD->GetGameInstance<UActionGameInstance>())
 									{
 										MyInstance->PlayerIndex = i * 4 + j;
+										HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(MyInstance->PlayerIndex), 5.f);
 									}
 								}
 								CurSelectIndex = i * 4 + j;

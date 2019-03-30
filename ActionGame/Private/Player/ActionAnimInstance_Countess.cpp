@@ -6,6 +6,7 @@
 #include "EngineUtils.h"
 #include "GameFramework/PlayerController.h"
 #include "HAIAIMIHelper.h"
+#include "TimerManager.h"
 
 void UActionAnimInstance_Countess::AnimNotify_StopAttack(UAnimNotify* Notify)
 {
@@ -103,5 +104,20 @@ void UActionAnimInstance_Countess::AnimNotify_LeaveEnemy(UAnimNotify* Notify)
 		CurOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
 		CurOwner->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		CurOwner->SetActorRotation(FRotator(0.f, CurOwner->GetActorRotation().Yaw, 0.f));
+	}
+}
+
+void UActionAnimInstance_Countess::AnimNotify_ToDeath(UAnimNotify* Notify)
+{
+	APawn* Owner = TryGetPawnOwner();
+	if (AActionGameCharacter_Countess* CurOwner = Cast<AActionGameCharacter_Countess>(Owner))
+	{
+		CurOwner->GetMesh()->bPauseAnims = true;
+		FTimerHandle TimerHandle;
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([this, CurOwner]() {
+			CurOwner->GetMesh()->SetSimulatePhysics(true);
+		});
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, GetWorld()->DeltaTimeSeconds * 1.5f, false);
 	}
 }
