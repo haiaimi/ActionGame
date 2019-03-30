@@ -26,7 +26,8 @@ namespace EAbilityType
 	{
 		QAbility = 1,
 		EAbility,
-		RAbility
+		RAbility,
+		FAbility
 	};
 }
 

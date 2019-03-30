@@ -7,6 +7,15 @@
 #include "GameFramework/PlayerController.h"
 #include "HAIAIMIHelper.h"
 
+void UActionAnimInstance_Countess::AnimNotify_StopAttack(UAnimNotify* Notify)
+{
+	APawn* Owner = TryGetPawnOwner();
+	if(AActionGameCharacter_Countess* CurOwner=Cast<AActionGameCharacter_Countess>(Owner))
+	{
+		CurOwner->EnableAttack(false);
+	}
+}
+
 void UActionAnimInstance_Countess::AnimNotify_SaveAttack(UAnimNotify* Notify)
 {
 	APawn* Owner = TryGetPawnOwner();

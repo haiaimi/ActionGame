@@ -66,8 +66,8 @@ AActionGameCharacter::AActionGameCharacter():
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	SkillCoolingTimes.SetNum(3);
-	SkillCoolingTimers.Init(FTimerHandle(), 3);
+	SkillCoolingTimes.SetNum(4);
+	SkillCoolingTimers.SetNum(SkillCoolingTimes.Num());
 }
 
 void AActionGameCharacter::BeginPlay()
@@ -91,9 +91,6 @@ void AActionGameCharacter::BeginPlay()
 			GetMesh()->SetSkeletalMesh(CharacterMeshes[MyGameInstance->PlayerSkinIndex]);
 		}
 	}
-
-	if (Controller)
-		HAIAIMIHelper::Debug_ScreenMessage(Controller->GetName(),5.f);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -108,6 +105,7 @@ void AActionGameCharacter::SetupPlayerInputComponent(class UInputComponent* Play
 	PlayerInputComponent->BindAction("Ability_Q", IE_Pressed, this, &AActionGameCharacter::Ability_Q);
 	PlayerInputComponent->BindAction("Ability_E", IE_Pressed, this, &AActionGameCharacter::Ability_E);
 	PlayerInputComponent->BindAction("Ability_R", IE_Pressed, this, &AActionGameCharacter::Ability_R);
+	PlayerInputComponent->BindAction("Ability_F", IE_Pressed, this, &AActionGameCharacter::Ability_F);
 	PlayerInputComponent->BindAction("NormalAttack", IE_Pressed, this, &AActionGameCharacter::NormalAttack);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &AActionGameCharacter::MoveForward);
@@ -152,6 +150,8 @@ AActionGameCharacter* AActionGameCharacter::AttackEnemy(UPrimitiveComponent* Ove
 
 void AActionGameCharacter::MakeAbilityCooling(EAbilityType::Type AbilityType)
 {
+	if (IsAttacking)
+		ResetCombo();    //进入释放技能阶段先重置普攻
 	const int32 Index = int32(AbilityType) - 1;
 	if (Index >= SkillCoolingTimes.Num())return;
 	bInAbility = true;
@@ -217,23 +217,22 @@ void AActionGameCharacter::ResetCombo()
 
 void AActionGameCharacter::Ability_Q()
 {
-	if (IsAttacking)
-		ResetCombo();
 	MakeAbilityCooling(EAbilityType::QAbility);
 }
 
 void AActionGameCharacter::Ability_E()
 {
-	if (IsAttacking)
-		ResetCombo();
 	MakeAbilityCooling(EAbilityType::EAbility);
 }
 
 void AActionGameCharacter::Ability_R()
 {
-	if (IsAttacking)
-		ResetCombo();
 	MakeAbilityCooling(EAbilityType::RAbility);
+}
+
+void AActionGameCharacter::Ability_F()
+{
+	MakeAbilityCooling(EAbilityType::FAbility);
 }
 
 bool AActionGameCharacter::IsAbilityinCooling(EAbilityType::Type AbilityType)

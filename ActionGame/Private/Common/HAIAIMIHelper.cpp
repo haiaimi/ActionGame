@@ -14,7 +14,8 @@ TArray<TSharedPtr<FJsonValue>> HAIAIMIHelper::JsonParser = {};
 
 void HAIAIMIHelper::Debug_ScreenMessage(FString&& InString, float ShowTime, FColor FontColor)
 {
-	GEngine->AddOnScreenDebugMessage(-1, ShowTime, FontColor, InString);
+	if (GEngine)
+		GEngine->AddOnScreenDebugMessage(-1, ShowTime, FontColor, InString);
 }
 
 void HAIAIMIHelper::Debug_LogMessage(FString&& InString)

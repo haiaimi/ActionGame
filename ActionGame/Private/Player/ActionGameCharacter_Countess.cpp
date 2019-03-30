@@ -25,10 +25,6 @@ AActionGameCharacter_Countess::AActionGameCharacter_Countess():
 	SwordCollision_L(nullptr),
 	SwordCollision_R(nullptr)
 {
-#if WITH_EDITOR
-	GetEnemy(true);
-#endif
-
 	SwordCollision_L = CreateDefaultSubobject<UBoxComponent>(TEXT("SwordCollision_L"));
 	SwordCollision_R = CreateDefaultSubobject<UBoxComponent>(TEXT("SwordCollision_R"));
 	if (SwordCollision_L)
@@ -42,6 +38,8 @@ AActionGameCharacter_Countess::AActionGameCharacter_Countess():
 		SwordCollision_R->SetupAttachment(GetMesh(), TEXT("weapon_mid_r"));
 		SwordCollision_R->SetBoxExtent(FVector(3.1762f, 32.4572f, 3.1681f));
 	}
+	GetEnemy(true);
+
 }
 
 void AActionGameCharacter_Countess::BeginPlay()
@@ -70,7 +68,7 @@ void AActionGameCharacter_Countess::Ability_Q()
 		return;
 	}
 
-	if (IsAbilityinCooling(EAbilityType::QAbility) || bInAbility)return;
+	if (IsAbilityinCooling(EAbilityType::QAbility) || int32(EAbilityType::QAbility) > AbilityAnims.Num() || bInAbility)return;
 	else Super::Ability_Q();
 		
 	if (BeginTeleportEffect)
@@ -91,7 +89,7 @@ void AActionGameCharacter_Countess::Ability_Q()
 
 void AActionGameCharacter_Countess::Ability_E()
 {
-	if (IsAbilityinCooling(EAbilityType::EAbility) || bInAbility)return;
+	if (IsAbilityinCooling(EAbilityType::EAbility) || int32(EAbilityType::EAbility) > AbilityAnims.Num() || bInAbility)return;
 	else Super::Ability_E();
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(AbilityAnims[1], 1.f);
@@ -99,7 +97,7 @@ void AActionGameCharacter_Countess::Ability_E()
 
 void AActionGameCharacter_Countess::Ability_R()
 {
-	if (IsAbilityinCooling(EAbilityType::RAbility) || bInAbility)return;
+	if (IsAbilityinCooling(EAbilityType::RAbility) || int32(EAbilityType::RAbility) > AbilityAnims.Num() || bInAbility)return;
 	else Super::Ability_R();
 	
 	GetCharacterMovement()->JumpZVelocity = 700.f;
@@ -118,6 +116,32 @@ void AActionGameCharacter_Countess::Ability_R()
 
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AActionGameCharacter_Countess::ClearUltFX, 5.f, false);
+}
+
+void AActionGameCharacter_Countess::Ability_F()
+{
+	if (IsAbilityinCooling(EAbilityType::FAbility) || int32(EAbilityType::FAbility) > AbilityAnims.Num() || bInAbility)return;
+	else Super::Ability_F();
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(AbilityAnims[3], 1.f);
+	
+	//计算攻击粒子的释放方向
+	if (auto Enemy = GetEnemy())
+	{	
+		const float Distance = (Enemy->GetActorLocation() - GetActorLocation()).Size();
+		FTimerHandle TimerHandle;
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([Enemy, this](){
+			const float Distance = (Enemy->GetActorLocation() - GetActorLocation()).Size();
+			if (Distance > 400.f)return;
+			const FVector Dir = (Enemy->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
+			const FRotator FXRot = Dir.RotateAngleAxis(90.f, FVector(0.f, 0.f, 1.f)).ToOrientationRotator();
+			const FRotator SocketRot = (FRotationMatrix(FXRot)*FRotationMatrix(Enemy->GetActorRotation()).Inverse()).Rotator();   //矩阵之间相除，得出相对于插槽的旋转角度
+			UGameplayStatics::SpawnEmitterAttached(SiphonHitFX, Enemy->GetMesh(), TEXT("Impact"), FVector::ZeroVector, SocketRot);
+		});
+		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, Distance / 900.f, false);
+	}
 }
 
 void AActionGameCharacter_Countess::SpawnRollingDarkSegemnts()
@@ -142,7 +166,7 @@ void AActionGameCharacter_Countess::SpawnRollingDarkSegemnts()
 		StartPos + Dir * 500.f,
 		FQuat(GetActorRotation()),
 		FCollisionObjectQueryParams(ECollisionChannel::ECC_Pawn),
-		FCollisionShape::MakeBox(FVector(10.f, 50.f, 50.f)));
+		FCollisionShape::MakeBox(FVector(10.f, 80.f, 50.f)));
 
 	for (auto Iter : Results)
 	{

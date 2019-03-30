@@ -14,6 +14,10 @@ class ACTIONGAME_API UActionAnimInstance_Countess : public UAnimInstance
 {
 	GENERATED_BODY()
 	
+	/**禁止对敌人施加伤害*/
+	UFUNCTION()
+	void AnimNotify_StopAttack(UAnimNotify* Notify);
+
 	UFUNCTION()
 	void AnimNotify_SaveAttack(UAnimNotify* Notify);
 

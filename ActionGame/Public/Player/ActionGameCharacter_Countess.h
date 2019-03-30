@@ -24,6 +24,8 @@ public:
 
 	virtual void Ability_R()override;
 
+	virtual void Ability_F()override;
+
 	/**释放E技能的粒子*/
 	void SpawnRollingDarkSegemnts();
 
@@ -117,6 +119,10 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")
 	class UParticleSystem* UltImpactFX;
+
+	///F技能
+	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")
+	class UParticleSystem*	SiphonHitFX;
 
 	class UParticleSystemComponent* UltEye_Right;
 

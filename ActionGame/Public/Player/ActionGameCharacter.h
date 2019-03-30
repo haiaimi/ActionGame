@@ -32,6 +32,8 @@ public:
 
 	virtual void Ability_R();
 
+	virtual void Ability_F();
+
 	bool IsAbilityinCooling(EAbilityType::Type AbilityType);
 
 	float GetCoolingRate(EAbilityType::Type AbilityType);

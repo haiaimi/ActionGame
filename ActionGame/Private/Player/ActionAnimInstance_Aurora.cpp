@@ -16,7 +16,7 @@ UActionAnimInstance_Aurora::UActionAnimInstance_Aurora()
 void UActionAnimInstance_Aurora::AnimNotify_CanStartAttack(UAnimNotify* Notify)
 {
 	APawn* Owner = TryGetPawnOwner();
-	if(AActionGameCharacter_Aurora* CurOwner=Cast<AActionGameCharacter_Aurora>(Owner))
+	if (AActionGameCharacter_Aurora* CurOwner = Cast<AActionGameCharacter_Aurora>(Owner))
 	{
 		CurOwner->PlayerCanAttack();
 	}
