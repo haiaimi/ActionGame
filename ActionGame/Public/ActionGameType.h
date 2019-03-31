@@ -37,6 +37,9 @@ struct FCharacterInfo
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UAnimInstance> MeshAnimClass;
+
+	UPROPERTY(EditDefaultsOnly)
 	FText CharName;
 
 	UPROPERTY(EditDefaultsOnly)

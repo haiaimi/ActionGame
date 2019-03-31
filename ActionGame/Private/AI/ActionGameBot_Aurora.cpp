@@ -9,8 +9,13 @@ AActionGameBot_Aurora::AActionGameBot_Aurora():
 	AIMoveDir(EMoveDir::Forward)
 {
 	AIControllerClass = AActionAIController::StaticClass();
-
 	bUseControllerRotationYaw = true;
+}
+
+void AActionGameBot_Aurora::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	BehaviorTree = BotBehavior;
 }
 
 void AActionGameBot_Aurora::Tick(float DeltaTime)
@@ -24,7 +29,6 @@ void AActionGameBot_Aurora::Tick(float DeltaTime)
 		FRotator NewRot = FMath::RInterpConstantTo(CurRot, TempRot, DeltaTime, 180.0f);
 		SetActorRotation(NewRot);
 	}
-	//HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(GetCharacterMovement()->MaxWalkSpeed));
 }
 
 void AActionGameBot_Aurora::FaceRotation(FRotator NewRotation, float DeltaTime /*= 0.f*/)

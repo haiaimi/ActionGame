@@ -22,6 +22,7 @@ if (Effect)\
 AActionGameCharacter_Countess::AActionGameCharacter_Countess():
 	ShadowClone(nullptr),
 	bFaceToEnemy(false),
+	bInvincible(false),
 	SwordCollision_L(nullptr),
 	SwordCollision_R(nullptr)
 {
@@ -146,7 +147,7 @@ void AActionGameCharacter_Countess::Ability_F()
 
 bool AActionGameCharacter_Countess::HitReact(const FVector& HitPoint)
 {
-	if (!IsInAbility(EAbilityType::RAbility) && Super::HitReact(HitPoint))
+	if (!bInvincible && Super::HitReact(HitPoint))
 	{
 		ResetCombo();
 		if (bInAbility)bInAbility = false;

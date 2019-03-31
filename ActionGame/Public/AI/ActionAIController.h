@@ -40,6 +40,9 @@ public:
 
 	bool IsMovingBack();
 
+	/**游戏是否已经开始*/
+	bool HasStarted();
+
 	void StartAIPlayer();
 private:
 	

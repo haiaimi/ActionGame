@@ -74,6 +74,7 @@ void AHeroDetailPlatform::SetCharacterMesh(int32 CharIndex, int32 MeshIndex)
 {
 	if (CharacterMesh && CharInfos.Num() > CharIndex && CharInfos[CharIndex].CharMeshs.Num() > CharIndex)
 	{
+		CharacterMesh->SetAnimInstanceClass(CharInfos[CharIndex].MeshAnimClass);
 		CharacterMesh->SetSkeletalMesh(CharInfos[CharIndex].CharMeshs[MeshIndex]);
 	}
 }

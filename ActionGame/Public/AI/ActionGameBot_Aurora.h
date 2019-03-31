@@ -5,18 +5,21 @@
 #include "CoreMinimal.h"
 #include "Player/ActionGameCharacter_Aurora.h"
 #include "ActionGameType.h"
+#include "GameBotInterface.h"
 #include "ActionGameBot_Aurora.generated.h"
 
 /**
  * AI敌人
  */
 UCLASS()
-class ACTIONGAME_API AActionGameBot_Aurora : public AActionGameCharacter_Aurora
+class ACTIONGAME_API AActionGameBot_Aurora : public AActionGameCharacter_Aurora, public IGameBotInterface
 {
 	GENERATED_BODY()
 
 public:
 	AActionGameBot_Aurora();
+
+	virtual void PostInitializeComponents()override;
 
 	virtual void Tick(float DeltaTime)override;
 
@@ -24,7 +27,7 @@ public:
 
 	virtual void AddMovementInput(FVector WorldDirection, float ScaleValue, bool bForce /*=false*/)override;
 
-	void SetAIRotation(FRotator Rotator);
+	virtual void SetAIRotation(FRotator Rotator)override;
 
 	virtual EMoveDir::Type GetMoveDirection()override;
 

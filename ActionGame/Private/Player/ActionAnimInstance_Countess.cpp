@@ -81,6 +81,7 @@ void UActionAnimInstance_Countess::AnimNotify_StartJump(UAnimNotify* Notify)
 		{
 			if (HAIAIMIHelper::GetDegreesBetweenActors(Enemy, CurOwner) < 45.f)
 				CurOwner->bFaceToEnemy = true;
+			CurOwner->bInvincible = true;
 		}
 	}
 }
@@ -108,6 +109,7 @@ void UActionAnimInstance_Countess::AnimNotify_LeaveEnemy(UAnimNotify* Notify)
 		FVector CurLocation = CurOwner->GetActorLocation();
 		CurLocation.Z = FMath::Clamp(CurLocation.Z, 120.f, 1000.f);
 		CurOwner->SetActorLocation(CurLocation);
+		CurOwner->bInvincible = false;
 	}
 }
 

@@ -13,6 +13,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "TimerManager.h"
 #include "GameFramework/PlayerController.h"
+#include "GameBotInterface.h"
 
 AActionAIController::AActionAIController()
 {
@@ -92,22 +93,28 @@ bool AActionAIController::IsMovingBack()
 	return BlackboardComp->GetValue<UBlackboardKeyType_Bool>(MoveBackKeyID);
 }
 
+bool AActionAIController::HasStarted()
+{
+	return BehaviorComp->IsRunning();
+}
+
 void AActionAIController::StartAIPlayer()
 {
 	if (BehaviorComp->IsRunning())return;
-	class AActionGameBot_Aurora* Bot = Cast<AActionGameBot_Aurora>(GetPawn());
-	if (Bot && Bot->BotBehavior)
+	IGameBotInterface* Bot = Cast<IGameBotInterface>(GetPawn());
+	ensure(Bot);
+	if (Bot && Bot->BehaviorTree)
 	{
-		if (Bot->BotBehavior->BlackboardAsset)
+		if (Bot->BehaviorTree->BlackboardAsset)
 		{
-			BlackboardComp->InitializeBlackboard(*Bot->BotBehavior->BlackboardAsset);
+			BlackboardComp->InitializeBlackboard(*Bot->BehaviorTree->BlackboardAsset);
 		}
 		EnemyKeyID = BlackboardComp->GetKeyID(TEXT("Enemy"));
 		FreezedKeyID = BlackboardComp->GetKeyID(TEXT("bFreezed"));
 		MoveBackKeyID = BlackboardComp->GetKeyID(TEXT("bMoveBack"));
 	}
 
-	BehaviorComp->StartTree(*(Bot->BotBehavior));
+	BehaviorComp->StartTree(*(Bot->BehaviorTree));
 
 	if (AActionGameCharacter* Enemy = GetEnemy())
 	{

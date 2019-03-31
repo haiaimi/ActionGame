@@ -45,6 +45,9 @@ public:
 
 	bool bFaceToEnemy;
 
+	/**释放R技能时会有一小段无敌时间*/
+	bool bInvincible;
+
 protected:
 	virtual void BeginPlay()override;
 

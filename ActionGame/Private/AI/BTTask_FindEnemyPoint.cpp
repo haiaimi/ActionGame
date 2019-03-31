@@ -7,6 +7,8 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyAllTypes.h"
 #include <NavigationSystem.h>
 #include "ActionGameBot_Aurora.h"
+#include "GameBotInterface.h"
+#include "HAIAIMIHelper.h"
 
 EBTNodeResult::Type UBTTask_FindEnemyPoint::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
@@ -14,7 +16,6 @@ EBTNodeResult::Type UBTTask_FindEnemyPoint::ExecuteTask(UBehaviorTreeComponent& 
 	if (MyController == nullptr)
 		return EBTNodeResult::Failed;
 
-	//MyController->SetAIFreezedValue();
 	APawn* MyBot = MyController->GetPawn();
 	AActionGameCharacter* Enemy = MyController->GetEnemy();
 
@@ -27,7 +28,7 @@ EBTNodeResult::Type UBTTask_FindEnemyPoint::ExecuteTask(UBehaviorTreeComponent& 
 			if (Distance < 1000)
 			{
 				Result = MyBot->GetActorLocation() - MyBot->GetActorRotation().Vector()*100.f;
-				if (AActionGameBot_Aurora* MyBotA = Cast<AActionGameBot_Aurora>(MyBot))
+				if (IGameBotInterface* MyBotA = Cast<IGameBotInterface>(MyBot))
 					MyBotA->SetAIRotation((Enemy->GetActorLocation() - MyBot->GetActorLocation()).GetSafeNormal2D().ToOrientationRotator());
 			}
 		}
