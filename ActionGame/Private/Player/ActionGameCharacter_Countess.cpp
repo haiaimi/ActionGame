@@ -146,12 +146,19 @@ void AActionGameCharacter_Countess::Ability_F()
 
 bool AActionGameCharacter_Countess::HitReact(const FVector& HitPoint)
 {
-	if (Super::HitReact(HitPoint))
+	if (!IsInAbility(EAbilityType::RAbility) && Super::HitReact(HitPoint))
 	{
 		ResetCombo();
+		if (bInAbility)bInAbility = false;
 		return true;
 	}
 	return false;
+}
+
+float AActionGameCharacter_Countess::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (IsInAbility(EAbilityType::RAbility))return Health;
+	return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 }
 
 void AActionGameCharacter_Countess::SpawnRollingDarkSegemnts()
@@ -302,7 +309,7 @@ void AActionGameCharacter_Countess::TeleportArrive()
 	auto Enemy = GetEnemy();
 	const float SubDegree = HAIAIMIHelper::GetDegreesBetweenActors(Enemy, this);
 	FVector AimPos = GetActorLocation() + 1000.f * GetActorRotation().Vector();
-	if (SubDegree < 45.f)
+	if (SubDegree < 10.f)
 	{
 		const FVector Dir = (GetEnemy()->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 		const float Distance = (GetEnemy()->GetActorLocation() - GetActorLocation()).Size();

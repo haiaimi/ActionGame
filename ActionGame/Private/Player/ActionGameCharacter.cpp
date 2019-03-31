@@ -130,7 +130,7 @@ AActionGameCharacter* AActionGameCharacter::AttackEnemy(UPrimitiveComponent* Ove
 {
 	if (AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(OtherActor))
 	{
-		if (Enemy != this && !Enemy->IsDead())
+		if (Enemy != this && !Enemy->IsDead() && !Enemy->bHidden)
 		{
 			UGameplayStatics::SpawnEmitterAttached(ImpactParticle, Enemy->GetMesh(), TEXT("Impact"));
 			const float EnemyHealth = Enemy->TakeDamage(60.f, FDamageEvent(), GetController(), this);
@@ -239,6 +239,14 @@ bool AActionGameCharacter::IsAbilityinCooling(EAbilityType::Type AbilityType)
 {
 	const int32 Index = int32(AbilityType) - 1;
 	return SkillCoolingTimes[Index] == 0.f;
+}
+
+bool AActionGameCharacter::IsInAbility(EAbilityType::Type AbilityType)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance)
+		return AnimInstance->Montage_IsPlaying(AbilityAnims[int32(AbilityType) - 1]);
+	return false;
 }
 
 float AActionGameCharacter::GetCoolingRate(EAbilityType::Type AbilityType)

@@ -36,6 +36,8 @@ public:
 
 	bool IsAbilityinCooling(EAbilityType::Type AbilityType);
 
+	bool IsInAbility(EAbilityType::Type AbilityType);
+
 	float GetCoolingRate(EAbilityType::Type AbilityType);
 
 	AActionGameCharacter* GetAIEnemy();
@@ -144,6 +146,10 @@ protected:
 
 	int32 AttackCount;
 
+	/**玩家生命值*/
+	UPROPERTY(EditDefaultsOnly)
+	float Health;
+
 	/**普通攻击的动画*/
 	UPROPERTY(EditDefaultsOnly)
 	TArray<class UAnimMontage*> NormalAttackAnims;
@@ -169,10 +175,6 @@ private:
 
 	/**玩家目前移动方向的状态*/
 	uint8 MoveDirStat;
-
-	/**玩家生命值*/
-	UPROPERTY(EditDefaultsOnly)
-	float Health;
 
 	/**技能冷却定时器*/
 	TArray<FTimerHandle> SkillCoolingTimers;

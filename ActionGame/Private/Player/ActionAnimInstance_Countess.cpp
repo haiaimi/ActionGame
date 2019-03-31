@@ -104,6 +104,10 @@ void UActionAnimInstance_Countess::AnimNotify_LeaveEnemy(UAnimNotify* Notify)
 		CurOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Falling);
 		CurOwner->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		CurOwner->SetActorRotation(FRotator(0.f, CurOwner->GetActorRotation().Yaw, 0.f));
+
+		FVector CurLocation = CurOwner->GetActorLocation();
+		CurLocation.Z = FMath::Clamp(CurLocation.Z, 120.f, 1000.f);
+		CurOwner->SetActorLocation(CurLocation);
 	}
 }
 

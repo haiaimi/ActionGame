@@ -16,9 +16,11 @@ void SHUDWidget::Construct(const FArguments& InArgs)
 {
 	Owner = InArgs._Owner;
 	int32 PlayerIndex = 0;
+	int32 EnemyIndex = 0;
 	if (Owner.IsValid())
 	{
 		PlayerIndex = Owner->GetGameInstance<UActionGameInstance>()->PlayerIndex;
+		EnemyIndex = Owner->GetGameInstance<UActionGameInstance>()->EnemyIndex;
 	}
 
 	ChildSlot
@@ -54,7 +56,7 @@ void SHUDWidget::Construct(const FArguments& InArgs)
 						SNew(SHealthBarWidget)
 						.Owner(Owner)
 						.BarPos(EHorizontalAlignment::HAlign_Left)
-						.HeroIndex(0)
+						.HeroIndex(PlayerIndex)
 					]
 					+SHorizontalBox::Slot()
 					.FillWidth(1.f)
@@ -69,7 +71,7 @@ void SHUDWidget::Construct(const FArguments& InArgs)
 						SNew(SHealthBarWidget)
 						.Owner(Owner->GetAIEnemy())
 						.BarPos(EHorizontalAlignment::HAlign_Right)
-						.HeroIndex(1)
+						.HeroIndex(EnemyIndex)
 					]
 				]
 				+SVerticalBox::Slot()

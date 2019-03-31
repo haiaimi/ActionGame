@@ -28,6 +28,8 @@ public:
 
 	virtual bool HitReact(const FVector& HitPoint)override;
 
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)override;
+
 	/**释放E技能的粒子*/
 	void SpawnRollingDarkSegemnts();
 
