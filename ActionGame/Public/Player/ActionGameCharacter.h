@@ -18,6 +18,7 @@ public:
 	DECLARE_DELEGATE_OneParam(FOnHealthChanged, float);
 
 	/**普通攻击*/
+	UFUNCTION(BlueprintCallable)
 	virtual void NormalAttack();
 
 	void ComboAttackSave();

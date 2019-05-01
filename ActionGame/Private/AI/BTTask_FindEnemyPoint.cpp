@@ -18,7 +18,7 @@ EBTNodeResult::Type UBTTask_FindEnemyPoint::ExecuteTask(UBehaviorTreeComponent& 
 
 	APawn* MyBot = MyController->GetPawn();
 	AActionGameCharacter* Enemy = MyController->GetEnemy();
-
+	//HAIAIMIHelper::Debug_ScreenMessage(Enemy->GetName());
 	if(Enemy && MyBot)
 	{
 		FVector Result;

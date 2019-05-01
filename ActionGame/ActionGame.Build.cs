@@ -15,6 +15,7 @@ public class ActionGame : ModuleRules
                                                             "HeadMountedDisplay",
                                                             "Json",
                                                             "GameplayTasks",
+                                                            "AIModule",
                                                             "NavigationSystem",
                                                             "LevelSequence",
                                                             "CinematicCamera",
@@ -24,7 +25,10 @@ public class ActionGame : ModuleRules
 
         PrivateIncludePaths.AddRange(
            new string[] {
-                "ActionGame/Private/UI/Widgets"
+                "ActionGame/Private/UI/Widgets",
+                "ActionGame/Private/UI/Widgets/GameWidgets",
+                "ActionGame/Private/UI/Widgets/MainMenuWidgets",
+                "ActionGame/Private/UI/Styles"
            });
 
         PrivateDependencyModuleNames.AddRange(

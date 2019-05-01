@@ -26,6 +26,6 @@ EBTNodeResult::Type UBTTask_CastSkillQ::ExecuteTask(UBehaviorTreeComponent& Owne
 			return EBTNodeResult::Succeeded;
 		}
 	}
-	
+
 	return EBTNodeResult::Failed;
 }

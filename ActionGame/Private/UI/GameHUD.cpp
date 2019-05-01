@@ -9,10 +9,10 @@ void AGameHUD::DrawHUD()
 {
 	if (!HUDWidget.IsValid() && GEngine)
 	{
-		if (AActionGameCharacter* Owner = Cast<AActionGameCharacter>(GetOwningPawn()))
+		if (AActionGameCharacter* CurOwner = Cast<AActionGameCharacter>(GetOwningPawn()))
 		{
 			SAssignNew(HUDWidget, SHUDWidget)
-			.Owner(Owner);
+			.Owner(CurOwner);
 
 			GEngine->GameViewport->AddViewportWidgetContent(
 				SNew(SWeakWidget)
