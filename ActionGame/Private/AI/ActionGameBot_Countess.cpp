@@ -35,10 +35,12 @@ void AActionGameBot_Countess::Tick(float DeltaTime)
 	
 	if (OwnerController.IsValid() && OwnerController->GetSurroundState() && Enemy.IsValid())
 	{
+		bInSurround = OwnerController->GetSurroundState();
 		const float Distance = (Enemy->GetActorLocation() - GetActorLocation()).Size2D();
 		FRotator AIRot = GetControlRotation();
 		AIRot.Roll = 0.f;
-		SetActorRotation(AIRot);
+		const float Distance = (Enemy->GetActorLocation() - GetActorLocation()).Size2D();
+
 		if (Distance < 600.f)
 			MoveForward(-1.f);
 		if (Distance > 800.f)
@@ -62,7 +64,7 @@ void AActionGameBot_Countess::FaceRotation(FRotator NewRotation, float DeltaTime
 
 EMoveDir::Type AActionGameBot_Countess::GetMoveDirection()
 {
-	if (OwnerController.IsValid() && OwnerController->GetSurroundState())
+	if (bInSurround)
 		return Super::GetMoveDirection();
 	else
 		return EMoveDir::Forward;

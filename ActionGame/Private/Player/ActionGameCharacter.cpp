@@ -19,6 +19,7 @@
 #include "AI/ActionAIController.h"
 #include "ActionGameInstance.h"
 #include "AGPlayerController.h"
+//#include "ActionGame.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AActionGameCharacter

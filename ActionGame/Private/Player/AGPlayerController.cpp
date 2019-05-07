@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AGPlayerController.h"
-#include "GameWidgets/SPauseMenuWidget.h"
+#include "SPauseMenuWidget.h"
 #include "Engine/GameViewportClient.h"
 #include "Engine/Engine.h"
 #include "HAIAIMIHelper.h"
