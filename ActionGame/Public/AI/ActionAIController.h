@@ -25,11 +25,13 @@ public:
 	AActionAIController();
 
 	// Begin AController interface
+	virtual void TickActor( float DeltaTime, enum ELevelTick TickType, FActorTickFunction& ThisTickFunction ) override;
+
 	virtual void GameHasEnded(class AActor* EndGameFocus = NULL, bool bIsWinner = false) override;
-	virtual void Possess(class APawn* InPawn) override;
-	virtual void UnPossess() override;
+	virtual void OnPossess(class APawn* InPawn) override;
+	virtual void OnUnPossess() override;
 	virtual void BeginInactiveState() override;
-	// End APlayerController interface
+	// End AController interface
 	
 	class AActionGameCharacter* GetEnemy();
 
@@ -44,6 +46,10 @@ public:
 	bool HasStarted();
 
 	void StartAIPlayer();
+
+	bool GetSurroundState() { return bInSurround; }
+
+	void SetSurroundState(bool InState);
 private:
 	
 	int32 EnemyKeyID;
@@ -51,4 +57,8 @@ private:
 	int32 FreezedKeyID;
 
 	int32 MoveBackKeyID;
+
+	bool bInSurround;
+
+	class AActionGameCharacter* Enemy;
 };

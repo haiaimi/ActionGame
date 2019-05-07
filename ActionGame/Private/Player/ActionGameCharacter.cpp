@@ -24,17 +24,17 @@
 // AActionGameCharacter
 
 AActionGameCharacter::AActionGameCharacter():
-	MoveDirStat(0),
-	SaveAttack(false),
-	IsAttacking(false),
-	AttackCount(0),
-	bCanAttack(false),
+	bCheatMode(false),
 	bInAbility(false),
 	bTurboJumpAccelerate(false),
 	bFreezedSlow(false),
 	bFreezedStop(false),
-	bDead(false),
-	bCheatMode(false)
+	SaveAttack(false),
+	IsAttacking(false),
+	bCanAttack(false),
+	AttackCount(0),
+	MoveDirStat(0),
+	bDead(false)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -242,7 +242,7 @@ bool AActionGameCharacter::IsAbilityinCooling(EAbilityType::Type AbilityType)
 }
 
 bool AActionGameCharacter::IsInAbility(EAbilityType::Type AbilityType)
-{
+{ 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (AnimInstance)
 		return AnimInstance->Montage_IsPlaying(AbilityAnims[int32(AbilityType) - 1]);
@@ -467,7 +467,7 @@ float AActionGameCharacter::TakeDamage(float Damage, struct FDamageEvent const& 
 	
 	if (Health <= 0.f)
 	{
-		HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(Health), 2.f);
+		//HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(Health), 2.f);
 		bDead = true;
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		if (AnimInstance && DeathAnim)

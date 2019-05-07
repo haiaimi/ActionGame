@@ -20,18 +20,19 @@ if (Effect)\
 }
 
 AActionGameCharacter_Countess::AActionGameCharacter_Countess():
-	ShadowClone(nullptr),
 	bFaceToEnemy(false),
 	bInvincible(false),
+	bInTeleport(false),
 	SwordCollision_L(nullptr),
-	SwordCollision_R(nullptr)
+	SwordCollision_R(nullptr),
+	ShadowClone(nullptr)
 {
 	SwordCollision_L = CreateDefaultSubobject<UBoxComponent>(TEXT("SwordCollision_L"));
 	SwordCollision_R = CreateDefaultSubobject<UBoxComponent>(TEXT("SwordCollision_R"));
 	if (SwordCollision_L)
 	{
 		SwordCollision_L->SetupAttachment(GetMesh(), TEXT("weapon_mid_l"));
-		SwordCollision_L->SetBoxExtent(FVector(3.1762f, 32.4572f, 3.1681f));
+		SwordCollision_L->SetBoxExtent(FVector(3.1762f, 35.4572f, 3.1681f));
 	}
 		
 	if (SwordCollision_R)
@@ -84,6 +85,7 @@ void AActionGameCharacter_Countess::Ability_Q()
 	DisableInput(GetController<APlayerController>());
 	SetActorHiddenInGame(true);
 	
+	bInTeleport = true;
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AActionGameCharacter_Countess::TeleportArrive, 0.5f, false);
 }
@@ -130,18 +132,9 @@ void AActionGameCharacter_Countess::Ability_F()
 	//计算攻击粒子的释放方向
 	if (auto Enemy = GetEnemy())
 	{	
-		const float Distance = (Enemy->GetActorLocation() - GetActorLocation()).Size();
+		const float Distance = (Enemy->GetActorLocation() - GetActorLocation()).Size2D();
 		FTimerHandle TimerHandle;
-		FTimerDelegate TimerDelegate;
-		TimerDelegate.BindLambda([Enemy, this](){
-			const float Distance = (Enemy->GetActorLocation() - GetActorLocation()).Size();
-			if (Distance > 400.f)return;
-			const FVector Dir = (Enemy->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
-			const FRotator FXRot = Dir.RotateAngleAxis(90.f, FVector(0.f, 0.f, 1.f)).ToOrientationRotator();
-			const FRotator SocketRot = (FRotationMatrix(FXRot)*FRotationMatrix(Enemy->GetActorRotation()).Inverse()).Rotator();   //矩阵之间相除，得出相对于插槽的旋转角度
-			UGameplayStatics::SpawnEmitterAttached(SiphonHitFX, Enemy->GetMesh(), TEXT("Impact"), FVector::ZeroVector, SocketRot);
-		});
-		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, Distance / 900.f, false);
+		GetWorldTimerManager().SetTimer(TimerHandle, this, &AActionGameCharacter_Countess::SpawnSiphonHitFX, Distance / 900.f, false);
 	}
 }
 
@@ -158,7 +151,7 @@ bool AActionGameCharacter_Countess::HitReact(const FVector& HitPoint)
 
 float AActionGameCharacter_Countess::TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	if (IsInAbility(EAbilityType::RAbility))return Health;
+	if (IsInAbility(EAbilityType::RAbility) || bInTeleport)return Health;
 	return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 }
 
@@ -307,6 +300,7 @@ void AActionGameCharacter_Countess::OnCountDownFinshed(FName EventName, float Em
 
 void AActionGameCharacter_Countess::TeleportArrive()
 {
+	bInTeleport = false;
 	auto Enemy = GetEnemy();
 	const float SubDegree = HAIAIMIHelper::GetDegreesBetweenActors(Enemy, this);
 	FVector AimPos = GetActorLocation() + 1000.f * GetActorRotation().Vector();
@@ -360,5 +354,18 @@ void AActionGameCharacter_Countess::ClearUltFX()
 	{
 		UGameplayStatics::SpawnEmitterAttached(UltEyeFX_Burst, GetMesh(), TEXT("FX_R_eye"), FVector::ZeroVector);
 		UGameplayStatics::SpawnEmitterAttached(UltEyeFX_Burst, GetMesh(), TEXT("FX_L_eye"), FVector::ZeroVector);
+	}
+}
+
+void AActionGameCharacter_Countess::SpawnSiphonHitFX()
+{
+	if (auto Enemy = GetEnemy())
+	{
+		const float Distance = (Enemy->GetActorLocation() - GetActorLocation()).Size2D();
+		if (Distance > 900.f)return;
+		const FVector Dir = (Enemy->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
+		const FRotator FXRot = Dir.RotateAngleAxis(90.f, FVector(0.f, 0.f, 1.f)).ToOrientationRotator();
+		const FRotator SocketRot = (FRotationMatrix(FXRot)*FRotationMatrix(Enemy->GetActorRotation()).Inverse()).Rotator();   //矩阵之间相除，得出相对于插槽的旋转角度
+		UGameplayStatics::SpawnEmitterAttached(SiphonHitFX, Enemy->GetMesh(), TEXT("Impact"), FVector::ZeroVector, SocketRot);
 	}
 }

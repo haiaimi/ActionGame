@@ -1,5 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
+// Fill out your copyright notice in the Description page of Project Settings.
 #pragma once
 
 #include "CoreMinimal.h"
@@ -73,6 +73,11 @@ private:
 
 	/**清除R技能特效*/
 	void ClearUltFX();
+
+	void SpawnSiphonHitFX();
+
+	/**人物是否在Q技能瞬移中*/
+	bool bInTeleport;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* SwordCollision_L;

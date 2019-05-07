@@ -212,12 +212,6 @@ bool AActionGameCharacter_Aurora::HitReact(const FVector& HitPoint)
 	return false;
 }
 
-bool AActionGameCharacter_Aurora::IsCastAbility_R()
-{
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	return AnimInstance->Montage_IsPlaying(AbilityAnims[2]);
-}
-
 void AActionGameCharacter_Aurora::EmitFreeze()
 {
 	FTimerHandle EmitHandle;

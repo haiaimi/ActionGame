@@ -16,8 +16,6 @@ EBTNodeResult::Type UBTTask_NormalAttack::ExecuteTask(UBehaviorTreeComponent& Ow
 	AActionGameCharacter* MyBot = Cast<AActionGameCharacter>(MyController->GetPawn());
 	AActionGameCharacter* Enemy = MyController->GetEnemy();
 
-	//HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(MyBot->GetCharacterMovement()->Velocity.Size()));
-	HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(MyBot->GetCharacterMovement()->MaxWalkSpeed));
 	if (!MyBot->bFreezedSlow && !MyBot->bFreezedStop)
 		MyBot->GetCharacterMovement()->MaxWalkSpeed = 600.f;
 

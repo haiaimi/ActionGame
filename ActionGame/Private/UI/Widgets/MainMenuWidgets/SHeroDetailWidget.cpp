@@ -313,7 +313,7 @@ void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
 		
 		if (DetailPlatform.IsValid())
 		{
-			TArray<FCharacterInfo>& CharacterInfos = DetailPlatform->CharInfos;
+			TArray<FCharacterInfo>& CharacterInfos_1 = DetailPlatform->CharInfos;
 			TArray<FOnClicked> AbilityButtonDelegates;
 			AbilityButtonDelegates.SetNum(3);
 			for (int32 i = 0; i < 3; ++i)
@@ -330,8 +330,8 @@ void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
 			for (int32 i = 0; i < 4; ++i)
 			{
 				FSimpleDelegate AbilityButtonDelegate;
-				AbilityButtonDelegate.BindLambda([i, Index, CharacterInfos, this]() {
-					ShowTips(CharacterInfos[Index].CharName);
+				AbilityButtonDelegate.BindLambda([i, Index, CharacterInfos_1, this]() {
+					ShowTips(CharacterInfos_1[Index].CharName);
 					});
 				AbilityButtons[i]->SetOnHovered(AbilityButtonDelegate);
 			}

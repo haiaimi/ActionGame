@@ -16,9 +16,9 @@
 #include "Camera/CameraActor.h"
 
 AAGPlayerController::AAGPlayerController():
-	LevelSequence(nullptr),
 	bIsGameEnd(false),
-	bIsWon(false)
+	bIsWon(false),
+	LevelSequence(nullptr)
 {
 	
 }
@@ -136,7 +136,7 @@ void AAGPlayerController::SkipLevelSequence()
 		Cast<AActionGameCharacter>(GetPawn())->GetAIEnemy()->GetController<AActionAIController>()->StartAIPlayer();
 	}
 
-	const TArray<FPostProcessSettings>* PostProcess;
-	const TArray<float>* Blends;
-	this->PlayerCameraManager->GetCachedPostProcessBlends(PostProcess, Blends);
+	//const TArray<FPostProcessSettings>* PostProcess;
+	//const TArray<float>* Blends;
+	//this->PlayerCameraManager->GetCachedPostProcessBlends(PostProcess, Blends);
 }

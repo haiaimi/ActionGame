@@ -34,10 +34,16 @@ public:
 	class UBehaviorTree* BotBehavior;
 
 protected:
+	TWeakObjectPtr<AActionGameCharacter>& GetEnemy();
+
+	TWeakObjectPtr<class AActionAIController> OwnerController;
+
 	/**横向方向*/
 	EMoveDir::Type HoriDir;
 
 	/**纵向方向*/
 	EMoveDir::Type VertDir;
 	
+	/**AI围绕玩家状态*/
+	bool bInSurround;
 };
