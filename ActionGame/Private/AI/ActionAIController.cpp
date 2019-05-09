@@ -144,5 +144,5 @@ void AActionAIController::StartAIPlayer()
 void AActionAIController::SetSurroundState(bool InState)
 {
 	bInSurround = InState;
-	BlackboardComp->SetValueAsBool(TEXT("bInSurround"), true);
+	BlackboardComp->SetValueAsBool(TEXT("bInSurround"), bInSurround);
 }

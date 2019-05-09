@@ -11,6 +11,7 @@
 #include "TimerManager.h"
 #include "EngineUtils.h"
 #include "Components/BoxComponent.h"
+#include "ActionAIController.h"
 
 #define CLEAR_EFFECT(Effect)\
 if (Effect)\
@@ -81,6 +82,10 @@ void AActionGameCharacter_Countess::Ability_Q()
 	{
 		CountDown = UGameplayStatics::SpawnEmitterAttached(SlipTimerCountDown, GetFollowCamera(), NAME_None, FVector(120.f, 0.f, 0.f),FRotator::ZeroRotator,EAttachLocation::KeepRelativeOffset);
 		CountDown->OnParticleDeath.AddDynamic(this, &AActionGameCharacter_Countess::OnCountDownFinshed);
+		if(GetController()->IsA(AActionAIController::StaticClass()))      //如果当前人物是AI就不显示该粒子
+		{ 
+			CountDown->SetVisibility(false);     
+		}
 	}
 	DisableInput(GetController<APlayerController>());
 	SetActorHiddenInGame(true);
@@ -115,6 +120,12 @@ void AActionGameCharacter_Countess::Ability_R()
 	if (UltAimingFX)
 	{
 		UltAiming = UGameplayStatics::SpawnEmitterAttached(UltAimingFX, GetMesh(), TEXT("FX_SpineCenter"), FVector::ZeroVector);
+	}
+	if (GetController()->IsA(AActionAIController::StaticClass()))
+	{
+		AActionGameCharacter* Enemy = GetEnemy();
+		if (UltToEnemyCamFX && Enemy)
+			UGameplayStatics::SpawnEmitterAttached(UltToEnemyCamFX, Enemy->GetFollowCamera(), NAME_None, FVector(100.f, 0.f, 0.f), FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset);
 	}
 
 	FTimerHandle TimerHandle;
@@ -153,6 +164,14 @@ float AActionGameCharacter_Countess::TakeDamage(float Damage, struct FDamageEven
 {
 	if (IsInAbility(EAbilityType::RAbility) || bInTeleport)return Health;
 	return Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
+}
+
+FVector AActionGameCharacter_Countess::GetShadowPosition()
+{
+	if (ShadowClone)
+		return ShadowClone->GetComponentLocation();
+	else
+		return FVector::ZeroVector;
 }
 
 void AActionGameCharacter_Countess::SpawnRollingDarkSegemnts()
@@ -255,11 +274,11 @@ AActionGameCharacter* AActionGameCharacter_Countess::AttackEnemy(UPrimitiveCompo
 
 void AActionGameCharacter_Countess::OnSwordBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	if (!bCanAttack)return;
 	AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(OtherActor);
+	if (!bCanAttack)return;
 	if (!Enemy || Enemy == this)return;
 
-	HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(AttackCount));
+	//HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(AttackCount));
 	if (AttackCount == NormalAttackAnims.Num())AttackCount = 3;
 	switch (AttackCount)
 	{
@@ -284,6 +303,10 @@ void AActionGameCharacter_Countess::OnSwordBeginOverlap(UPrimitiveComponent* Ove
 	default:
 		break;
 	}
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (Enemy && AnimInstance && AnimInstance->Montage_IsPlaying(AbilityAnims[0]) && bInAbility)      //Q技能也可以出发平A
+		AttackEnemy(OtherComp, OtherActor);
 }
 
 void AActionGameCharacter_Countess::OnCountDownFinshed(FName EventName, float EmitterTime, int32 ParticleTime, FVector Location, FVector Velocity, FVector Direction)
@@ -310,12 +333,22 @@ void AActionGameCharacter_Countess::TeleportArrive()
 		const float Distance = (GetEnemy()->GetActorLocation() - GetActorLocation()).Size();
 		AimPos = GetActorLocation() + Dir * FMath::Clamp(Distance - 100.f, 0.f, 1000.f);
 	}
+	else
+	{
+		FHitResult HitReslt;
+		FCollisionQueryParams QueryParam;
+		QueryParam.AddIgnoredActor(this);
+		GetWorld()->LineTraceSingleByChannel(HitReslt, GetActorLocation(), AimPos, ECollisionChannel::ECC_Pawn, QueryParam);          //检测瞬移时是否有障碍物
+		if (HitReslt.bBlockingHit)
+			AimPos = HitReslt.Location;
+	}
 
 	EnableInput(GetController<APlayerController>());
 	SetActorHiddenInGame(false);
 	TeleportTo(AimPos, GetActorRotation());
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(AbilityAnims[0], 1.f);
+	bCanAttack = true;
 	if (TeleportCamEffect)
 		UGameplayStatics::SpawnEmitterAttached(TeleportCamEffect, GetFollowCamera(), NAME_None, FVector(150.f, 0.f, 0.f), FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset);
 }
@@ -324,7 +357,7 @@ void AActionGameCharacter_Countess::SlipReturn()
 {
 	if (TeleportReturnEffect)
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TeleportReturnEffect, GetActorLocation(), GetActorRotation());
-	if (TeleportReturnCamEffect)
+	if (TeleportReturnCamEffect && !GetController()->IsA(AActionAIController::StaticClass()))
 		UGameplayStatics::SpawnEmitterAttached(TeleportReturnCamEffect, GetFollowCamera(), NAME_None, FVector(90.f, 0.f, 0.f), FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset);
 	
 	FTimerHandle TimerHandle;
@@ -367,5 +400,6 @@ void AActionGameCharacter_Countess::SpawnSiphonHitFX()
 		const FRotator FXRot = Dir.RotateAngleAxis(90.f, FVector(0.f, 0.f, 1.f)).ToOrientationRotator();
 		const FRotator SocketRot = (FRotationMatrix(FXRot)*FRotationMatrix(Enemy->GetActorRotation()).Inverse()).Rotator();   //矩阵之间相除，得出相对于插槽的旋转角度
 		UGameplayStatics::SpawnEmitterAttached(SiphonHitFX, Enemy->GetMesh(), TEXT("Impact"), FVector::ZeroVector, SocketRot);
+		Enemy->TakeDamage(30.f, FDamageEvent(), GetController(), this);
 	}
 }

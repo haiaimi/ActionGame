@@ -135,7 +135,7 @@ AActionGameCharacter* AActionGameCharacter::AttackEnemy(UPrimitiveComponent* Ove
 		{
 			UGameplayStatics::SpawnEmitterAttached(ImpactParticle, Enemy->GetMesh(), TEXT("Impact"));
 			const float EnemyHealth = Enemy->TakeDamage(60.f, FDamageEvent(), GetController(), this);
-			//获取最适合的打击点
+			//获取最适合的打击点```
 			FVector NewImpactPoint, NewImpactNormal;
 			if (UBodySetup* BodySetup = OverlappedComponent->GetBodySetup())
 			{
@@ -282,6 +282,12 @@ void AActionGameCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 
 	Super::EndPlay(EndPlayReason);
+}
+
+float AActionGameCharacter::GetRemainHealthRate()
+{
+	const float DefaultHealth = GetClass()->GetDefaultObject<AActionGameCharacter>()->Health;
+	return Health / DefaultHealth;
 }
 
 void AActionGameCharacter::FaceRotation(FRotator NewRotation, float DeltaTime /*= 0.f*/)

@@ -30,6 +30,9 @@ public:
 
 	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)override;
 
+	/**获取玩家残影的位置，如果不存在残影就返回原点位置*/
+	FVector GetShadowPosition();
+
 	/**释放E技能的粒子*/
 	void SpawnRollingDarkSegemnts();
 
@@ -131,6 +134,10 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")
 	class UParticleSystem* UltImpactFX;
+
+	/**施放大招时敌人的Cam粒子效果*/
+	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")
+	class UParticleSystem* UltToEnemyCamFX;
 
 	///F技能
 	UPROPERTY(EditDefaultsOnly, Category = "AbilityEffect")

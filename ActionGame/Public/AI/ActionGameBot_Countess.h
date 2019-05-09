@@ -27,13 +27,24 @@ public:
 
 	virtual void FaceRotation(FRotator NewRotation, float DeltaTime = 0.f) override;
 
+	virtual float TakeDamage(float Damage, struct FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)override;
+
 	virtual EMoveDir::Type GetMoveDirection()override;
+
+	/**AI释放技能，按照一定优先级释放*/
+	UFUNCTION(BlueprintCallable)
+	void AICastAbility();
+
+	void ResetSurroundState();
+
+	void ResetSurroundCallable();
 
 	/**行为树*/
 	UPROPERTY(EditAnywhere, Category = Behavior)
 	class UBehaviorTree* BotBehavior;
 
 protected:
+	//仅限于AI中使用
 	TWeakObjectPtr<AActionGameCharacter>& GetEnemy();
 
 	TWeakObjectPtr<class AActionAIController> OwnerController;
@@ -46,4 +57,7 @@ protected:
 	
 	/**AI围绕玩家状态*/
 	bool bInSurround;
+
+	/**控制Ai是否可以环绕，AI不可能一直都能进入环绕状态*/
+	bool bCanSurround;
 };

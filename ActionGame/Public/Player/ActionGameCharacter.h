@@ -74,6 +74,9 @@ public:
 
 	void EnableAttack(bool IsEnable) { bCanAttack = IsEnable; }
 
+	/**获取剩余生命值比例*/
+	float GetRemainHealthRate();
+
 	UPROPERTY(EditAnywhere)
 	bool bCheatMode;
 
