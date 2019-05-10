@@ -19,6 +19,7 @@
 #include "AI/ActionAIController.h"
 #include "ActionGameInstance.h"
 #include "AGPlayerController.h"
+#include "Sound/SoundCue.h"
 //#include "ActionGame.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -189,6 +190,9 @@ void AActionGameCharacter::NormalAttack()
 			}
 			else
 				AnimInstance->Montage_Play(NormalAttackAnims[AttackCount++], 1.f);
+
+			if (AttackSound)
+				UGameplayStatics::PlaySoundAtLocation(this, AttackSound, GetActorLocation());
 			bCanAttack = true;
 		}
 	}
@@ -203,6 +207,8 @@ void AActionGameCharacter::ComboAttackSave()
 		{
 			UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 			AnimInstance->Montage_Play(NormalAttackAnims[AttackCount++], 1.f);
+			if (AttackSound)
+				UGameplayStatics::PlaySoundAtLocation(this, AttackSound, GetActorLocation());
 			bCanAttack = true;
 		}
 	}
@@ -219,21 +225,29 @@ void AActionGameCharacter::ResetCombo()
 void AActionGameCharacter::Ability_Q()
 {
 	MakeAbilityCooling(EAbilityType::QAbility);
+	if (AbilitySounds.Num() >= EAbilityType::QAbility)
+		UGameplayStatics::PlaySoundAtLocation(this, AbilitySounds[int32(EAbilityType::QAbility) - 1], GetActorLocation());
 }
 
 void AActionGameCharacter::Ability_E()
 {
 	MakeAbilityCooling(EAbilityType::EAbility);
+	if (AbilitySounds.Num() >= EAbilityType::EAbility)
+		UGameplayStatics::PlaySoundAtLocation(this, AbilitySounds[int32(EAbilityType::EAbility) - 1], GetActorLocation());
 }
 
 void AActionGameCharacter::Ability_R()
 {
 	MakeAbilityCooling(EAbilityType::RAbility);
+	if (AbilitySounds.Num() >= EAbilityType::RAbility)
+		UGameplayStatics::PlaySoundAtLocation(this, AbilitySounds[int32(EAbilityType::RAbility) - 1], GetActorLocation());
 }
 
 void AActionGameCharacter::Ability_F()
 {
 	MakeAbilityCooling(EAbilityType::FAbility);
+	if (AbilitySounds.Num() >= EAbilityType::FAbility)
+		UGameplayStatics::PlaySoundAtLocation(this, AbilitySounds[int32(EAbilityType::FAbility) - 1], GetActorLocation());
 }
 
 bool AActionGameCharacter::IsAbilityinCooling(EAbilityType::Type AbilityType)
@@ -471,25 +485,30 @@ float AActionGameCharacter::TakeDamage(float Damage, struct FDamageEvent const& 
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 
 	Health -= Damage;
-	
+	bTurboJumpAccelerate = false;
+
 	if (Health <= 0.f)
 	{
-		//HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(Health), 2.f);
 		bDead = true;
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 		if (AnimInstance && DeathAnim)
 			AnimInstance->Montage_Play(DeathAnim);
+		if (DeadSound)     //播放死亡音效
+			UGameplayStatics::PlaySoundAtLocation(this, DeadSound, GetActorLocation());
+
 		AAGPlayerController* PlayerController = nullptr;
 		//当前人物是AI
 		if (auto AIController = Cast<AAIController>(GetController()))
 		{
-			AIController->UnPossess();
+			if (AIController->GetPawn())
+				AIController->UnPossess();
 			PlayerController = Cast<AAGPlayerController>(EventInstigator);
 			if(PlayerController)PlayerController->bIsWon = true;
 		}
 		else
 		{
-			EventInstigator->UnPossess();
+			if (EventInstigator->GetPawn())
+				EventInstigator->UnPossess();
 			PlayerController = Cast<AAGPlayerController>(GetController());
 			if (PlayerController)
 			{
@@ -503,6 +522,8 @@ float AActionGameCharacter::TakeDamage(float Damage, struct FDamageEvent const& 
 		GetWorldTimerManager().SetTimer(TimerHandle, PlayerController, &AAGPlayerController::EndGame, 1.5f);
 		Health = 0.f;
 	}
+	if (BlockSound)
+		UGameplayStatics::PlaySoundAtLocation(this, BlockSound, GetActorLocation());
 	OnHealthChanged.ExecuteIfBound(FMath::Abs(Health / GetClass()->GetDefaultObject<AActionGameCharacter>()->Health));
 	return Health;
 }

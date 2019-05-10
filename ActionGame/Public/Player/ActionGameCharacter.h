@@ -108,6 +108,21 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	bool bFreezedSlow;
 
+	UPROPERTY(EditDefaultsOnly)
+	class USoundCue* AttackSound;
+
+	/**技能音效*/
+	UPROPERTY(EditDefaultsOnly)
+	TArray<class USoundCue*> AbilitySounds;
+
+	/**受击音效*/
+	UPROPERTY(EditDefaultsOnly)
+	class USoundCue* BlockSound;
+
+	/**死亡音效*/
+	UPROPERTY(EditDefaultsOnly)
+	class USoundCue* DeadSound;
+
 	/**是否被冻住*/
 	bool bFreezedStop;
 
@@ -186,4 +201,3 @@ private:
 	/**玩家是否已经死亡*/
 	bool bDead;
 };
-
