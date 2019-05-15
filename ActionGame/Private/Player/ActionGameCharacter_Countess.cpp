@@ -107,6 +107,9 @@ void AActionGameCharacter_Countess::Ability_R()
 {
 	if (IsAbilityinCooling(EAbilityType::RAbility) || int32(EAbilityType::RAbility) > AbilityAnims.Num() || bInAbility)return;
 	else Super::Ability_R();
+
+	AActionGameCharacter* Enemy = GetEnemy();
+	if (Enemy && Enemy->IsInAbility(EAbilityType::RAbility))return;      //在敌人释放大招的时候不能释放
 	
 	GetCharacterMovement()->JumpZVelocity = 700.f;
 	Super::Jump();
@@ -123,7 +126,6 @@ void AActionGameCharacter_Countess::Ability_R()
 	}
 	if (GetController()->IsA(AActionAIController::StaticClass()))
 	{
-		AActionGameCharacter* Enemy = GetEnemy();
 		if (UltToEnemyCamFX && Enemy)
 			UGameplayStatics::SpawnEmitterAttached(UltToEnemyCamFX, Enemy->GetFollowCamera(), NAME_None, FVector(100.f, 0.f, 0.f), FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset);
 	}
@@ -278,7 +280,6 @@ void AActionGameCharacter_Countess::OnSwordBeginOverlap(UPrimitiveComponent* Ove
 	if (!bCanAttack)return;
 	if (!Enemy || Enemy == this)return;
 
-	//HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(AttackCount));
 	if (AttackCount == NormalAttackAnims.Num())AttackCount = 3;
 	switch (AttackCount)
 	{
@@ -344,7 +345,7 @@ void AActionGameCharacter_Countess::TeleportArrive()
 	}
 
 	EnableInput(GetController<APlayerController>());
-	SetActorHiddenInGame(false);
+	SetActorHiddenInGame(false);       //解除人物隐身
 	TeleportTo(AimPos, GetActorRotation());
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(AbilityAnims[0], 1.f);

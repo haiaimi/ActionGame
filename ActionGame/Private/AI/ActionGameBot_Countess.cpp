@@ -97,7 +97,7 @@ EMoveDir::Type AActionGameBot_Countess::GetMoveDirection()
 void AActionGameBot_Countess::AICastAbility()
 {
 	TWeakObjectPtr<AActionGameCharacter>& Enemy = GetEnemy();
-	if (!Enemy.IsValid())return;
+	if (!Enemy.IsValid() || bFreezedStop)return;    //AI被冻住同样不能释放技能
 	const float Distance = (Enemy->GetActorLocation() - GetActorLocation()).Size2D();
 
 	if (Distance < 1000.f && Distance > 200.f)

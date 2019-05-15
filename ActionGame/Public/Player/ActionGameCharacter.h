@@ -157,6 +157,8 @@ protected:
 
 	void SetAbilityReady(int32 Index);
 
+	uint8 GetMoveDirStat() { return MoveDirStat; }
+
 	bool SaveAttack;
 
 	bool IsAttacking;

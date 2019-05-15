@@ -46,6 +46,8 @@ public:
 
 	virtual void Ability_R()override;
 
+	virtual void Ability_F()override;
+
 	virtual bool HitReact(const FVector& HitPoint)override;
 
 	void EmitFreeze();
@@ -69,6 +71,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EffectOfAbilityE(class AActor* Enemy);
 
+	bool bInAbilityJump;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* SwordCollsion;
@@ -84,6 +88,10 @@ protected:
 	/**R技能的粒子*/
 	UPROPERTY(EditDefaultsOnly)
 	class UParticleSystem* RAbilityParticle;
+
+	/**F技能动画，由于AuroraF技能有多个动画*/
+	UPROPERTY(EditDefaultsOnly)
+	TArray<class UAnimMontage*> FAbilityAnims;
 	
 	/**对敌人的特效*/
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyEffect")
@@ -121,4 +129,7 @@ protected:
 
 	/**Q技能第一次攻击时间*/
 	float QFirstAttackTime;
+
+	/**用于F技能的跳跃*/
+	uint8 AbilityJumpDir;
 };

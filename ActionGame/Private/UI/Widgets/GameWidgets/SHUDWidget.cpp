@@ -153,9 +153,9 @@ void SHUDWidget::Tick(const FGeometry& AllottedGeometry, const double InCurrentT
 
 	if (Owner.IsValid())
 	{
-		const float CurYawSpeed = Owner->YawSpeed;
+		const float CurYawSpeed = Owner->YawSpeed;     //对应屏幕上X方向的速度
 		const float PreYawSpeed = -AbilityTransform.X / 10.f;
-		const float CurPitchSpeed = Owner->PitchSpeed;
+		const float CurPitchSpeed = Owner->PitchSpeed; //对应屏幕上y方向的速度
 		const float PrePitchSpeed = -AbilityTransform.Y / 10.f;
 
 		AbilityTransform.X += (CurYawSpeed > PreYawSpeed) ? -200.f*InDeltaTime : 200.f*InDeltaTime;

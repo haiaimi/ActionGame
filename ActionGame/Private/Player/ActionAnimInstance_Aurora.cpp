@@ -90,6 +90,17 @@ void UActionAnimInstance_Aurora::AnimNotify_EndRAbility(UAnimNotify* Notify)
 	}
 }
 
+void UActionAnimInstance_Aurora::AnimNotify_EndJumpMove(UAnimNotify* Notify)
+{
+	APawn* Owner = TryGetPawnOwner();
+	if (AActionGameCharacter_Aurora* CurOwner = Cast<AActionGameCharacter_Aurora>(Owner))
+	{
+		CurOwner->GetCharacterMovement()->JumpZVelocity = 600.f;    //恢复人物跳跃高度
+		CurOwner->bInAbilityJump = false;
+		CurOwner->bInAbility = false;
+	}
+}
+
 void UActionAnimInstance_Aurora::AnimNotify_ToDeath(UAnimNotify* Notify)
 {
 	APawn* Owner = TryGetPawnOwner();

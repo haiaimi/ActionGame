@@ -42,5 +42,8 @@ public:
 	void AnimNotify_EndRAbility(UAnimNotify* Notify);
 
 	UFUNCTION()
+	void AnimNotify_EndJumpMove(UAnimNotify* Notify);
+
+	UFUNCTION()
 	void AnimNotify_ToDeath(UAnimNotify* Notify);
 };

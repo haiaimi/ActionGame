@@ -17,10 +17,12 @@
 
 
 AActionGameCharacter_Aurora::AActionGameCharacter_Aurora():
+	bInAbilityJump(false),
 	PreIcePlatform(nullptr),
 	IcePlatformOffset(0.f),
 	MoveTime(0.f),
-	QFirstAttackTime(-5.f)
+	QFirstAttackTime(-5.f),
+	AbilityJumpDir(0)
 {
 	NormalAttackAnims.SetNum(4);
 	AbilityAnims.SetNum(3);
@@ -103,10 +105,22 @@ void AActionGameCharacter_Aurora::Tick(float DeltaTime)
 
 	if(bTurboJumpAccelerate)
 	{
-		const FRotator Rotation = GetActorRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		const FVector Direction = GetActorForwardVector();
 		SetActorLocation(GetActorLocation() + Direction * 800.f * DeltaTime, false, nullptr, ETeleportType::ResetPhysics);
+	}
+
+	if (bInAbilityJump)
+	{
+		const FVector ForwardDirection = GetActorForwardVector();
+		const FVector RightDirection = GetActorRightVector();
+		TArray<FVector> Dirs = { ForwardDirection,-ForwardDirection,-RightDirection,RightDirection };
+		FVector TmpMoveDir(0.f, 0.f, 0.f);
+		for (int32 i = 3; i >= 0; --i)
+		{
+			if ((AbilityJumpDir >> i) & 1)TmpMoveDir += Dirs[i];
+		}
+
+		GetCharacterMovement()->MoveSmooth(TmpMoveDir.GetSafeNormal()*600.f, DeltaTime);
 	}
 }
 
@@ -169,7 +183,8 @@ void AActionGameCharacter_Aurora::Ability_E()
 	EmitFreeze();
 	FActorSpawnParameters SpawnParameter;
 	SpawnParameter.Owner = this;
-	GetWorld()->SpawnActor<AActor>(EAbilityDetection, GetMesh()->GetSocketTransform(TEXT("Root")), SpawnParameter);
+	if (EAbilityDetection)
+		GetWorld()->SpawnActor<AActor>(EAbilityDetection, GetMesh()->GetSocketTransform(TEXT("Root")), SpawnParameter);
 }
 
 void AActionGameCharacter_Aurora::Ability_R()
@@ -194,9 +209,50 @@ void AActionGameCharacter_Aurora::Ability_R()
 	}
 }
 
+void AActionGameCharacter_Aurora::Ability_F()
+{
+	if (IsAbilityinCooling(EAbilityType::FAbility) || FAbilityAnims.Num() < 8 || bInAbility)return;
+	else Super::Ability_F();
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AbilityJumpDir = GetMoveDirStat();
+	
+	int32 AnimIndex = 0;
+	switch (AbilityJumpDir)
+	{
+		case 1: AnimIndex = 0;      //前
+			break;
+		case 2: AnimIndex = 1;      //后
+			break;
+		case 4: AnimIndex = 2;      //左
+			break;
+		case 8: AnimIndex = 3;      //右
+			break;
+		case 5: AnimIndex = 4;      //左前
+			break;
+		case 9: AnimIndex = 5;      //右前
+			break;
+		case 6: AnimIndex = 6;      //左后
+			break;
+		case 10: AnimIndex = 7;      //右后
+			break;
+
+		default:
+		{
+			AnimIndex = 0;
+			AbilityJumpDir = 1;
+		}
+	}
+	
+	if (AnimInstance)AnimInstance->Montage_Play(FAbilityAnims[AnimIndex]);
+	bInAbilityJump = true;
+	GetCharacterMovement()->JumpZVelocity = 700.f;
+	Super::Jump();
+}
+
 bool AActionGameCharacter_Aurora::HitReact(const FVector& HitPoint)
 {
-	if(Super::HitReact(HitPoint))
+	if(!bInAbilityJump && Super::HitReact(HitPoint))
 	{
 		ResetCombo();
 		if (bInAbility)
@@ -230,6 +286,7 @@ void AActionGameCharacter_Aurora::EmitFreeze()
 	FreezeTransform.SetRotation(FQuat(CurRot));
 }
 
+//生成冰块路径
 void AActionGameCharacter_Aurora::SpawnIcePlatform()
 {
 	if (MoveTime == 0.f && bInAbility && !bFreezedStop)
@@ -255,6 +312,7 @@ void AActionGameCharacter_Aurora::SpawnIcePlatform()
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AActionGameCharacter_Aurora::SpawnIcePlatform, 0.05f, false);
 }
 
+//检测路况
 void AActionGameCharacter_Aurora::DetectIceRoad()
 {
 	const float OffsetLength = 180.f;
