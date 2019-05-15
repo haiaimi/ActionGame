@@ -325,6 +325,13 @@ void SSettingsWidget::BackToShow()
 	ShowGraphicSettingList();
 }
 
+FReply SSettingsWidget::OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
+{
+	HAIAIMIHelper::Debug_ScreenMessage(InKeyEvent.GetKey().ToString());
+
+	return SWidget::OnKeyDown(MyGeometry, InKeyEvent);
+}
+
 void SSettingsWidget::SetTagButtonHighlight(int32 ButtonIndex)
 {
 	for (int32 i = 0; i < SettingTagButtons.Num(); ++i)

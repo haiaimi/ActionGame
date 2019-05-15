@@ -20,7 +20,7 @@ AAGPlayerController::AAGPlayerController():
 	bIsWon(false),
 	LevelSequence(nullptr)
 {
-	
+
 }
 
 void AAGPlayerController::BeginPlay()

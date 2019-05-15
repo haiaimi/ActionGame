@@ -35,6 +35,8 @@ public:
 
 	FORCEINLINE float GetCurAnimLerp() { return AnimHandle.GetLerp(); }
 
+	virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent);
+
 private:
 	const struct FButtonStyle* ButtonStyle;
 
