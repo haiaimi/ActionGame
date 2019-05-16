@@ -16,13 +16,16 @@ public:
 	SLATE_BEGIN_ARGS(SInputBoxWidget)
 	{}
 	SLATE_ARGUMENT(FText, SelectName)
-	SLATE_ARGUMENT(FText, CurSelection)
-	//SLATE_EVENT(FExecuteSelection, ExecuteSelection)
+	SLATE_ARGUMENT(FString, DefaultSelection)
+	SLATE_ARGUMENT(FString, InputMappingName)
+	SLATE_ARGUMENT(TWeakObjectPtr<class UPlayerInput>, PlayerInput)
 	SLATE_EVENT(FSimpleDelegate, SelectionOnHovered)
 	SLATE_END_ARGS()
 
 	/** Constructs this widget with InArgs */
 	void Construct(const FArguments& InArgs);
+
+	virtual FReply OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent);
 
 private:
 	const struct FButtonStyle* SelectBoxButtonStyle;
@@ -32,4 +35,12 @@ private:
 	TSharedPtr<STextBlock> SelectionText;
 
 	FSimpleDelegate SelectionOnHovered;
+
+	FString InputMappingName;
+
+	bool bCanChangeText;
+
+	FKey PreKey;
+
+	TWeakObjectPtr<class UPlayerInput> PlayerInput;
 };

@@ -20,7 +20,7 @@ void SSelectBoxWidget::Construct(const FArguments& InArgs)
 	else
 		CurSelection = 0;
 	FText InitContent = SelectContent.Num() == 0 ? FText::FromString(TEXT("Null Content")) : SelectContent[CurSelection];
-	//SetColorAndOpacity()
+	
 	ChildSlot
 	.HAlign(EHorizontalAlignment::HAlign_Fill)
 	.VAlign(EVerticalAlignment::VAlign_Fill)

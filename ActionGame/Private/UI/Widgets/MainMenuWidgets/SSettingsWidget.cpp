@@ -10,6 +10,7 @@
 #include "GameFramework/GameUserSettings.h"
 #include "CoreGlobals.h"
 #include "HAIAIMIHelper.h"
+#include "Widgets/MainMenuWidgets/SInputBoxWidget.h"
 
 
 
@@ -327,7 +328,7 @@ void SSettingsWidget::BackToShow()
 
 FReply SSettingsWidget::OnKeyDown(const FGeometry& MyGeometry, const FKeyEvent& InKeyEvent)
 {
-	HAIAIMIHelper::Debug_ScreenMessage(InKeyEvent.GetKey().ToString());
+	//HAIAIMIHelper::Debug_ScreenMessage(InKeyEvent.GetKey().ToString());
 
 	return SWidget::OnKeyDown(MyGeometry, InKeyEvent);
 }
@@ -678,6 +679,92 @@ void SSettingsWidget::ShowOperationSettingList()
 	{
 		SetTagButtonHighlight(2);
 		ClearScrollBox();
+
+		SettingTitle->SetText(LOCTEXT("OperationSettings","操作设置"));
+		SettingDetails->SetText(LOCTEXT("OperationSettingsTag","游戏输入功能设置"));
+
+		int32 AnimIndex = 0;
+		SettingList->AddSlot()
+		[
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground.Get())
+			[
+				SNew(SDividingLineWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.CategoryName(LOCTEXT("AbilityKey","技能按键"))
+			]
+		];
+
+		SettingList->AddSlot()
+		[
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground.Get())
+			[
+				SNew(SInputBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(LOCTEXT("Ability_Q", "A技能"))
+				.DefaultSelection(TEXT("Q"))
+				.InputMappingName(FString("Ability_Q"))
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText(LOCTEXT("QAbilityTip", "A技能"));
+					SettingDetails->SetText(LOCTEXT("QAbilityTipCont", "A技能绑定按键"));
+				})
+			]
+		];
+
+		SettingList->AddSlot()
+		[
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground.Get())
+			[
+				SNew(SInputBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(LOCTEXT("Ability_E", "B技能"))
+				.DefaultSelection(TEXT("E"))
+				.InputMappingName(FString("Ability_E"))
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText(LOCTEXT("EAbilityTip", "B技能"));
+					SettingDetails->SetText(LOCTEXT("EAbilityTipCont", "B技能绑定按键"));
+				})
+			]
+		];
+
+		SettingList->AddSlot()
+		[
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground.Get())
+			[
+				SNew(SInputBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(LOCTEXT("Ability_R", "C技能"))
+				.DefaultSelection(TEXT("R"))
+				.InputMappingName(FString("Ability_R"))
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText(LOCTEXT("RAbilityTip", "C技能"));
+					SettingDetails->SetText(LOCTEXT("RAbilityTipCont", "C技能绑定按键"));
+				})
+			]
+		];
+
+		SettingList->AddSlot()
+		[
+			SAssignNew(SettingBorders[AnimIndex], SBorder)
+			.BorderImage(BorderBackground.Get())
+			[
+				SNew(SInputBoxWidget)
+				.RenderTransform(ButtonTransformParams[AnimIndex++])
+				.SelectName(LOCTEXT("Ability_F", "D技能"))
+				.DefaultSelection(TEXT("F"))
+				.InputMappingName(FString("Ability_F"))
+				.SelectionOnHovered_Lambda([&]() {
+					SettingTitle->SetText(LOCTEXT("FAbilityTip", "D技能"));
+					SettingDetails->SetText(LOCTEXT("FAbilityTipCont", "D技能绑定按键"));
+				})
+			]
+		];
+
+		if (AnimSequence.GetSequenceTime() >= 0.5f)
+			AnimSequence.Play(this->AsShared(), false, 0.5f);
 	}
 }
 
