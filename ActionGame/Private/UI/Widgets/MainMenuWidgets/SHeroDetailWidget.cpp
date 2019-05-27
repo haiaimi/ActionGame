@@ -14,7 +14,7 @@ using FRenderTransformParam = TAttribute<TOptional<FSlateRenderTransform>>;
 
 #define LOCTEXT_NAMESPACE "ActionGame.UI.HeroDetail"
 
-const TArray<FText> AbilityButtonNames = { LOCTEXT("Overview","人物概况"),LOCTEXT("A","A"),LOCTEXT("B","B"),LOCTEXT("C","C") };
+const TArray<FText> AbilityButtonNames = { LOCTEXT("Overview","人物概况"), LOCTEXT("A","A"), LOCTEXT("B","B"), LOCTEXT("C","C"), LOCTEXT("D","D") };
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SHeroDetailWidget::Construct(const FArguments& InArgs)
@@ -173,8 +173,9 @@ void SHeroDetailWidget::Construct(const FArguments& InArgs)
 		]
 	];
 
-	AbilityButtons.SetNum(4);
-	for (int32 i = 0; i < 4; ++i)
+	int32 ButtonNum = AbilityButtonNames.Num();
+	AbilityButtons.SetNum(ButtonNum);
+	for (int32 i = 0; i < ButtonNum; ++i)
 	{
 		AbilityButtonContainer->AddSlot()
 		.FillWidth(1.f)
@@ -315,8 +316,8 @@ void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
 		{
 			TArray<FCharacterInfo>& CharacterInfos_1 = DetailPlatform->CharInfos;
 			TArray<FOnClicked> AbilityButtonDelegates;
-			AbilityButtonDelegates.SetNum(3);
-			for (int32 i = 0; i < 3; ++i)
+			AbilityButtonDelegates.SetNum(4);
+			for (int32 i = 0; i < 4; ++i)
 			{
 				FOnClicked AbilityButtonDelegate;
 				AbilityButtonDelegate.BindLambda([i, Index, this]() {
@@ -327,11 +328,12 @@ void SHeroDetailWidget::ShowHeroSkinButtons(int32 Index)
 				AbilityButtons[i + 1]->SetOnClicked(AbilityButtonDelegate);
 			}
 
-			for (int32 i = 0; i < 4; ++i)
+			for (int32 i = 0; i < AbilityButtons.Num(); ++i)
 			{
+				
 				FSimpleDelegate AbilityButtonDelegate;
 				AbilityButtonDelegate.BindLambda([i, Index, CharacterInfos_1, this]() {
-					ShowTips(CharacterInfos_1[Index].CharName);
+					ShowTips(CharacterInfos_1[Index].HeroDetails[i]);
 					});
 				AbilityButtons[i]->SetOnHovered(AbilityButtonDelegate);
 			}

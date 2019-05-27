@@ -132,4 +132,7 @@ protected:
 
 	/**用于F技能的跳跃*/
 	uint8 AbilityJumpDir;
+
+private:
+	FTimerHandle FreezedSlowTimer;
 };

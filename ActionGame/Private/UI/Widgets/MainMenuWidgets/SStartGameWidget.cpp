@@ -245,7 +245,7 @@ void SStartGameWidget::AddHeroHeads()
 									if (UActionGameInstance* MyInstance = OwnerHUD->GetGameInstance<UActionGameInstance>())
 									{
 										MyInstance->PlayerIndex = i * 4 + j;
-										HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(MyInstance->PlayerIndex), 5.f);
+										//HAIAIMIHelper::Debug_ScreenMessage(FString::FormatAsNumber(MyInstance->PlayerIndex), 5.f);
 									}
 								}
 								CurSelectIndex = i * 4 + j;

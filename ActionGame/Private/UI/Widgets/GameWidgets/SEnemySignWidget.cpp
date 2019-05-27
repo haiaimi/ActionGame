@@ -39,14 +39,16 @@ void SEnemySignWidget::Tick(const FGeometry& AllottedGeometry, const double InCu
 		if (!MyController)return;
 		FVector2D ScreenPos;
 		int32 X, Y;
-		MyController->ProjectWorldLocationToScreen(AIEnemy->GetActorLocation() + FVector(0.f, 0.f, 90.f), ScreenPos);
+		bool bOnScreen = MyController->ProjectWorldLocationToScreen(AIEnemy->GetActorLocation() + FVector(0.f, 0.f, 90.f), ScreenPos);
 		MyController->GetViewportSize(X, Y);
-		if (ScreenPos.X > 0.f && ScreenPos.X < X && ScreenPos.Y > 0.f && ScreenPos.Y < Y)
+		if (!(ScreenPos.X > 0.f && ScreenPos.X < X && ScreenPos.Y > 0.f && ScreenPos.Y < Y) || !bOnScreen)
+		{
+			SignImage->SetVisibility(EVisibility::Visible);
+		}
+		else
 		{
 			SignImage->SetVisibility(EVisibility::Hidden);
 		}
-		else
-			SignImage->SetVisibility(EVisibility::Visible);
 
 		const FVector ForwardDir = Owner->GetControlRotation().Vector().GetSafeNormal2D();
 		const FVector RightDir = FRotationMatrix(Owner->GetControlRotation()).GetScaledAxis(EAxis::Y);

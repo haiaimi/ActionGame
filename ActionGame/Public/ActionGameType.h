@@ -50,6 +50,9 @@ struct FCharacterInfo
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FText> MeshNames;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FText> HeroDetails;
 };
 
 

@@ -29,12 +29,14 @@ public:
 	/**下面是人物主要的三个技能*/
 	virtual void Ability_Q();
 
+	UFUNCTION(BlueprintCallable)
 	virtual void Ability_E();
 
 	virtual void Ability_R();
 
 	virtual void Ability_F();
 
+	UFUNCTION(BlueprintCallable)
 	bool IsAbilityinCooling(EAbilityType::Type AbilityType);
 
 	bool IsInAbility(EAbilityType::Type AbilityType);
@@ -90,6 +92,7 @@ public:
 	float BaseLookUpRate;
 
 	/**是否在释放技能*/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bInAbility;
 
 	bool bTurboJumpAccelerate;

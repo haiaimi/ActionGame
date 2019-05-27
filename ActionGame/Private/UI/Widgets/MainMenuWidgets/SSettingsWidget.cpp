@@ -10,8 +10,7 @@
 #include "GameFramework/GameUserSettings.h"
 #include "CoreGlobals.h"
 #include "HAIAIMIHelper.h"
-#include "Widgets/MainMenuWidgets/SInputBoxWidget.h"
-
+#include "SInputBoxWidget.h"
 
 
 #define GETGRAPHICLEVEL(EffectName)\
@@ -282,7 +281,7 @@ void SSettingsWidget::Construct(const FArguments& InArgs)
 	SetupAnimation();
 	ShowGraphicSettingList();
 
-	HAIAIMIHelper::Debug_ScreenMessage(HAIAIMIHelper::GetLocalization(), 5.f);
+	//HAIAIMIHelper::Debug_ScreenMessage(HAIAIMIHelper::GetLocalization(), 5.f);
 }
 
 void SSettingsWidget::SetupAnimation()

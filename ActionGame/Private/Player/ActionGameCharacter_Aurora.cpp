@@ -82,10 +82,8 @@ void AActionGameCharacter_Aurora::FreezeEnemyImpl(class AActor* InEnemy)
 		Enemy->ApplyFreezedParticle(Freezed_Slow);
 		Enemy->GetCharacterMovement()->MaxWalkSpeed = 200.f;
 		UGameplayStatics::SpawnEmitterAttached(CamFrostParticle_Slowed, Enemy->GetFollowCamera(), NAME_None, FVector(90.f, 0.f, 0.f),FRotator::ZeroRotator,EAttachLocation::KeepRelativeOffset);
-
-		FTimerHandle TimerHandle;
-
-		GetWorldTimerManager().SetTimer(TimerHandle, Enemy, &AActionGameCharacter::EndFreezedSlow, 2.f, false);
+		GetWorldTimerManager().ClearTimer(FreezedSlowTimer);
+		GetWorldTimerManager().SetTimer(FreezedSlowTimer, Enemy, &AActionGameCharacter::EndFreezedSlow, 2.f, false);
 	}
 }
 
@@ -361,7 +359,7 @@ void AActionGameCharacter_Aurora::OnQAbilityBeginOverlap(UPrimitiveComponent* Ov
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (Cast<AActionGameCharacter>(OtherActor) && AnimInstance->Montage_IsPlaying(AbilityAnims[0]) && bInAbility && GetWorld()->TimeSeconds - QFirstAttackTime >= 1.5f)
 	{
-		HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(GetWorld()->TimeSeconds));
+		//HAIAIMIHelper::Debug_ScreenMessage(FString::SanitizeFloat(GetWorld()->TimeSeconds));
 		AttackEnemy(OverlappedComponent, OtherActor, TEXT("Sword_Mid"));
 		QFirstAttackTime = GetWorld()->TimeSeconds;
 	}
@@ -377,8 +375,9 @@ void AActionGameCharacter_Aurora::EffectOfAbilityE(class AActor* InEnemy)
 	if (InEnemy == this)return;   //ºöÂÔÍæ¼Ò×ÔÉí
 	if(AActionGameCharacter* Enemy = Cast<AActionGameCharacter>(InEnemy))
 	{
+		const bool bPreFreezedSlowStat = Enemy->bFreezedSlow;
 		FreezeEnemyImpl(InEnemy);
-		Enemy->bFreezedSlow = false;
+		Enemy->bFreezedSlow = bPreFreezedSlowStat;
 	}
 }
 

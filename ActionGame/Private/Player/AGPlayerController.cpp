@@ -14,6 +14,10 @@
 #include "ActionAIController.h"
 #include "Camera/CameraComponent.h"
 #include "Camera/CameraActor.h"
+#include "GameFramework/PlayerInput.h"
+
+const TArray<FString> AbilityMappingNames = { TEXT("Ability_Q"), TEXT("Ability_E"), TEXT("Ability_R"), TEXT("Ability_F") };
+const TArray<FString> DefaultAbilityKeyNames = { TEXT("Q"), TEXT("E"), TEXT("R"), TEXT("LeftShift") };
 
 AAGPlayerController::AAGPlayerController():
 	bIsGameEnd(false),
@@ -41,6 +45,13 @@ void AAGPlayerController::BeginPlay()
 	{
 		(*It)->OnDestroyed.AddDynamic(this, &AAGPlayerController::CameraOnDestroyed);
 		break;
+	}
+
+	FString Ref;
+	for (int32 i = 0; i < AbilityMappingNames.Num(); ++i)
+	{
+		GConfig->GetString(TEXT("haiaimi"), *AbilityMappingNames[i], Ref, GGameIni);
+		PlayerInput->AddActionMapping(FInputActionKeyMapping(*AbilityMappingNames[i], Ref.IsEmpty() ? FKey(*DefaultAbilityKeyNames[i]) : FKey(*Ref)));
 	}
 }
 

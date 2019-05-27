@@ -11,6 +11,8 @@
 #include "GameFramework/GameUserSettings.h"
 #include "CoreGlobals.h"
 
+//const TArray<FString> AbilityMappingNames = { TEXT("Ability_Q"), TEXT("Ability_E"), TEXT("Ability_R"), TEXT("Ability_F") };
+
 AMenuPlayerController::AMenuPlayerController():
 	CurDetailPlatform(nullptr)
 {
