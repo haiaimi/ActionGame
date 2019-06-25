@@ -136,7 +136,7 @@ AActionGameCharacter* AActionGameCharacter::AttackEnemy(UPrimitiveComponent* Ove
 		{
 			UGameplayStatics::SpawnEmitterAttached(ImpactParticle, Enemy->GetMesh(), TEXT("Impact"));
 			const float EnemyHealth = Enemy->TakeDamage(60.f, FDamageEvent(), GetController(), this);
-			//获取最适合的打击点```
+			//获取最适合的打击点
 			FVector NewImpactPoint, NewImpactNormal;
 			if (UBodySetup* BodySetup = OverlappedComponent->GetBodySetup())
 			{
@@ -487,7 +487,7 @@ float AActionGameCharacter::TakeDamage(float Damage, struct FDamageEvent const& 
 	Health -= Damage;
 	bTurboJumpAccelerate = false;
 
-	if (Health <= 0.f)
+	if (Health <= 0.f && EventInstigator)
 	{
 		bDead = true;
 		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();

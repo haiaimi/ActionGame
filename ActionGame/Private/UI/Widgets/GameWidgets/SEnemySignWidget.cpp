@@ -70,7 +70,7 @@ void SEnemySignWidget::Tick(const FGeometry& AllottedGeometry, const double InCu
 		{
 			WidgetPos.X = bInRight ? 1870.f : 0.f;
 			if (Radian <= 1.57f)
-				WidgetPos.Y = -960.f*FMath::Tan(1.57f - Radian) + 540.f;
+				WidgetPos.Y = -960.f*FMath::Tan(1.57f - Radian) + 540.f; 
 			else
 				WidgetPos.Y = 960.f*FMath::Tan(Radian - 1.57f) + 540.f;
 			WidgetRot = FQuat2D(FMath::DegreesToRadians(bInRight ? 0.f : -180.f));
